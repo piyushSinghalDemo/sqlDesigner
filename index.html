@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>magellan</title>
+
+    <script type="text/javascript" src="./static/js-core/jquery-core.js"></script>
+    <script type="text/javascript" src="./static/js-core/jquery-ui-core.js"></script>
+    <script type="text/javascript" src="./static/js-core/jquery-ui-widget.js"></script>
+    <script type="text/javascript" src="./static/js-core/jquery-ui-mouse.js"></script>
+    <script type="text/javascript" src="./static/js-core/jquery-ui-position.js"></script>
+    <script type="text/javascript" src="./static/js-core/modernizr.js"></script>
+    <script type="text/javascript" src="./static/js-core/jquery-cookie.js"></script>
+    <!-- <script type="text/javascript" src="ace.js"></script> -->
+    <style media="screen">
+        /* Start by setting display:none to make this hidden.
+ Then we position it in relation to the viewport window
+ with position:fixed. Width, height, top and left speak
+ speak for themselves. Background we set to 80% white with
+ our animation centered, and no-repeating */
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba( 255, 255, 255, .8) url('http://sampsonresume.com/labs/pIkfp.gif') 50% 50% no-repeat;
+        }
+        /* When the body has the loading class, we turn
+ the scrollbar off with overflow:hidden */
+        
+        body.loading {
+            overflow: hidden;
+        }
+        /* Anytime the body has the loading class, our
+ modal element will be visible */
+        
+        body.loading .modal {
+            display: block;
+        }
+        
+        #parent {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+        }
+        
+        .child {
+            position: absolute;
+            height: 100px;
+            width: 1px;
+            background-color: #AFBBC6;
+            cursor: move;
+        }
+        
+        #minimap {
+            position: fixed;
+            width: 125px;
+            height: 125px;
+            top: 0px;
+            right: 30px;
+            background-color: #EEE;
+            border: 1px solid #AAA;
+            opacity: 0.9;
+            z-index: 10000;
+            /* top:100px; */
+        }
+        
+        .minimap-node {
+            position: absolute;
+            background-color: rgb(96, 122, 134);
+        }
+        
+        .minimap-viewport {
+            position: absolute;
+            box-sizing: border-box;
+            background-color: rgba(79, 111, 126, 0.4);
+            z-index: 1;
+            cursor: move;
+        }
+    </style>
+</head>
+
+<body class="fixed-sidebar fixed-header">
+    <div class="modal">
+
+    </div>
+    <!-- <img src="./assets/logo.png"> -->
+    <div id="app"></div>
+    <!-- built files will be auto injected-->
+
+    <!-- WIDGETS -->
+
+    <script type="text/javascript" src="./static/bootstrap/js/bootstrap.js"></script>
+
+    <!-- Bootstrap Dropdown -->
+
+    <script type="text/javascript" src="./static/widgets/dropdown/dropdown.js"></script>
+
+    <!-- Bootstrap Tooltip -->
+
+    <script type="text/javascript" src="./static/widgets/tooltip/tooltip.js"></script>
+
+    <!-- Bootstrap Popover -->
+
+    <script type="text/javascript" src="./static/widgets/popover/popover.js"></script>
+
+    <!-- Bootstrap Progress Bar -->
+
+    <script type="text/javascript" src="./static/widgets/progressbar/progressbar.js"></script>
+
+    <!-- Bootstrap Buttons -->
+
+    <script type="text/javascript" src="./static/widgets/button/button.js"></script>
+
+    <!-- Bootstrap Collapse -->
+
+    <script type="text/javascript" src="./static/widgets/collapse/collapse.js"></script>
+
+    <!-- Superclick -->
+
+    <script type="text/javascript" src="./static/widgets/superclick/superclick.js"></script>
+
+    <!-- Input switch alternate -->
+
+    <script type="text/javascript" src="./static/widgets/input-switch/inputswitch-alt.js"></script>
+
+    <!-- Slim scroll -->
+
+    <script type="text/javascript" src="./static/widgets/slimscroll/slimscroll.js"></script>
+
+    <!-- Slidebars -->
+
+    <script type="text/javascript" src="./static/widgets/slidebars/slidebars.js"></script>
+    <script type="text/javascript" src="./static/widgets/slidebars/slidebars-demo.js"></script>
+
+    <!-- PieGage -->
+
+    <script type="text/javascript" src="./static/widgets/charts/piegage/piegage.js"></script>
+    <script type="text/javascript" src="./static/widgets/charts/piegage/piegage-demo.js"></script>
+
+    <!-- Screenfull -->
+
+    <script type="text/javascript" src="./static/widgets/screenfull/screenfull.js"></script>
+
+    <!-- Content box -->
+
+    <script type="text/javascript" src="./static/widgets/content-box/contentbox.js"></script>
+
+    <!-- Overlay -->
+
+    <script type="text/javascript" src="./static/widgets/overlay/overlay.js"></script>
+
+    <!-- Widgets init for demo -->
+
+    <script type="text/javascript" src="./static/js-init/widgets-init.js"></script>
+
+    <!-- Theme layout -->
+
+    <script type="text/javascript" src="./static/themes/admin/layout.js"></script>
+
+    <!-- Theme switcher -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="./static/widgets/theme-switcher/themeswitcher.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script type="text/javascript" src="./static/widgets/datepicker/datepicker.js"></script>
+    <script type="text/javascript" src="./static/widgets/calendar/calendar.js"></script>
+    <script type="text/javascript" src="./static/widgets/datatable/datatable.js"></script>
+    <script type="text/javascript" src="./static/widgets/datatable/datatable-bootstrap.js"></script>
+    <script type="text/javascript" src="./static/widgets/datatable/datatable-reorder.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+    <script type="text/javascript" src="./static/canvas2image/canvas2image.js"></script>
+    <!-- flowchart js -->
+    <script src="./static/flowchart/js/jquery-minimap.js"></script>
+
+    <!-- <script src="./static/minimap/minimap.js"></script> -->
+    <!-- <script src="./static/minimap/jquery.panzoom.js"></script> -->
+    <!-- <script src="./static/minimap/jquery.mousewheel.js"></script> -->
+    <!-- <script src="./static/minimap/jquery-minimap.js"></script> -->
+    <!-- <script src="./static/flowchart/js/app.flowchart.js"></script> -->
+    <script type="text/javascript">
+        $(function() {
+            // First, lets build an interesting example of parent and child DOM elements...
+            // Add children to the parent.
+            var $parent = $("#droppable");
+            var childrenFragment = document.createDocumentFragment();
+            // var left = 0;
+            // var top = 0;
+            // var $child;
+            // for ( var i = 0; i < 15; i++ ) {
+            // 	$child = $( "<div></div>" ).addClass( "child" ).css( { left : left, top : top } );
+            // 	childrenFragment.appendChild( $child[ 0 ] );
+            // 	// left += 200;
+            // 	top += 200;
+            // }
+            // $parent.append( childrenFragment );
+            // // Allow children to be draggable. The position of the child will be updated in the minimap.
+            // var $children = $parent.find( '.child' );
+            // $children.each( function () {
+            // 	$( this ).draggable( {
+            // 		containment : $parent,
+            // 		scroll : false
+            // 	} );
+            // } );
+            // Now invoke the minimap method on the element you'd like to become the minimap,
+            // passing a reference to the element you'd like the map to be based on.
+            // var mini = $( "#minimap" ).minimap( $parent );
+            // console.log(mini.redraw);
+        });
+        $(function() {
+            $(".accordion").accordion({
+                heightStyle: "content"
+            });
+        });
+
+        $(document).ready(function() {
+            // var previewBody = $('#droppable').minimap()
+            //
+
+        });
+    </script>
+
+</body>
+
+</html>
