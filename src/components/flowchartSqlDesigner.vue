@@ -879,6 +879,7 @@
                     </div>
                 </div>                  
 		            <!-- <div id="parent"></div> -->
+                <div id="createScroll" class="createScroll">
                 <div id="droppable" class="" style="margin-top:10px;">
 
                   <!-- <div class="col-md-12 scrollD" >
@@ -887,6 +888,7 @@
                   </div> -->
 
                   <!-- {{dataStr}} -->
+                </div>
                 </div>
                 <br style="clear:both">
 
@@ -997,7 +999,7 @@ export default {
     setTimeout(function () {
         var data = {}
         this.loadData(data)
-        var object = $("#droppable");
+        var object = $(".createScroll");
         $( "#minimap" ).minimap(object);
     }.bind(this), 10)
   },
@@ -1011,16 +1013,16 @@ export default {
       $(".sb-slidebar").removeClass("toggleshow")
     },
     minimapImage(){
-      debugger;
       var data={};
-      var node = document.getElementById("droppable");
+      var node = document.getElementById("createScroll");
+      debugger;
       data.overflow = "auto";
-      data.width = node.clientWidth;
-      data.height = node.clientHeight;
+      data.width = node.offsetWidth;
+      data.height = node.offsetHeight;
       var height = node.scrollHeight;
       var width = node.scrollWidth;
       html2canvas(node, {
-        backgroundColor: "white",
+        // backgroundColor: "white",
          onpreloaded: function(){
             node.style.overflow= "visible";
             node.style.height= height+'px';
@@ -1031,10 +1033,10 @@ export default {
            node.style.height= data.height+'px';
            node.style.width= data.width+'px';
            canvas.backgroundColor="red";
-          //  node.className = data
+           node.className = data
           //  Canvas2Image.saveAsPNG(canvas, 198, 161);
            var img = Canvas2Image.convertToImage(canvas, 198, 161);
-           document.getElementsByClassName("minimap-node")[1].style.backgroundImage="url("+img.src+")";            
+           document.getElementsByClassName("minimap-node")[0].style.backgroundImage="url("+img.src+")";            
         }
 		  });
     },
@@ -1308,14 +1310,14 @@ export default {
 
 <style lang="css">
 .draggable { width: 80px; height: 80px; /*border: red 1px solid;*/ margin:10px 5px 0 1px; float: left;cursor: move}
-#droppable { min-height: 400px;border: black 1px solid;overflow: auto}
+.createScroll{overflow: scroll;height: 400px;width: 1000px;border: black 1px solid;}
+#droppable {height: 1000px;width: 1986px;overflow: auto}
 .togglehide {display: none; z-index: -1}
 .toggleshow {display: block;z-index: 9}
 .block {background-color: #000}
 .custom-modal-dialog {
   width: 90%;
   /*height: 100%;*/
-
   margin: auto;
   padding: 0;
 }
@@ -1350,7 +1352,7 @@ export default {
 				position: absolute;
 				box-sizing: border-box;
 				/* //background-color: rgba(79, 111, 126, 0.4); */
-		    background-color: antiquewhite;        
+		    background-color: indianred;        
 				z-index: 1;
 				cursor: move;
 			}
