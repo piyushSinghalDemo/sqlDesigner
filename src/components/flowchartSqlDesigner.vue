@@ -966,7 +966,7 @@ export default {
           refreshPositions: true,
           scroll: true,
           containment: "document",
-           zIndex: 10000,
+          zIndex: 10000,
       });
 
       $("#droppable").droppable({
@@ -1333,7 +1333,7 @@ export default {
   #minimap {
     position: fixed;
     width: 200px;
-    height: 163px;
+    height: 155px;
     top: 6px;
     right: 24px;
     background-color: #EEE;
