@@ -2,6 +2,8 @@
 <style >
 @import "/static/bootstrap/css/bootstrap.css";
 @import "/node_modules/vue2-animate/dist/vue2-animate.min.css";
+/* @import 'vuetify/dist/vuetify.min.css'; */
+@import "/node_modules/vuetify@0.16.9/dist/vuetify.min.css";
 /*helpers*/
 @import "/static/helpers/animate.css";
 @import "/static/helpers/backgrounds.css";

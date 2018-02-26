@@ -377,16 +377,11 @@
                         <textarea class="form-control" name="name" v-model="spForm.outputVariables"></textarea>
                     </div>
                 </div>
-								<!-- <div class="form-group">
-                    <div class="col-sm-6">
-                        <button class="btn success" type="submit" name="submit">Save</button>
-                    </div>
-                </div> -->
 
             </p>
           </div>
           <div class="modal-footer">
-            <!-- <button type="submit" class="btn btn-default" data-dismiss="modal">Save</button> -->
+
             <button type="submit" class="btn btn-default">Save</button>
           </div>
           </form>
@@ -421,7 +416,7 @@
                                     <div class="tab-pane fade active in" id="home">
                                       <div class="" style="background-color:#f0f0f0; border: 1px solid #ccc">
                                       <div class="">
-                                      <!-- <div class="scrollable-content scrollable-slim-sidebar"> -->
+
                                       <div class="pad15A">
                                       <a href="#" title="" data-toggle="collapse" data-target="#sidebar-toggle-1" class="popover-title">
                                           Title
@@ -431,7 +426,7 @@
                                       <div id="sidebar-toggle-1" class="collapse in">
                                           <div class="pad15A container">
                                               <div class="row ">
-                                                <!-- {{blockData}} -->
+
                                                   <div class="col-md-12">
                                                       <input type="text"  class="form-control" placeholder="Table name" v-on:keyup="operatorClick()" v-model="blockData.properties.title">
                                                   </div>
@@ -629,7 +624,7 @@
 <div id="sidebar-toggle-1" class="collapse in">
     <div class="pad15A container">
         <div class="row ">
-          <!-- {{blockData}} -->
+          
             <div class="col-md-12">
                 <input type="text"  class="form-control" placeholder="Table name" v-on:keyup="operatorClick()" v-model="blockData.properties.title">
             </div>
@@ -652,15 +647,7 @@
     <ul class="files-box">
         <li v-for="(item, index) in blockData.properties.inputs">
           {{item.label}}
-            <!-- <input type="text" name="" value="" class="form-control" v-model="item.label" v-on:keyup="operatorClick()"> -->
-            <!-- <div class="files-buttons">
-                <a href="#" class="btn btn-xs hover-danger tooltip-button" data-placement="left" title="Delete" @click="removeInput(index)">
-                    <i class="glyph-icon icon-times"></i>
-                </a>
-            </div> -->
         </li>
-        <!-- <li><button type="button" name="button" class="btn btn-success" @click="addInputs()">Add</button></li> -->
-
     </ul>
 
 </div>
@@ -676,15 +663,8 @@
       <ul class="files-box">
         <li v-for="(item, index ) in blockData.properties.outputs">
           {{item.label}}
-            <!-- <input type="text" name="" value="" class="form-control" v-model="item.label" v-on:keyup="operatorClick()"> -->
-
-            <!-- <div class="files-buttons">
-                <a href="#" class="btn btn-xs hover-danger tooltip-button" data-placement="left" title="Delete" @click="removeOutput(index)">
-                    <i class="glyph-icon icon-times"></i>
-                </a>
-            </div> -->
         </li>
-        <!-- <li><button type="button" name="button" class="btn btn-success" @click="addOutputs()">Add</button></li> -->
+
       </ul>
 
   </div>
@@ -702,27 +682,7 @@
       <ul class="files-box">
         <li v-for="(item, index ) in blockData.properties.outputs" class="">
 
-            <!-- <div class="files-buttons">
-                <a href="#" class="btn btn-xs hover-danger tooltip-button" data-placement="left" title="Delete" @click="removeOutput(index)">
-                    <i class="glyph-icon icon-times"></i>
-                </a>
-            </div> -->
         </li>
-        <!-- <li>
-          <div class="form-group">
-            <select class="form-control" name="">
-              <option value="">Select</option>
-            </select><br>
-            <select class="form-control" name="">
-              <option value="">Select</option>
-            </select><br>
-            <input type="text" name="" value="" class="form-control" >
-          </div>
-        </li> -->
-        <!-- <li>
-          <button type="button" name="button" class="btn btn-success" @click="addOutputs()">Add</button>
-
-        </li> -->
       </ul>
 
   </div>
@@ -773,21 +733,14 @@
 </div>
 </div>
 
-    <!--  Sidebar #############################-->
-
-    <!--  Sidebar #############################-->
-
-
-
-
 
     <div id="page-sidebar">
 		<div class="scroll-sidebar">
 
 			<ul id="sidebar-menu">
 
-			<!-- <li><button type="button" class="btn success" name="button" @click="openModal">+</button></li> -->
-	    </ul><!-- #sidebar-menu -->
+			
+	    </ul>
 
 
       <div id="storage" class="definition" style="position:relative">
@@ -829,10 +782,7 @@
                         </div>
                         <h3>Widgets</h3>
                         <div style="padding-bottom:25px">
-                          <!-- <div class="draggable" id="table"><h5>Table</h5>
-                            <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
-                          </div> -->
-
+           
                           <div class="draggable" id="sale_order"><h5>Sell Order</h5>
                             <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
                           </div>
@@ -863,7 +813,7 @@
 
     <div class="row" >
         <div class="col-md-12">
-<div class="panel">
+        <div class="panel">
             <div class="panel-body" style="margin-top:10px; ">
 
               <div class="showdata">
@@ -878,16 +828,94 @@
                       <i class="fa fa-arrow-left rt-45" v-bind:class="{'fa-arrow-open':minimap.showMap, 'fa-arrow-down': !minimap.showMap}"></i>
                     </div>
                 </div>                  
-		            <!-- <div id="parent"></div> -->
+		       
+                <v-layout row justify-center>
+                    <!-- <v-btn color="primary" dark @click.stop="dialog = true">Open Dialog 1</v-btn> -->
+                    <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition"
+                     :overlay="false" scrollable >
+                      <v-card tile>
+                      <v-toolbar card dark color="primary">
+                      <v-btn icon @click.native="dialog = false" dark>
+                      <v-icon>close</v-icon>
+                      </v-btn>
+                    <v-toolbar-title>Settings</v-toolbar-title>
+                      <v-spacer></v-spacer>
+                      <v-toolbar-items>
+                      <v-btn dark flat @click.native="dialog = false">Save</v-btn>
+                    </v-toolbar-items>
+                    <v-menu bottom right offset-y>
+                    <v-btn slot="activator" dark icon>
+                      <v-icon>more_vert</v-icon>
+                    </v-btn>
+                    <v-list>
+                      <v-list-tile v-for="(item, i) in items" :key="i" @click="">
+                        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                    </v-menu>
+                  </v-toolbar>
+                  <v-card-text>
+                    <v-btn color="primary" dark @click.stop="dialog2 = !dialog2">Open Dialog 2</v-btn>
+                    <v-tooltip right>
+                    <v-btn slot="activator">Tool Tip Activator</v-btn>
+                         Tool Tip
+                    </v-tooltip>
+                    <v-list three-line subheader>
+                    <v-subheader>User Controls</v-subheader>
+                    <v-list-tile avatar>
+                    <v-list-tile-content>
+                    <v-list-tile-title>Content filtering</v-list-tile-title>
+                  <v-list-tile-sub-title>Set the content filtering level to restrict apps that can be downloaded</v-list-tile-sub-title>
+                  </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile avatar>
+                <v-list-tile-content>
+                  <v-list-tile-title>Password</v-list-tile-title>
+                  <v-list-tile-sub-title>Require password for purchase or use password to restrict purchase</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list three-line subheader>
+              <v-subheader>General</v-subheader>
+              <v-list-tile avatar>
+                <v-list-tile-action>
+                  <v-checkbox v-model="notifications"></v-checkbox>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                  <v-list-tile-title>Notifications</v-list-tile-title>
+                  <v-list-tile-sub-title>Notify me about updates to apps or games that I downloaded</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile avatar>
+                <v-list-tile-action>
+                  <v-checkbox v-model="sound"></v-checkbox>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                  <v-list-tile-title>Sound</v-list-tile-title>
+                  <v-list-tile-sub-title>Auto-update apps at any time. Data charges may apply</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile avatar>
+                <v-list-tile-action>
+                  <v-checkbox v-model="widgets"></v-checkbox>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                  <v-list-tile-title>Auto-add widgets</v-list-tile-title>
+                  <v-list-tile-sub-title>Automatically add home screen widgets</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </v-list>
+          </v-card-text>
+
+          <div style="flex: 1 1 auto;"/>
+        </v-card>
+      </v-dialog>
+    </v-layout>
                 <div id="createScroll" class="createScroll">
                 <div id="droppable" class="" style="margin-top:10px;">
 
-                  <!-- <div class="col-md-12 scrollD" >
-                      <h2 v-if="dragType=='db'">Drag Step</h2>
-                      <h2 v-else>Drag Table</h2>
-                  </div> -->
-
-                  <!-- {{dataStr}} -->
+           
                 </div>
                 </div>
                 <br style="clear:both">
@@ -944,7 +972,36 @@ export default {
       operators: _def.operators,
       tableOperatorData:[],
       worflowData:{},
-      dbData: {}
+      dbData: {},
+      dialog: false,
+        dialog2: false,
+        dialog3: false,
+        notifications: false,
+        sound: true,
+        widgets: false,
+        items: [
+          {
+            title: 'Click Me'
+          },
+          {
+            title: 'Click Me'
+          },
+          {
+            title: 'Click Me'
+          },
+          {
+            title: 'Click Me 2'
+          }
+        ],
+        select: [
+          { text: 'State 1' },
+          { text: 'State 2' },
+          { text: 'State 3' },
+          { text: 'State 4' },
+          { text: 'State 5' },
+          { text: 'State 6' },
+          { text: 'State 7' }
+        ]
 		}
   },
   computed: {
@@ -1226,6 +1283,7 @@ export default {
                return true;
              },
              onOperatorDoubleClick: function (operatorId) {
+               debugger;
                var operator = $('#droppable').flowchart('getOperatorData', operatorId);
                console.log(operator);
                var type = operator.className
@@ -1238,16 +1296,17 @@ export default {
 
                if(operator.className != 'db')
                   return
-                $(".sb-slidebar").removeClass("toggleshow");
-                setTimeout(function(){
-                  console.log(JSON.stringify(_this.dataStr.workflow[operatorId]))
-                  $('#droppable').flowchart('setData', _this.dataStr.workflow[operatorId]);
+                  _this.dialog = true;
+                // $(".sb-slidebar").removeClass("toggleshow");
+                // setTimeout(function(){
+                //   console.log(JSON.stringify(_this.dataStr.workflow[operatorId]))
+                //   $('#droppable').flowchart('setData', _this.dataStr.workflow[operatorId]);
 
-                },10)
-                _this.dbOperatorId = operatorId;
-                _this.dragType = 'table';
-                this.operatorClass = "tableImage"
-                $(".flowchart-operator").addClass("tableImage");
+                // },10)
+                // _this.dbOperatorId = operatorId;
+                // _this.dragType = 'table';
+                // this.operatorClass = "tableImage"
+                // $(".flowchart-operator").addClass("tableImage");
                 return true;
              },
              onOperatorCreate: function (operatorId, operatorData, fullElement) {
@@ -1339,7 +1398,7 @@ export default {
     background-color: #EEE;
     border: 1px solid #AAA;
     opacity: 0.9;
-    z-index: 1000;
+    z-index: 201;
   }
 
 			.minimap-node {
@@ -1373,7 +1432,7 @@ export default {
         top: 14px;
         right: 35px;
         cursor: pointer;
-        z-index: 1001;
+        z-index: 202;
         background: white;
         width: 25px;
         height: 25px;
@@ -1388,6 +1447,9 @@ export default {
       .fa-arrow-open{
         transform: rotate(-45deg);
         transition: transform .25s linear;
+      }
+      .card__text{
+            background: white;
       }
 /*
 sql designer
