@@ -3,13 +3,14 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 const state = {
-  schedulerId: 'hello'
+    schedulerId: 'hello',
+    dialog: false
 }
 const mutations = {
-   mutateUpdateSchedulerId: function (state, id) {
-      state.schedulerId = id
-   }
+    mutateUpdateSchedulerId: function(state, id) {
+        state.schedulerId = id
+    }
 }
 export default new Vuex.Store({
-  state
+    state
 })
