@@ -4,29 +4,11 @@
       <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition" :overlay="false" scrollable>
         <v-card tile style="height:650px">
           <!-- ******************************Start ************************************* -->
-          <v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" app v-model="drawer">
-            <v-list dense>
-              <div class="draggable2" id="sale_order">
-                <h5>Sell Order</h5>
-                <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
-              </div>
-              <div class="draggable2" id="work_order">
-                <h5>Work Order</h5>
-                <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
-              </div>
-              <div class="draggable2" id="pur_order">
-                <h5>Purchase Order</h5>
-                <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
-              </div>
-            </v-list>
-          </v-navigation-drawer>
           <v-toolbar card dark color="primary" app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
-            <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-              <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
               <v-btn icon @click.native="closeDialog" dark>
-                <v-icon>close</v-icon>
-              </v-btn>
-            </v-toolbar-title>
+              <v-icon>close</v-icon>
+            </v-btn>
+            <v-toolbar-title >Close</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
               <v-btn dark flat @click.native="saveDialog">Save</v-btn>
@@ -37,6 +19,45 @@
               <v-layout justify-center align-center>
                 <div id="createScroll2" class="createScroll2">
                   <div id="droppable2" class="" style="margin-top:10px;">
+                    <v-container grid-list-md text-xs-center>
+                      <v-layout row wrap>
+                        <v-flex class="text-xs-center" xs12>
+                          <v-card>
+                            <v-card-text>
+                                <div class="form-group form-group-lg panel panel-default">
+                                  <div class="panel-heading">
+                                    <h3 class="panel-title">Sortbale control</h3>
+                                  </div>
+                                </div>
+                                <div  class="col-md-3">
+                                <draggable class="list-group" element="ul" v-model="list" :options="dragOptions" :move="onMove" 
+                                     @change = "updateGroup($event)"
+                                     @start="isDragging=true"
+                                     @end="isDragging=false"> 
+                                  <transition-group type="transition" :name="'flip-list'">
+                                    <li class="list-group-item" v-for="element in list" :key="element.order"> 
+                                      {{element.name}}
+                                      <span class="badge">{{element.order}}</span>
+                                    </li> 
+                                  </transition-group>
+                              </draggable>
+                            </div>
+                            <div  class="col-md-3">
+                            <draggable element="span" v-model="list2" :options="dragOptions" :move="onMove" @change = "updateGroup2($event)"> 
+                                <transition-group type="transition" :name="'flip-list'" class="list-group" tag="ul">
+                                  <li class="list-group-item" v-for="element in list2" :key="element.order"> 
+                                    {{element.name}}
+                                    <span class="badge">{{element.order}}</span>
+                                  </li> 
+                                </transition-group>
+                            </draggable>
+                          </div>
+                            </v-card-text>
+                          </v-card>
+                          </v-flex>
+                      </v-layout>
+                    </v-container>
+
                   </div>
                 </div>
               </v-layout>
@@ -52,39 +73,23 @@
 
 <script>
 import _def from './various/defnitions'
+import draggable from 'vuedraggable'
+const message = [ 'vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based' , 'on', 'Sortablejs' ]
 export default {
+  components: {
+            draggable,
+  },
   data() {
     return {
       drawer: null,
       dataStr: _def.dataStr,
       dom: {},
-      minimap: {
-        showMap: false,
-      },
-      connectionData: {},
-      operatorId: '',
-      dbOperatorId: '',
-      dbLinkData: [],
-      operatorI: 0,
-      dragType: 'db',
-      dbAllowed: ['db', 'merge'],
-      tableAllowed: ['table'],
-      SPData: [],
-      operatorClass: "dbImage",
-      blockData: _def.blockData,
-      blockColumns: {},
-      purgeForm: _def.purgeForm,
-      spForm: _def.spForm,
-      conditionForm: _def.conditionForm,
-      archiveForm: _def.archiveForm,
-      copyForm: _def.copyForm,
-      reportForm: _def.reportForm,
-      duplicateForm: _def.duplicateForm,
-      operatorOptions: _def.operatorOptions,
-      operators: _def.operators,
-      tableOperatorData: [],
-      worflowData: {},
-      dbData: {}
+      list: message.map( (name,index) => {return {name, order: index+1, fixed: false}; }),
+      list2:[],
+      editable:true,
+      isDragging: false,
+      delayedDragging:false,
+      // editable:true
     }
   },
   computed: {
@@ -93,488 +98,122 @@ export default {
     },
     total: function () {
       return this.value.interval ? (this.value.interval * this.value.multiplier).toFixed(2) : 0
+    },
+    dragOptions () {
+      return  {
+        animation: 0,
+        group: 'description',
+        // disabled: !this.editable,
+        ghostClass: 'ghost'
+      };
+    },
+    listString(){
+      return JSON.stringify(this.list, null, 2);  
+    },
+    list2String(){
+      return JSON.stringify(this.list2, null, 2);  
+    }
+  },
+  watch: {
+     isDragging (newValue) {
+      if (newValue){
+        this.delayedDragging= true
+        return
+      }
+      this.$nextTick( () =>{
+           this.delayedDragging =false
+      })
     }
   },
   props: {
     source: String
   },
   methods: {
+    updateGroup(event){
+      this.orderList();
+      // console.log(event);
+    },
+    updateGroup2(event){
+      debugger;
+      this.orderList2();
+    },
+     orderList () {
+      this.list = this.list.sort((one,two) =>{return one.order-two.order; })
+    },orderList2 () {
+      this.list2 = this.list2.sort((one,two) =>{return one.order-two.order; })
+    },
+    onMove ({relatedContext, draggedContext}) {
+      const relatedElement = relatedContext.element;
+      const draggedElement = draggedContext.element;
+      return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
+    },
+     add: function() {
+      this.list.push({
+        name: 'Juan'
+      });
+    },
+    replace: function() {
+      this.list = [{
+        name: 'Edgard'
+      }]
+    },
     closeDialog() {
       this.$store.state.dialog = false
     },
     saveDialog() {
       this.$store.state.dialog = false
     },
-    getIDEData() {
-      var data = $('#droppable2').flowchart('getData');
-      console.log(JSON.stringify(data));
-    },
-    closeRightPael() {
-      console.log("this is log on 453");
-      $(".sb-slidebar").removeClass("toggleshow")
-    },
-    deletTable() {
-      this.deleteOperator()
-      this.closeRightPael()
-      this.blockData = {
-        top: 0,
-        left: 0,
-        properties: {
-          title: "",
-          inputs: {},
-          outputs: {}
-        }
-      }
-      this.operatorId = ''
-    },
-    operatorClick() {
-      this.saveBlockData();
-    },
-    saveBlockData() {
-      console.log(this.blockData);
-      var blockId = localStorage.getItem("operatorId")
-      this.setOperatorData(this.operatorId)
-    },
-    addInputs() {
-      var _this = this
-      var noOfItems = Object.keys(this.blockData.properties.inputs).length + 1;
-      console.log(noOfItems);
-      this.blockData.properties.inputs["input_" + noOfItems] = {
-        "label": "Input"
-      }
-      this.setOperatorData(this.operatorId)
-    },
-    removeInput(index) {
-      console.log(index);
-      delete this.blockData.properties.inputs[index];
-      this.saveBlockData()
-    },
-    addOutputs() {
-      var noOfItems = Object.keys(this.blockData.properties.outputs).length + 1;
-      this.blockData.properties.outputs["output_" + noOfItems] = {
-        "label": "Output"
-      }
-      this.setOperatorData(this.operatorId)
-    },
-    removeOutput(index) {
-      delete this.blockData.properties.outputs[index];
-      this.saveBlockData()
-    },
-    addWhere() {},
-    removeWhere() {},
-    addOr() {},
-    removeOr() {},
-    getTableColumns() {
-      this.tableColumns = [{
-        column: "column1",
-        type: "integer"
-      }, {
-        column: "column2",
-        type: "string"
-      }, {
-        column: "column3",
-        type: "date"
-      }, {
-        column: "column4",
-        type: "datetime"
-      }]
-    },
-    getData() {
-      var ideData = getData()
-      console.log(ideData);
-    },
-    oneInZeroOutOperator(left, top, className) {
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
-      var operatorData = _def.methods.oneInZeroOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable2').flowchart('createOperator', operatorId, operatorData);
-      this.dataStr.workflow[operatorId] = {};
-      var data = $('#droppable2').flowchart('getData')
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data))
-      this.dbData = JSON.parse(JSON.stringify(data))
-      console.log(JSON.stringify(this.dataStr.dbData));
-    },
-    oneInOneOutOperator(left, top, className) {
-      var _this = this
-      var operatorId = 'created_' + className + '_operator_' + _this.operatorI;
-      var operatorData = _def.methods.oneInOneOutOperator(_this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable2').flowchart('createOperator', operatorId, operatorData);
-      _this.dataStr.workflow[operatorId] = {};
-      var data = $('#droppable2').flowchart('getData')
-      _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
-      _this.dbData = JSON.parse(JSON.stringify(data))
-      console.log(JSON.stringify(_this.dataStr));
-    },
-    oneInTwoOutOperator(left, top, className) {
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
-      var operatorData = _def.methods.oneInTwoOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable2').flowchart('createOperator', operatorId, operatorData);
-      this.dataStr.workflow[operatorId] = {};
-      var data = $('#droppable2').flowchart('getData');
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data));
-    },
-    twoInOneOutOperator(left, top, className) {
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
-      var operatorData = _def.methods.twoInOneOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable2').flowchart('createOperator', operatorId, operatorData);
-      this.dataStr.workflow[operatorId] = {};
-      var data = $('#droppable2').flowchart('getData');
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data));
-      this.dbData = JSON.parse(JSON.stringify(data));
-    },
-    twoInTwoOutOperator(left, top, className) {
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
-      var operatorData = _def.methods.twoInTwoOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable2').flowchart('createOperator', operatorId, operatorData);
-      var data = $('#droppable2').flowchart('getData')
-      this.dataStr.workflow[operatorId] = {};
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data));
-      this.dbData = JSON.parse(JSON.stringify(data));
-      console.log(JSON.stringify(this.dataStr.dbData));
-    },
-    addTableOperator(left, top, className) {
-      var operatorId = 'created_table_operator_' + this.operatorI;
-      var operatorData = {
-        new: true,
-        className: className,
-        top: top,
-        left: left,
-        properties: {
-          title: 'Table ' + (this.operatorI + 3),
-          inputs: {
-            input_1: {
-              label: 'Input 1',
-            }
-          },
-          outputs: {
-            output_1: {
-              label: 'Output 1',
-            }
-          }
-        }
-      };
-      this.operatorI += 1;
-      $('#droppable2').flowchart('createOperator', operatorId, operatorData);
-      var data = $('#droppable2').flowchart('getData')
-      this.dataStr.workflow[this.dbOperatorId] = JSON.parse(JSON.stringify(data))
-      this.worflowData[this.dbOperatorId] = JSON.parse(JSON.stringify(data))
-      console.log(JSON.stringify(this.dataStr));
-    },
-    getOperatorData(operatorId) {
-      this.blockData = $('#droppable2').flowchart('getOperatorData', operatorId);
-    },
-    setOperatorData(operatorId) {
-      $('#droppable2').flowchart('setOperatorData', operatorId, this.blockData);
-      this.getOperatorData(operatorId)
-    },
-    deleteOperator() {
-      $('#droppable2').flowchart('deleteOperator', this.operatorId);
-    },
-    setData() {
-      $('#droppable2').flowchart('setData', {});
-    },
-    getSPData() {
-      this.SPData = []
-    },
-    saveModalForm(formData, modal) {
-      console.log("sff", this.operatorId);
-      if (this.dragType == 'table') {} else {}
-      var IDEData = $('#droppable2').flowchart('getData');
-      console.log(JSON.stringify(IDEData));
-      IDEData.operators[this.operatorId]["data"] = formData
-      console.log(IDEData.operators[this.operatorId]);
-      setTimeout(function () {
-        $('#droppable2').flowchart('setData', IDEData);
-        console.log(JSON.stringify(IDEData));
-      }.bind(this), 10)
-      $("#" + modal).modal('hide')
-    },
-    loadDb() {
-      var data = {}
-      var _this = this
-      this.dragType = 'db'
-      setTimeout(function () {
-        $('#droppable2').flowchart('setData', _this.dataStr.dbData);
-        console.log(JSON.stringify(_this.dbData));
-      }.bind(this), 10)
-    },
-
-    loadData(data) {
-      var _this = this
-      $('#droppable2').flowchart({
-        data: data,
-        onOperatorSelect: (operatorId) => {
-          _this.getOperatorData(operatorId);
-          _this.operatorId = operatorId;
-          $(".sb-slidebar").addClass("toggleshow");
-          return true;
-        },
-        onOperatorDoubleClick: function (operatorId) {
-          var operator = $('#droppable2').flowchart('getOperatorData', operatorId);
-          console.log(operator);
-          var type = operator.className
-          var op = _this.operatorOptions[type]
-          _this.operatorId = operatorId
-          console.log(op);
-          if (op['dblClick'] && op["modal"]) {
-            $("#" + op["modalName"]).modal()
-          }
-          if (operator.className != 'db')
-            return
-          _this.$store.state.dialog = true;
-          return true;
-        },
-        onOperatorCreate: function (operatorId, operatorData, fullElement) {
-          return true;
-        },
-        onLinkCreate: (linkId, linkData) => {
-          console.log(linkData);
-          var fromOperatorData = $('#droppable2').flowchart('getOperatorData', linkData.fromOperator);
-          var toOperatorData = $('#droppable2').flowchart('getOperatorData', linkData.toOperator);
-          linkData.fromTable = fromOperatorData.properties.title
-          linkData.toTable = toOperatorData.properties.title
-          setTimeout(function () {
-            var data = $('#droppable2').flowchart('getData')
-            console.log(JSON.stringify(data));
-            if (_this.dragType == 'db') {
-              _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
-            } else {
-              _this.dataStr.workflow[_this.dbOperatorId] = JSON.parse(JSON.stringify(data))
-            }
-          }, 10)
-          return true;
-        },
-        onOperatorDelete: function (operatorId) {
-          return true;
-        }
-      });
-    },
-    clauseModal(type) {
-      this.clauseType = type;
-      $("#clauseModal").modal()
-    },
-    remove(key) {
-      let confirmFn = function () {
-        this.$parent.dataStr.workflow.splice(key, 1)
-        // this.$parent.deleteCollection(id)
-      }
-      let obj = {
-        title: 'Delete',
-        message: 'Are you sure want to delete this?',
-        type: 'info',
-        useConfirmBtn: true,
-        onConfirm: confirmFn
-      }
-      this.$refs.simplert.openSimplert(obj)
-    },
-
-    openModal(data) {
-      $('#myModal').modal();
-    },
-
-    findByStep: (step) => {
-      this.users.find((usr) => {
-        return usr.token === token
-      });
-    }
-
   },
 
   mounted() {
     var title = '';
     var blockId = ''
     var _this = this
-    $(".draggable2").draggable({
-      appendTo: '#droppable2',
-      cursor: 'move',
-      helper: 'clone',
-      // grid: [20, 20],
-      // revertDuration: 100,
-      // revert: 'invalid',
-      // refreshPositions: true,
-      // scroll: true,
-      // containment: "document",
-      // zIndex: 10000,
-    });
-
-    $("#droppable2").droppable({
-      accept: ".draggable2",
-      // tolerance: "intersect",
-      drop: function (event, ui) {
-        var pos = ui.position;
-        var $obj = ui.helper.clone();
-        var leftPosition = pos.left; //ui.offset.left - $(this).offset().left;
-        var topPosition = pos.top; //ui.offset.top - $(this).offset().top;
-        var type = ui.draggable.attr("id");
-        var className = '';
-        var imageClass = '';
-        var operator = _this.operatorOptions[type]
-        _this[operator['operatorType']](leftPosition, topPosition, type)
-        // _this.dragType = type
-        if (type == "db" || type == 'spstep') {
-          // _this.oneInOneOutOperator(leftPosition, topPosition, type)
-          _this.dragType = 'db'
-        }
-        if (type == "table" || type == "sale_order" || type == "work_order" || type == "pur_order") {
-          // _this.addTableOperator(leftPosition, topPosition, type)
-          _this.dragType = 'table'
-        }
-        // _this.minimapImage();
-      }
-    });
-    setTimeout(function () {
-      var data = {}
-      this.loadData(data)
-    }.bind(this), 10)
   }
 }
 
 </script>
 <style scoped>
-.draggable2 {
-  width: 80px;
-  height: 80px;
-  /*border: red 1px solid;*/
-  margin: 10px 5px 0 1px;
-  float: left;
-  cursor: move
+
+.dragArea {
+  min-height: 100px;
+  background: beige;
+}
+.ht-30{
+  min-height: 30px;
+  background: white;
+} 
+.bg-grey{
+border:01px solid gray
+}
+.card__text{
+  height: inherit;
 }
 
-.createScroll2 {
-  overflow: scroll;
-  height: 500px;
-  width: 1000px;
+.flip-list-move {
+  transition: transform 0.5s;
 }
 
-#droppable2 {
-  height: 1000px;
-  width: 1986px;
-  overflow: auto
+.no-move {
+  transition: transform 0s;
 }
 
-.togglehide {
-  display: none;
-  z-index: -1
+.ghost {
+  opacity: .5;
+  background: #C8EBFB;
 }
 
-.toggleshow {
-  display: block;
-  z-index: 9
+.list-group {
+  min-height: 150px;
 }
 
-.block {
-  background-color: #000
-}
-
-.custom-modal-dialog {
-  width: 90%;
-  /*height: 100%;*/
-  margin: auto;
-  padding: 0;
-}
-
-.modal-content {
-  height: auto;
-  /*min-height: 100%;*/
-  border-radius: 0;
-}
-
-body {
-  /* overflow: hidden; */
-}
-
-#minimap {
-  position: fixed;
-  width: 200px;
-  height: 155px;
-  top: 6px;
-  right: 24px;
-  background-color: #EEE;
-  border: 1px solid #AAA;
-  opacity: 0.9;
-  z-index: 201;
-}
-
-.minimap-node {
-  position: absolute;
-  background-color: white;
-  background-image: url("../../static/images/background.jpg");
-}
-
-.minimap-viewport {
-  position: absolute;
-  box-sizing: border-box;
-  /* //background-color: rgba(79, 111, 126, 0.4); */
-  background-color: indianred;
-  z-index: 1;
+.list-group-item {
   cursor: move;
 }
 
-.imageCss {
-  width: 1000px !important;
-  height: 1000px !important;
-  background-color: white;
-  overflow: visible;
-}
-
-.rt-45 {
-  margin-left: 20%;
-  margin-top: 25%;
-}
-
-.tp-14 {
-  position: fixed;
-  top: 14px;
-  right: 35px;
+.list-group-item i{
   cursor: pointer;
-  z-index: 201;
-  background: white;
-  width: 25px;
-  height: 25px;
-  border-radius: 5px;
-  box-shadow: 2px 2px 2px;
 }
-
-/* ****************** Rotate minimap icon ****************/
-
-.fa-arrow-down {
-  transform: rotate(225deg);
-  transition: transform .25s linear;
-}
-
-.fa-arrow-open {
-  transform: rotate(-45deg);
-  transition: transform .25s linear;
-}
-
-.card__text {
-  background: white;
-  height: 600px;
-}
-
-.navigation-drawer--open {
-  background: white;
-  box-shadow: 0px 0px 7px 0px;
-  /* z-index: 2 */
-}
-
-.navigation-drawer:not(.navigation-drawer--is-booted) {
-  z-index: 2
-}
-
-.content {
-  height: 100%;
-  background: white
-}
-
-.content--wrap {
-  height: 100%;
-}
-
 /*
 sql designer
  */

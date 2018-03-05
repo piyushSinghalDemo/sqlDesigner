@@ -771,6 +771,9 @@
                   </div>
                   <div id="createScroll" class="createScroll">
                     <div id="droppable" class="" style="margin-top:10px;">
+
+
+
                     </div>
                   </div>
                   <br style="clear:both">
@@ -791,10 +794,12 @@
 import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
+import draggable from 'vuedraggable'
 export default {
   components: {
     Simplert,
-    'table-modal': table
+    'table-modal': table,
+     draggable
   },
   data() {
     return {
@@ -827,6 +832,20 @@ export default {
       tableOperatorData: [],
       worflowData: {},
       dbData: {},
+      list: [{
+      name: "John"
+    }, {
+      name: "Joao"
+    }, {
+      name: "Jean"
+    }],
+    list2: [{
+      name: "Juan"
+    }, {
+      name: "Edgard"
+    }, {
+      name: "Johnson"
+    }]
     }
   },
   computed: {
@@ -884,6 +903,16 @@ export default {
     }.bind(this), 10)
   },
   methods: {
+     add: function() {
+      this.list.push({
+        name: 'Juan'
+      });
+    },
+    replace: function() {
+      this.list = [{
+        name: 'Edgard'
+      }]
+    },
     getIDEData() {
       var data = $('#droppable').flowchart('getData');
       console.log(JSON.stringify(data));
@@ -1196,21 +1225,147 @@ export default {
 </script>
 
 <style lang="css">
-.draggable { width: 80px; height: 80px; /*border: red 1px solid;*/ margin:10px 5px 0 1px; float: left;cursor: move} .createScroll{overflow:
-scroll;height: 450px;width: 1000px;} #droppable {height: 1000px;width: 1986px;overflow: auto} .togglehide {display: none;
-z-index: -1} .toggleshow {display: block;z-index: 9} .block {background-color: #000} .custom-modal-dialog { width: 90%; margin:
-auto; padding: 0; } .modal-content { height: auto; /*min-height: 100%;*/ border-radius: 0; } body{ /* overflow: hidden; */
-} #minimap { position: fixed; width: 200px; height: 155px; top: 6px; right: 24px; background-color: #EEE; border: 1px solid
-#AAA; opacity: 0.9; z-index: 201; } .minimap-node { position: absolute; background-color: white; background-image: url("../../static/images/background.jpg");
-} .minimap-viewport { position: absolute; box-sizing: border-box; /* //background-color: rgba(79, 111, 126, 0.4); */ background-color:
-indianred; z-index: 1; cursor: move; } .imageCss{ width: 1000px !important; height: 1000px !important; background-color:
-white; overflow: visible; } .rt-45{ /* transform: rotateZ(-45deg); */ margin-left: 20%; margin-top: 25%; } .tp-14{ position:
-fixed; top: 14px; right: 35px; cursor: pointer; z-index: 201; background: white; width: 25px; height: 25px; border-radius:
-5px; box-shadow: 2px 2px 2px; } /* ****************** Rotate minimap icon ****************/ .fa-arrow-down{ transform: rotate(225deg);
-transition: transform .25s linear; } .fa-arrow-open{ transform: rotate(-45deg); transition: transform .25s linear; } .card__text{
-background: white; height: 600px; } .navigation-drawer--open{ background: white; box-shadow: 0px 0px 7px 0px; /* z-index:
-2 */ } .navigation-drawer:not(.navigation-drawer--is-booted){ z-index: 2 } .content{ height: 100%; background: white } .content--wrap{
-height: 100%; }
+.draggable {
+  width: 80px;
+  height: 80px;
+  /*border: red 1px solid;*/
+  margin: 10px 5px 0 1px;
+  float: left;
+  cursor: move
+}
+
+.createScroll {
+  overflow: scroll;
+  height: 450px;
+  width: 1000px;
+}
+
+#droppable {
+  height: 1000px;
+  width: 1986px;
+  overflow: auto
+}
+
+.togglehide {
+  display: none;
+  z-index: -1
+}
+
+.toggleshow {
+  display: block;
+  z-index: 9
+}
+
+.block {
+  background-color: #000
+}
+
+.custom-modal-dialog {
+  width: 90%;
+  margin: auto;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  /*min-height: 100%;*/
+  border-radius: 0;
+}
+
+body {
+  /* overflow: hidden; */
+}
+
+#minimap {
+  position: fixed;
+  width: 200px;
+  height: 155px;
+  top: 6px;
+  right: 24px;
+  background-color: #EEE;
+  border: 1px solid #AAA;
+  opacity: 0.9;
+  z-index: 201;
+}
+
+.minimap-node {
+  position: absolute;
+  background-color: white;
+  background-image: url("../../static/images/background.jpg");
+}
+
+.minimap-viewport {
+  position: absolute;
+  box-sizing: border-box;
+  /* //background-color: rgba(79, 111, 126, 0.4); */
+  /* background-color: indianred; */
+  z-index: 1;
+  cursor: move;
+}
+
+.imageCss {
+  width: 1000px !important;
+  height: 1000px !important;
+  background-color: white;
+  overflow: visible;
+}
+
+.rt-45 {
+  /* transform: rotateZ(-45deg); */
+  margin-left: 20%;
+  margin-top: 25%;
+}
+
+.tp-14 {
+  position: fixed;
+  top: 14px;
+  right: 35px;
+  cursor: pointer;
+  z-index: 201;
+  background: white;
+  width: 25px;
+  height: 25px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 2px;
+}
+
+/* ****************** Rotate minimap icon ****************/
+
+.fa-arrow-down {
+  transform: rotate(225deg);
+  transition: transform .25s linear;
+}
+
+.fa-arrow-open {
+  transform: rotate(-45deg);
+  transition: transform .25s linear;
+}
+
+.card__text {
+  background: white;
+  height: 600px;
+}
+
+.navigation-drawer--open {
+  background: white;
+  box-shadow: 0px 0px 7px 0px;
+  /* z-index:
+2 */
+}
+
+.navigation-drawer:not(.navigation-drawer--is-booted) {
+  z-index: 2
+}
+
+.content {
+  height: 100%;
+  background: white
+}
+
+.content--wrap {
+  height: 100%;
+}
+
 
 /*
 sql designer
