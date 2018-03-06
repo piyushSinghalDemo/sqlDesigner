@@ -6,11 +6,13 @@ import VeeValidate from 'vee-validate';
 import store from './store/store'
 import zepto from './../static/flowchart/js/jquery.flowchart';
 import Vuetify from 'vuetify'
+import Vue2Filters from 'vue2-filters'
 // my-project/src/index.js
 import 'babel-polyfill'
 Vue.use(VeeValidate);
 Vue.use(VueResource)
 Vue.use(Vuetify)
+Vue.use(Vue2Filters)
 Vue.config.productionTip = false
 
 
