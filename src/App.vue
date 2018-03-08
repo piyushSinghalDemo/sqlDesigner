@@ -1,6 +1,7 @@
 <style src="vue2-animate/dist/vue2-animate.min.css"></style>
 <style >
 @import "/static/bootstrap/css/bootstrap.css";
+@import '../node_modules/vuetify/dist/vuetify.min.css';
 /* @import "/node_modules/vue2-animate/dist/vue2-animate.min.css"; */
 /* @import 'vuetify/dist/vuetify.min.css'; */
 /* @import "/node_modules/vuetify@0.16.9/dist/vuetify.min.css"; */
@@ -136,7 +137,6 @@
 </style>
 <template>
   <div id="app">
-
 <!-- <div id="loading">
     <div class="spinner">
         <div class="bounce1"></div>
@@ -217,9 +217,14 @@
         </div>
     </div>
 </div> -->
-<router-view></router-view>
+<v-app>
+    <v-content>
+    <v-container fluid>
+    <router-view></router-view>
+    </v-container>
+    </v-content>
+</v-app>   
 </div>
-
 
 
 

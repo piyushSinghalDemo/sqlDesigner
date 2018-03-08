@@ -7,6 +7,7 @@ import store from './store/store'
 import zepto from './../static/flowchart/js/jquery.flowchart';
 import Vuetify from 'vuetify'
 import Vue2Filters from 'vue2-filters'
+// import '../node_modules/vuetify/dist/vuetify.min.css';
 // my-project/src/index.js
 import 'babel-polyfill'
 Vue.use(VeeValidate);

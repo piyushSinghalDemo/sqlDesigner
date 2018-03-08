@@ -17,7 +17,7 @@
           <v-content>
             <v-container fluid fill-height>
               <v-layout justify-center >
-                <div id="createScroll2" class="createScroll2">
+                <div id="createScroll2" class="createScroll2" style="width:100%">
                   <div id="droppable2" class="" style="margin-top:10px;">
                     <v-container grid-list-md>
                       <v-layout row wrap>
@@ -84,14 +84,24 @@
                                     </multiselect>
                                 </v-flex>
                                 <v-flex>
+                                    <multiselect v-model="relationship.selectedFilter" :options="filterArray" placeholder="Select Criteria" 
+                                      > 
+                                    </multiselect>
+                                </v-flex>
+                                <v-flex>
                                     <multiselect v-model="relationship.selectedColumn" :options="optionColumn" 
                                       placeholder="Select Column" :hideSelected="true" :multiple="true"> 
                                     </multiselect>
                                 </v-flex>
+                                <v-flex v-if="relationship.lgclRln">
+                                    <v-btn disabled>{{relationship.lgclRln}}</v-btn>
+                                </v-flex>
                                 </v-layout>
                                 <v-layout>
-                                <v-flex offset-xs10 xs2 style="margin-bottom:10px;">
-                                   <v-btn color="primary" @click="addRelation">Add More</v-btn>
+                                <v-flex offset-xs9 xs3 justify-end style="margin-bottom:10px;">
+                                  
+                                   <v-btn color="success" @click="addRelation('AND')">AND</v-btn>
+                                   <v-btn color="success" @click="addRelation('OR')">OR</v-btn>
                                 </v-flex>
                               </v-layout>
                             </v-expansion-panel-content>
@@ -99,7 +109,7 @@
                         </v-flex>
                       </v-layout>
 
-                      <v-layout row wrap>
+                      <!-- <v-layout row wrap>
                         <v-flex class="text-xs-center">
                           <v-expansion-panel>
                             <v-expansion-panel-content>
@@ -127,7 +137,7 @@
                             </v-expansion-panel-content>
                           </v-expansion-panel>
                         </v-flex>
-                      </v-layout>
+                      </v-layout> -->
                     </v-container>
                   </div>
                 </div>
@@ -167,13 +177,15 @@ export default {
       selectedSearch:"",
       e1:"",
       // items:["table1","table2","table3"],
-      selectTable: ["table1","table2","table3"],
-      optionColumn:["column1","column2","column3"],
-      columnArray:["column1","column2","column3"],
+      selectTable: ["SalesHeader","SalesDetail","SalesLedger"],
+      optionColumn:["OrderNumber","OrderType","OrderDetail","LineNumber"],
+      columnArray:["OrderNumber","OrderType","OrderDetail","LineNumber"],
       filterArray:["==","<",">", "<=",">=","!="],
       relationshipArray:[{
         selected: null,
         selectedColumn:null,
+        selectedFilter:null,
+        lgclRln:null,
       }],
       customArray:[{
         selected: null,
@@ -220,8 +232,10 @@ export default {
     addFilter(){
       this.customArray.push({selected: null, selectedFilter:null});
     },
-    addRelation(){
-      this.relationshipArray.push({ selected: null, selectedColumn:null});
+    addRelation(join){
+      let index = this.relationshipArray.length-1;
+      this.relationshipArray[index].lgclRln = join;
+      this.relationshipArray.push({ selected: null, selectedColumn:null, selectedFilter:null,lgclRln: null});
     },
     updateGroup(event){
       this.orderList();

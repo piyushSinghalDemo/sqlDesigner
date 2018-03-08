@@ -1145,12 +1145,12 @@ export default {
       var _this = this
       $('#droppable').flowchart({
         data: data,
-        onOperatorSelect: (operatorId) => {
-          _this.getOperatorData(operatorId);
-          _this.operatorId = operatorId;
-          $(".sb-slidebar").addClass("toggleshow");
-          return true;
-        },
+        // onOperatorSelect: (operatorId) => {
+        //   _this.getOperatorData(operatorId);
+        //   _this.operatorId = operatorId;
+        //   $(".sb-slidebar").addClass("toggleshow");
+        //   return true;
+        // },
         onOperatorDoubleClick: function (operatorId) {
           var operator = $('#droppable').flowchart('getOperatorData', operatorId);
           console.log(operator);
