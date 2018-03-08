@@ -218,15 +218,9 @@
     </div>
 </div> -->
 <v-app>
-    <v-content>
-    <v-container fluid>
     <router-view></router-view>
-    </v-container>
-    </v-content>
 </v-app>   
 </div>
-
-
 
   </div>
 </template>
