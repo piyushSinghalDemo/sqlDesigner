@@ -1,4 +1,6 @@
 <style src="vue2-animate/dist/vue2-animate.min.css"></style>
+<style src="vue-nav-tabs/themes/vue-tabs.css"></style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style >
 @import "/static/bootstrap/css/bootstrap.css";
 @import '../node_modules/vuetify/dist/vuetify.min.css';

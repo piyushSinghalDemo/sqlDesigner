@@ -4,7 +4,9 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 const state = {
     schedulerId: 'hello',
-    dialog: false
+    dialog: false,
+    dataSelectionArray: [],
+    dataSelectionIndex: null
 }
 const mutations = {
     mutateUpdateSchedulerId: function(state, id) {

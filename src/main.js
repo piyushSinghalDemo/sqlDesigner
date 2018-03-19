@@ -7,6 +7,7 @@ import store from './store/store'
 import zepto from './../static/flowchart/js/jquery.flowchart';
 import Vuetify from 'vuetify'
 import Vue2Filters from 'vue2-filters'
+import VueTabs from 'vue-nav-tabs'
 // import '../node_modules/vuetify/dist/vuetify.min.css';
 // my-project/src/index.js
 import 'babel-polyfill'
@@ -14,6 +15,7 @@ Vue.use(VeeValidate);
 Vue.use(VueResource)
 Vue.use(Vuetify)
 Vue.use(Vue2Filters)
+Vue.use(VueTabs)
 Vue.config.productionTip = false
 
 

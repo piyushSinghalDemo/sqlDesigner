@@ -731,21 +731,6 @@
                     <img src="../../static/flowchart/images/duplicate.png" alt="" height="40" width="40">
                   </div>
                 </div>
-                <!-- <h3>Widgets</h3>
-                <div style="padding-bottom:25px">
-                  <div class="draggable" id="sale_order">
-                    <h5>Sell Order</h5>
-                    <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
-                  </div>
-                  <div class="draggable" id="work_order">
-                    <h5>Work Order</h5>
-                    <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
-                  </div>
-                  <div class="draggable" id="pur_order">
-                    <h5>Purchase Order</h5>
-                    <img src="../../static/flowchart/images/tables.png" alt="" height="40" width="40">
-                  </div>
-                </div> -->
                 <!-- <h3>Header 3</h3>
                 <div>
                   Accordion content 3
@@ -1341,10 +1326,10 @@ body {
   transition: transform .25s linear;
 }
 
-.card__text {
+/* .card__text {
   background: white;
   height: 600px;
-}
+} */
 
 .navigation-drawer--open {
   background: white;
