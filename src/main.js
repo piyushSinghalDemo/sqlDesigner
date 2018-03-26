@@ -1,13 +1,16 @@
+import zepto from './../static/flowchart/js/jquery.flowchart';
 import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueResource from 'vue-resource'
 import VeeValidate from 'vee-validate';
 import store from './store/store'
-import zepto from './../static/flowchart/js/jquery.flowchart';
 import Vuetify from 'vuetify'
 import Vue2Filters from 'vue2-filters'
 import VueTabs from 'vue-nav-tabs'
+import underscore from 'vue-underscore';
+import Toaster from 'v-toaster';
+import ToggleButton from 'vue-js-toggle-button'
 // import '../node_modules/vuetify/dist/vuetify.min.css';
 // my-project/src/index.js
 import 'babel-polyfill'
@@ -16,6 +19,9 @@ Vue.use(VueResource)
 Vue.use(Vuetify)
 Vue.use(Vue2Filters)
 Vue.use(VueTabs)
+Vue.use(underscore);
+Vue.use(Toaster, { timeout: 2000 })
+Vue.use(ToggleButton)
 Vue.config.productionTip = false
 
 

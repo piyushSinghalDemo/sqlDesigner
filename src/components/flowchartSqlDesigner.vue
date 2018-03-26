@@ -113,7 +113,6 @@
                     <div class="col-sm-6">
                       <input type="checkbox" name="vehicle" value="Bike">
                     </div>
-
                     <div class="col-sm-6">
                       <div class="radio">
                         <label>
@@ -431,7 +430,6 @@
                                 </div>
                               </div>
 
-
                               <div class="clear"></div>
                               <div class="panel panel-default">
                                 <a href="#" title="" data-toggle="collapse" data-target="#sidebar-toggle-6" class="popover-title">
@@ -731,11 +729,14 @@
                     <img src="../../static/flowchart/images/duplicate.png" alt="" height="40" width="40">
                   </div>
                 </div>
+            
                 <!-- <h3>Header 3</h3>
                 <div>
                   Accordion content 3
                 </div> -->
               </div>
+              <button type="button" class="btn btn-danger" @click.stop="deleteOperator">Delete Selected Step/Link</button>
+              <!-- <button>deleteOperator</button> -->
             </div>
           </div>
         </div>
@@ -756,9 +757,6 @@
                   </div>
                   <div id="createScroll" class="createScroll">
                     <div id="droppable" class="" style="margin-top:10px;">
-
-
-
                     </div>
                   </div>
                   <br style="clear:both">
@@ -865,17 +863,16 @@ export default {
         var type = ui.draggable.attr("id");
         var className = '';
         var imageClass = '';
-        var operator = _this.operatorOptions[type]
-        _this[operator['operatorType']](leftPosition, topPosition, type)
+        // var operator = _this.operatorOptions[type]
+        // _this[operator['operatorType']](leftPosition, topPosition, type)
         // _this.dragType = type
-        if (type == "db" || type == 'spstep') {
-          // _this.oneInOneOutOperator(leftPosition, topPosition, type)
-          _this.dragType = 'db'
-        }
-        if (type == "table" || type == "sale_order" || type == "work_order" || type == "pur_order") {
-          // _this.addTableOperator(leftPosition, topPosition, type)
-          _this.dragType = 'table'
-        }
+        _this.oneInOneOutOperator(leftPosition, topPosition, type)
+        // if (type == "db" || type == 'spstep') {
+        //   _this.dragType = 'db'
+        // }
+        // if (type == "table" || type == "sale_order" || type == "work_order" || type == "pur_order") {
+        //   _this.dragType = 'table'
+        // }
         _this.minimapImage();
       }
     });
@@ -885,9 +882,29 @@ export default {
       this.loadData(data)
       var object = $(".createScroll");
       $("#minimap").minimap(object);
-    }.bind(this), 10)
+    }.bind(this), 1000)
   },
   methods: {
+    gettables(){
+      let _this = this;
+      let url = 'http://192.168.1.100:8010/get_tables';
+      let inputJson = {
+               "conn_str": "postgresql+psycopg2://postgres:essentio@192.168.1.100:5432/erpdatacloud",
+               "dest_queue": "test",
+               "table_name": ""
+      }
+      this.$http.post(url, inputJson, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          _this.$store.state.allDbTables = JSON.parse(response.bodyText);
+          console.log("Response from all tables"+JSON.stringify(response));
+        },response => {}).catch(e => {
+          console.log(e)
+            this.ErrorMessage = 'Something went wrong.'
+          })
+    },
      add: function() {
       this.list.push({
         name: 'Juan'
@@ -1092,7 +1109,8 @@ export default {
       this.getOperatorData(operatorId)
     },
     deleteOperator() {
-      $('#droppable').flowchart('deleteOperator', this.operatorId);
+      $('#droppable').flowchart('deleteSelected');
+      // $('#droppable').flowchart('deleteOperator', this.operatorId);
     },
     setData() {
       $('#droppable').flowchart('setData', {});
@@ -1124,7 +1142,7 @@ export default {
         $('#droppable').flowchart('setData', _this.dataStr.dbData);
         console.log(JSON.stringify(_this.dbData));
         // _this.loadData(this.dataStr.dbData)
-      }.bind(this), 10)
+      }.bind(this), 200)
     },
     loadData(data) {
       var _this = this
@@ -1148,6 +1166,7 @@ export default {
           }
           if (operator.className != 'db')
             return
+           _this.gettables(); 
           _this.$store.state.dialog = true;
           return true;
         },

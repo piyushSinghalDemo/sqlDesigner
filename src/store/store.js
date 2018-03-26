@@ -6,7 +6,9 @@ const state = {
     schedulerId: 'hello',
     dialog: false,
     dataSelectionArray: [],
-    dataSelectionIndex: null
+    dataSelectionIndex: null,
+    allDbTables: [],
+    dbColumn: []
 }
 const mutations = {
     mutateUpdateSchedulerId: function(state, id) {

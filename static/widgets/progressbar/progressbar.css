@@ -1,4 +1,4 @@
-    /* Progress Bar */
+    /* Progress Bar
     
     .progress,
     .progress-bar,
@@ -71,7 +71,6 @@
         opacity: 1;
         filter: alpha(opacity=100);
     }
-    /* Bootstrap progressbar */
     
     @-webkit-keyframes progress-bar-stripes {
         from {
@@ -119,4 +118,65 @@
     .progress.active .progress-bar {
         -webkit-animation: progress-bar-stripes 2s linear infinite;
         animation: progress-bar-stripes 2s linear infinite;
+    } */
+    
+    .progressbar {
+        margin-bottom: 0px;
+        overflow: hidden;
+        counter-reset: step;
+        /* padding-left: 25%; */
+    }
+    
+    .progressbar li::before {
+        content: counter(step, decimal);
+        counter-increment: step;
+        width: 23px;
+        line-height: 20px;
+        display: block;
+        font-size: 15px;
+        color: rgb(36, 161, 237);
+        background: none repeat scroll 0% 0% #FFF;
+        border: 1px solid rgb(36, 161, 237);
+        border-radius: 12px;
+        margin: -3px auto 5px;
+        font-weight: bold;
+        position: absolute;
+        left: 21%;
+        text-align: center;
+    }
+    
+    .progressbar li.active::before,
+    .progressbar li.active::after {
+        background: none repeat scroll 0% 0% rgb(36, 161, 237);
+        ;
+        color: white;
+    }
+    
+    .progressbar li.active,
+    .progressbar li.Error {
+        /*     font-weight: bold; */
+        color: rgb(36, 161, 237);
+    }
+    
+    .progressbar li {
+        border-bottom: 01px solid rgb(36, 161, 237);
+        text-align: left;
+        list-style-type: none;
+        margin-bottom: 13%;
+        padding-left: 8px;
+    }
+    
+    #progressbar li::before {
+        content: counter(step, decimal);
+        counter-increment: step;
+        width: 25px;
+        line-height: 20px;
+        display: block;
+        font-size: 15px;
+        color: #2A62E9;
+        background: #FFF none repeat scroll 0% 0%;
+        border: 3px solid #2A62E9;
+        border-radius: 12px;
+        margin: 37px 0px -18px -14px;
+        font-weight: bold;
     }
