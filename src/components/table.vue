@@ -144,7 +144,8 @@
                         <v-select :items="functionArray" single-line label="Select Function" v-model="parenthasisobject.function"></v-select> 
                       </v-flex>  
                       <v-flex xs1>
-                        <v-select label="Select Column" :items="optionColumn" v-model="parenthasisobject.column" item-text="name" single-line item-value="name"
+                        <v-select label="Select Column" :items="optionColumn" v-model="parenthasisobject.column"
+                           item-text="name" single-line item-value="name + tblAlies"
                     ></v-select> 
                         <!-- <v-select :items="columnArray" single-line label="Select Column" v-model="parenthasisobject.column"></v-select>  -->
                       </v-flex>  
@@ -159,7 +160,7 @@
                           single-line label="Label Text" v-model="parenthasisobject.value"></v-text-field>
 
                          <v-menu ref="menu" lazy :close-on-content-click="false" v-show="parenthasisobject.valueType == 'date'"
-                          v-model="parenthasisobject.menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="date">
+                          v-model="parenthasisobject.menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="parenthasisobject.date">
                           <v-text-field slot="activator" label="Picker in menu" v-model="parenthasisobject.date" prepend-icon="event" readonly ></v-text-field>
                           <v-date-picker v-model="parenthasisobject.date" no-title scrollable>
                             <v-spacer></v-spacer>
@@ -167,13 +168,15 @@
                           </v-date-picker>
                         </v-menu>
 
-                        <v-select :items="columnArray" single-line label="Select Column" v-show="parenthasisobject.valueType == 'field'" v-model="parenthasisobject.field"></v-select> 
+                        <v-select :items="optionColumn" single-line label="Select Column" v-show="parenthasisobject.valueType == 'field'"
+                             v-model="parenthasisobject.field" item-text="name"  item-value="name + tblAlies"></v-select> 
                       </v-flex>  
                       <v-flex xs2>
                         <v-select :items="closebrsisArray" single-line label="Select Parenthisis" v-model="parenthasisobject.closebrsis"></v-select> 
                       </v-flex>  
                       <v-flex xs1>
-                        <toggle-button :value="true" :width=80 :height=30 v-model = "parenthasisobject.logOperator" :labels="{checked: 'AND', unchecked: 'OR'}" style="margin-top:12%"/>
+                        <toggle-button :value="true" :width=80 :height=30 v-model = "parenthasisobject.logOperator" 
+                          :labels="{checked: 'AND', unchecked: 'OR'}" style="margin-top:12%"/>
                       </v-flex>  
                      </v-layout>
                      <v-layout row>
@@ -258,7 +261,7 @@
                        </v-flex>
                        <v-flex xs10></v-flex>
                        <v-flex xs1>
-                         <v-btn class="next"  @click.native="closeDialog" color="info">Save</v-btn>
+                         <v-btn class="next"  @click.native="saveDialog" color="info">Save</v-btn>
                        </v-flex>                      
                      </v-layout> 
                    </div>
@@ -405,7 +408,6 @@
                    <v-select label="From Column" :items="optionColumn" v-model="column.fromColumn" item-text="name" single-line item-value="name"
                     autocomplete></v-select>     
                  <!-- ********************************************************************************************** -->
-
                   <!-- <v-select :items="optionColumn" v-model="column.fromColumn" label="From Column" single-line ></v-select> -->
                </v-flex>
                <v-flex xs2 style="margin-right:20px;">
@@ -520,7 +522,8 @@ export default {
       functionArray:['count','sum'],
       relOperatorArray:["==","<",">", "<=",">=","!="],
       valueTypeArray:['value','date','field'],
-      parenthasisobject:{openbrsis:'',function:'',column:'',relOperator:'',valueType:'',value:'',closebrsis:'',logOperator:'',date:null,menu:false,modal:false,field:''},
+      parenthasisobject:{openbrsis:'',function:'',column:'',relOperator:'',valueType:'',value:'',closebrsis:'',logOperator:true,date:null,
+                          menu:false,modal:false,field:'',},
     }
   },
   computed: {
@@ -568,26 +571,6 @@ export default {
     source: String
   },
   methods: {
-    // gettables(value){
-    //   let _this = this;
-    //   let url = 'http://192.168.1.100:8010/get_tables';
-    //   let inputJson = {
-    //            "conn_str": "postgresql+psycopg2://postgres:essentio@192.168.1.100:5432/erpdatacloud",
-    //            "dest_queue": "test",
-    //            "table_name": value
-    //   }
-    //   this.$http.post(url, inputJson, {
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //       }
-    //     }).then(response => {
-    //       _this.$store.state.allDbTables = JSON.parse(response.bodyText);
-    //       console.log("Response from all tables"+JSON.stringify(response));
-    //     },response => {}).catch(e => {
-    //       console.log(e)
-    //         this.ErrorMessage = 'Something went wrong.'
-    //       })
-    // },
     addTable(){
       let validFlag=true;
       let _this = this;
@@ -623,8 +606,8 @@ export default {
           _this.optionColumn.push(cloneDeep(headerObj));
           let allColumn = JSON.parse(response.bodyText);
           allColumn.map(function(obj, index){
-             let tableObj = { name: obj, group: table, fixed: false };
-            _this.optionColumn.push(cloneDeep(tableObj));
+             let columnObj = { name: obj, group: table, fixed: false, tblAlies:table, colAlies: obj};
+            _this.optionColumn.push(cloneDeep(columnObj));
           });
           
           console.log("Response from all tables"+JSON.stringify(response));
@@ -745,7 +728,90 @@ export default {
     closeDialog() {
       this.$store.state.dialog = false
     },
+    getSelectionData(){
+      let _this = this; 
+      console.log("parenthasisobject" +JSON.stringify(_this.parenthasisobject));
+      let workTablecolumns=[];
+      _this.$store.state.dbStepObject.output_table = _this.relationship.selectedTableArray[0];
+      _this.$store.state.dbStepObject.select_table.name = _this.relationship.selectedTableArray[0];
+      _this.$store.state.dbStepObject.select_table.alias = _this.relationship.selectedTableArray[0];
+      _this.list2.map(function(obj, index){
+       let tempObj = {
+                'table_alias': obj.tblAlies,
+                'col_alias': obj.colAlies,
+                'col_name': obj.name,
+                'func': '' //for now by default it will be blank
+            }
+       _this.$store.state.dbStepObject.select_table.cols.push(cloneDeep(tempObj));     
+      });
+      let joinObject = { //Table Relationship
+            'jfrom': '', //from table
+            'jto': '', //to table
+            'jfromalias': 't1', // alies name of from table
+            'jtoalias': 'gc', //alies name to table
+            'type': 'INNER JOIN',
+            'condition': [] // will push condition object here
+        }
+      let conditionObject = {
+                'from_column': '', //from column
+                'to_column': '', //to column alies
+                'from_alias': '', //from column alies
+                'to_alias': '', //to column
+                'operator': ''
+            }
+       _this.relationshipArray.map(function(obj, index){
+         joinObject.jfrom = obj.relationship.fromTable;
+         joinObject.jto = obj.relationship.toTable;
+         joinObject.jfromalias = obj.relationship.fromTable;
+         joinObject.jtoalias = obj.relationship.toTable;
+         joinObject.type = obj.relationship.selectedFilter;
+         obj.colArray.map(function(colObj, colIndex){
+           conditionObject.from_column = colObj.fromColumn;
+           conditionObject.to_column = colObj.toColumn;
+           conditionObject.from_alias = colObj.fromColumn;
+           conditionObject.to_alias = colObj.toColumn;
+           conditionObject.operator =  _this.getjoinOperator(colObj.operator);
+           joinObject.condition.push(cloneDeep(conditionObject));
+         });
+         _this.$store.state.dbStepObject.joins.push(cloneDeep(joinObject));
+       });    
+       let CriteriaObject = { 
+            'alias': _this.parenthasisobject.column.tblAlies, //table alies
+            'column_name': _this.parenthasisobject.column.name, //column alies
+            'operator':  _this.getjoinOperator(_this.parenthasisobject.column.name), //relational operator
+            'value': _this.parenthasisobject.value, //may be value date or column
+            'operand': _this.parenthasisobject.logOperator ? 'AND':'OR',
+            'pre_braces': _this.parenthasisobject.openbrsis,
+            'post_braces': _this.parenthasisobject.closebrsis,
+            'is_col_compare':_this.parenthasisobject.valueType == 'field' ? true : false,
+            'with_alias':_this.parenthasisobject.field.colAlies,
+            'with_col':_this.parenthasisobject.field.name
+        }   
+      _this.$store.state.dbStepObject.where.push(cloneDeep(CriteriaObject));
+    },
+    getjoinOperator(sign){
+      let operatorArray = {'==':'_eq_','<':'_lt_','>':'_gt_','<=':'_lt_eq_','>=':'_gt_eq_','!=':'_not_eq_'};
+       return operatorArray[sign];
+    },
     saveDialog() {
+      this.getSelectionData();
+      let _this = this;
+      let inputParam = _this.$store.state.dbStepObject;
+      console.log("inputParam"+JSON.stringify(inputParam));
+      let url = 'http://192.168.1.101:8016/ide_step_data/add';
+       _this.$http.post(url, inputParam, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          console.log("Response from all tables"+JSON.stringify(response));
+          _this.$toaster.success('Data save successfully') 
+        },response => {
+           _this.$toaster.error('There is some internal error please try again later.')
+        }).catch(e => {
+              console.log(e)
+            this.ErrorMessage = 'Something went wrong.'
+      }) 
       this.$store.state.dialog = false
     }
   },
@@ -938,7 +1004,7 @@ export default {
 /*
 sql designer
  */
- @import "/static/flowchart/css/jquery.flowchart.css";
+ /* @import "/static/flowchart/css/jquery.flowchart.css"; */
  /* @import "/static/minimap/minimap.css"; */
  /*@import "/static/sqldesigner/styles/print.css";*/
 

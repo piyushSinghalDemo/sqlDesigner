@@ -1362,7 +1362,7 @@ overflow: auto;}
 /*
 sql designer
  */
- @import "/static/flowchart/css/jquery.flowchart.css";
+ /* @import "/static/flowchart/css/jquery.flowchart.css"; */
  /* @import "/static/minimap/minimap.css"; */
  /*@import "/static/sqldesigner/styles/print.css";*/
 </style>

@@ -845,12 +845,7 @@ export default {
       cursor: 'move',
       helper: 'clone',
       refreshPositions: true,
-      // grid: [20, 20],
-      // revertDuration: 100,
-      // revert: 'invalid',
-      // scroll: true,
-      // containment: "document",
-      // zIndex: 10000,
+      
     });
     $("#droppable").droppable({
       accept: ".draggable",
@@ -863,16 +858,16 @@ export default {
         var type = ui.draggable.attr("id");
         var className = '';
         var imageClass = '';
-        // var operator = _this.operatorOptions[type]
-        // _this[operator['operatorType']](leftPosition, topPosition, type)
+         var operator = _this.operatorOptions[type]
+         _this[operator['operatorType']](leftPosition, topPosition, type)
         // _this.dragType = type
-        _this.oneInOneOutOperator(leftPosition, topPosition, type)
-        // if (type == "db" || type == 'spstep') {
-        //   _this.dragType = 'db'
-        // }
-        // if (type == "table" || type == "sale_order" || type == "work_order" || type == "pur_order") {
-        //   _this.dragType = 'table'
-        // }
+        // _this.oneInOneOutOperator(leftPosition, topPosition, type)
+        if (type == "db" || type == 'spstep') {
+          _this.dragType = 'db'
+        }
+        if (type == "table" || type == "sale_order" || type == "work_order" || type == "pur_order") {
+          _this.dragType = 'table'
+        }
         _this.minimapImage();
       }
     });
@@ -1040,7 +1035,7 @@ export default {
       var data = $('#droppable').flowchart('getData')
       _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
       _this.dbData = JSON.parse(JSON.stringify(data))
-      console.log(JSON.stringify(_this.dataStr));
+      // console.log(JSON.stringify(_this.dataStr));
     },
     oneInTwoOutOperator(left, top, className) {
       var operatorId = 'created_' + className + '_operator_' + this.operatorI;
@@ -1070,7 +1065,7 @@ export default {
       this.dataStr.workflow[operatorId] = {};
       this.dataStr.dbData = JSON.parse(JSON.stringify(data));
       this.dbData = JSON.parse(JSON.stringify(data));
-      console.log(JSON.stringify(this.dataStr.dbData));
+      // console.log(JSON.stringify(this.dataStr.dbData));
     },
     addTableOperator(left, top, className) {
       var operatorId = 'created_table_operator_' + this.operatorI;
@@ -1231,8 +1226,7 @@ export default {
 <style lang="css">
 .draggable {
   width: 80px;
-  height: 80px;
-  /*border: red 1px solid;*/
+  height: 100px;
   margin: 10px 5px 0 1px;
   float: left;
   cursor: move
@@ -1369,7 +1363,14 @@ body {
 .content--wrap {
   height: 100%;
 }
-
+/* .flowchart-operator-inputs-outputs{
+    background-image: url("./eagle.jpg");
+    height: 100%; 
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 60px;
+} */
 
 /*
 sql designer

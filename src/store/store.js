@@ -8,7 +8,24 @@ const state = {
     dataSelectionArray: [],
     dataSelectionIndex: null,
     allDbTables: [],
-    dbColumn: []
+    dbColumn: [],
+    aliesCounter: 0,
+    dbStepObject: {
+        'id': 'default',
+        'type': 'select', //step type select, merge, minus
+        'name': 'temp', //temp
+        'desc': 'table description', //table_2
+        'output_table': 'table_2', //dummy or any one table name 
+        "distinct": false,
+        'select_table': { //work table output
+            'name': 'table_1', //default   //work table output may be same as output_table key
+            'alias': 't1', // 2char +incr 
+            'cols': []
+        },
+        'joins': [],
+
+        'where': []
+    }
 }
 const mutations = {
     mutateUpdateSchedulerId: function(state, id) {
