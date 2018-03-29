@@ -1042,6 +1042,7 @@ export default {
       // console.log(JSON.stringify(_this.dataStr));
     },
     oneInTwoOutOperator(left, top, className) {
+      let _this = this;
       var operatorId = 'created_' + className + '_operator_' + this.operatorI;
       var operatorData = _def.methods.oneInTwoOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;
@@ -1052,6 +1053,7 @@ export default {
       this.dataStr.dbData = JSON.parse(JSON.stringify(data));
     },
     twoInOneOutOperator(left, top, className) {
+      let _this = this;
       var operatorId = 'created_' + className + '_operator_' + this.operatorI;
       var operatorData = _def.methods.twoInOneOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;
@@ -1063,6 +1065,7 @@ export default {
       this.dbData = JSON.parse(JSON.stringify(data));
     },
     twoInTwoOutOperator(left, top, className) {
+      let _this = this;
       var operatorId = 'created_' + className + '_operator_' + this.operatorI;
       var operatorData = _def.methods.twoInTwoOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;

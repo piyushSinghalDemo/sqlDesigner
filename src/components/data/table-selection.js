@@ -23,6 +23,22 @@ export default {
         modal: false,
         field: '',
     },
+    criteriaArray: [{
+        openbrsis: '',
+        function: '',
+        column: '',
+        relOperator: '',
+        valueType: '',
+        value: '',
+        closebrsis: '',
+        logOperator: true,
+        date: null,
+        menu: false,
+        modal: false,
+        field: '',
+    }],
+    selectAllColumn: false,
     optionColumn: [],
-    selectedColumns: []
+    selectedColumns: [],
+    distinct: false
 }

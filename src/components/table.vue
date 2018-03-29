@@ -92,50 +92,50 @@
                        <v-flex xs2>Parenthesis</v-flex>
                        <v-flex xs1>Operator</v-flex>
                      </v-layout>
-                     <v-layout>
+                     <v-layout v-for="(obj,index) in tableObj.criteriaArray">
                       <v-flex xs2>
                        <v-select :items="openbrsisArray" single-line label="Select Parenthisis" 
-                            v-model="tableObj.parenthasisobject.openbrsis"></v-select> 
+                            v-model="obj.openbrsis"></v-select> 
                       </v-flex>
                       <v-flex xs1>
                         <v-select :items="functionArray" single-line label="Select Function" 
-                            v-model="tableObj.parenthasisobject.function"></v-select> 
+                            v-model="obj.function"></v-select> 
                       </v-flex>  
                       <v-flex xs1>
-                        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="tableObj.parenthasisobject.column"
+                        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column"
                            item-text="name" single-line item-value="name + tblAlies"></v-select> 
                       </v-flex>  
                       <v-flex xs1>
-                        <v-select :items="relOperatorArray" single-line label="Select Operator" v-model="tableObj.parenthasisobject.relOperator">
-                        </v-select> 
+                        <v-select :items="relOperatorArray" single-line label="Select Operator" v-model="obj.relOperator">
+                        </v-select>
                       </v-flex>  
                       <v-flex xs2>
-                        <v-select :items="valueTypeArray" single-line label="Select ValueType" v-model="tableObj.parenthasisobject.valueType">
+                        <v-select :items="valueTypeArray" single-line label="Select ValueType" v-model="obj.valueType">
                         </v-select> 
                       </v-flex>
                       <v-flex xs2>
-                         <v-text-field name="input-1" v-show="tableObj.parenthasisobject.valueType == 'value' || tableObj.parenthasisobject.valueType == ''"
-                          single-line label="Label Text" v-model="tableObj.parenthasisobject.value"></v-text-field>
+                         <v-text-field name="input-1" v-show="obj.valueType == 'value' || obj.valueType == ''"
+                          single-line label="Label Text" v-model="obj.value"></v-text-field>
 
-                         <v-menu ref="menu" lazy :close-on-content-click="false" v-show="tableObj.parenthasisobject.valueType == 'date'"
-                          v-model="tableObj.parenthasisobject.menu" transition="scale-transition" offset-y full-width :nudge-right="40" 
-                            min-width="290px" :return-value.sync="tableObj.parenthasisobject.date">
-                          <v-text-field slot="activator" label="Picker in menu" v-model="tableObj.parenthasisobject.date" prepend-icon="event" readonly ></v-text-field>
-                          <v-date-picker v-model="tableObj.parenthasisobject.date" no-title scrollable>
+                         <v-menu ref="menu" lazy :close-on-content-click="false" v-show="obj.valueType == 'date'"
+                          v-model="obj.menu" transition="scale-transition" offset-y full-width :nudge-right="40" 
+                            min-width="290px" :return-value.sync="obj.date">
+                          <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly ></v-text-field>
+                          <v-date-picker v-model="obj.date" no-title scrollable>
                             <v-spacer></v-spacer>
                             <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                           </v-date-picker>
                         </v-menu>
 
-                        <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="tableObj.parenthasisobject.valueType == 'field'"
-                             v-model="tableObj.parenthasisobject.field" item-text="name"  item-value="name + tblAlies"></v-select> 
+                        <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'"
+                             v-model="obj.field" item-text="name"  item-value="name + tblAlies"></v-select> 
                       </v-flex>  
                       <v-flex xs2>
-                        <v-select :items="closebrsisArray" single-line label="Select Parenthisis" v-model="tableObj.parenthasisobject.closebrsis">
+                        <v-select :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
                         </v-select> 
-                      </v-flex>  
+                      </v-flex>
                       <v-flex xs1>
-                        <toggle-button :width=80 :height=30 :value="tableObj.parenthasisobject.logOperator" v-model="tableObj.parenthasisobject.logOperator" 
+                        <toggle-button :width=80 :height=30 :value="obj.logOperator" v-model="obj.logOperator" 
                           :labels="{checked: 'AND', unchecked: 'OR'}" style="margin-top:12%" :sync="true"/>
                       </v-flex>  
                      </v-layout>
@@ -150,19 +150,33 @@
                      </v-layout>
                    </div>
                    <div class="form-views" v-show="progressbar == 3" style="width:100%;margin-left:3%;height:500px">
-                     <ul>
-                      <li @click.stop="nextScreen(1)" :class="{chevron:true,chevron_active:progressbar == 1}">Table Relationship</li>
-                      <li @click.stop="nextScreen(2)" :class="{chevron:true,chevron_active:progressbar == 2}">Criteria</li>
-                      <li @click.stop="nextScreen(3)" :class="{chevron:true,chevron_active:progressbar == 3}">Worktable Output</li>
-                     </ul>
+                      
+                            <ul>
+                              <li @click.stop="nextScreen(1)" :class="{chevron:true,chevron_active:progressbar == 1}">Table Relationship</li>
+                              <li @click.stop="nextScreen(2)" :class="{chevron:true,chevron_active:progressbar == 2}">Criteria</li>
+                              <li @click.stop="nextScreen(3)" :class="{chevron:true,chevron_active:progressbar == 3}">Worktable Output</li>
+                            </ul>
+                        
+                     
                      <!-- <h1>screen3</h1> -->
                   <div id="createScroll2" class="createScroll2" style="width:100%">
                   <div id="droppable2" class="">
                     <v-container grid-list-md>
+                       <div class="row clearfix">
+                         <div class="col-sm-6">
+                           <label style="font-size:20px;cursor:pointer">
+                             <input type="checkbox" v-model="tableObj.selectAllColumn" style="vertical-align: baseline;margin-right: 11px;">Select All</label>
+                         </div>
+                         <div class="col-sm-6">
+                           <label style="font-size:20px;cursor:pointer">
+                             <input type="checkbox" v-model="tableObj.distinct" style="vertical-align: baseline;margin-right: 11px;">Distinct</label>
+                         </div>
+                        </div> 
                       <v-layout row wrap>
                         <v-flex>
                           <v-card>
                             <v-card-text>
+                          <!-- <v-checkbox :label="`Distinct`" v-model="tableObj.distinct" style="position:absolute;left:40%"></v-checkbox> -->
                               <v-layout row wrap>
                                 <v-flex xs8>
                                   <h3 class="panel-title">Available Column</h3>
@@ -382,7 +396,6 @@ export default {
   },
    watch: {
      dialog (newValue){
-       debugger;
        if(newValue){
           this.tableObj =cloneDeep(this.$store.state.archivalStep[this.$store.state.currentStep]);
        }
@@ -549,12 +562,22 @@ export default {
       this.$store.state.dialog = false
     },
     getSelectionData(){
-      let _this = this; 
+      let _this = this;
+      let dbStepInput =  cloneDeep(_this.$store.state.dbStepObject);
       // console.log("parenthasisobject" +JSON.stringify(_this.parenthasisobject));
       let workTablecolumns=[];
-      _this.$store.state.dbStepObject.output_table = _this.tableObj.relationship.selectedTableArray[0];
-      _this.$store.state.dbStepObject.select_table.name = _this.tableObj.relationship.selectedTableArray[0];
-      _this.$store.state.dbStepObject.select_table.alias = _this.tableObj.relationship.selectedTableArray[0];
+      dbStepInput.distinct=_this.tableObj.distinct;
+      dbStepInput.output_table = _this.tableObj.relationship.selectedTableArray[0];
+      dbStepInput.select_table.name = _this.tableObj.relationship.selectedTableArray[0];
+      dbStepInput.select_table.alias = _this.tableObj.relationship.selectedTableArray[0];
+      if(_this.tableObj.selectAllColumn){
+        dbStepInput.select_table.cols.push({
+                'table_alias': 'cu',
+                'col_alias': '',
+                'col_name': '_*_',
+                'func': '' //for now by default it will be blank
+        });   
+      }
       _this.tableObj.selectedColumns.map(function(obj, index){
        let tempObj = {
                 'table_alias': obj.tblAlies,
@@ -562,7 +585,7 @@ export default {
                 'col_name': obj.name,
                 'func': '' //for now by default it will be blank
             }
-       _this.$store.state.dbStepObject.select_table.cols.push(cloneDeep(tempObj));     
+       dbStepInput.select_table.cols.push(cloneDeep(tempObj));     
       });
       let joinObject = { //Table Relationship
             'jfrom': '', //from table
@@ -593,30 +616,33 @@ export default {
            conditionObject.operator =  _this.getjoinOperator(colObj.operator);
            joinObject.condition.push(cloneDeep(conditionObject));
          });
-         _this.$store.state.dbStepObject.joins.push(cloneDeep(joinObject));
+         dbStepInput.joins.push(cloneDeep(joinObject));
+       });
+       _this.tableObj.criteriaArray.map(function(obj, index){
+         let CriteriaObject = { 
+            'alias': obj.column.tblAlies, //table alies
+            'column_name': obj.column.name, //column alies
+            'operator':  _this.getjoinOperator(obj.column.name), //relational operator
+            'value': obj.value, //may be value date or column
+            'operand': obj.logOperator ? 'AND':'OR',
+            'pre_braces': obj.openbrsis,
+            'post_braces': obj.closebrsis,
+            'is_col_compare':obj.valueType == 'field' ? true : false,
+            'with_alias':obj.field.colAlies,
+            'with_col':obj.field.name
+        }
+        dbStepInput.where.push(cloneDeep(CriteriaObject));
        });    
-       let CriteriaObject = { 
-            'alias': _this.tableObj.parenthasisobject.column.tblAlies, //table alies
-            'column_name': _this.tableObj.parenthasisobject.column.name, //column alies
-            'operator':  _this.getjoinOperator(_this.tableObj.parenthasisobject.column.name), //relational operator
-            'value': _this.tableObj.parenthasisobject.value, //may be value date or column
-            'operand': _this.tableObj.parenthasisobject.logOperator ? 'AND':'OR',
-            'pre_braces': _this.tableObj.parenthasisobject.openbrsis,
-            'post_braces': _this.tableObj.parenthasisobject.closebrsis,
-            'is_col_compare':_this.tableObj.parenthasisobject.valueType == 'field' ? true : false,
-            'with_alias':_this.tableObj.parenthasisobject.field.colAlies,
-            'with_col':_this.tableObj.parenthasisobject.field.name
-        }   
-      _this.$store.state.dbStepObject.where.push(cloneDeep(CriteriaObject));
+      return dbStepInput;
     },
     getjoinOperator(sign){
       let operatorArray = {'==':'_eq_','<':'_lt_','>':'_gt_','<=':'_lt_eq_','>=':'_gt_eq_','!=':'_not_eq_'};
        return operatorArray[sign];
     },
     saveDialog() {
-      this.getSelectionData();
+      let inputParam = this.getSelectionData();
       let _this = this;
-      let inputParam = _this.$store.state.dbStepObject;
+      // let inputParam = _this.$store.state.dbStepObject;
       console.log("inputParam"+JSON.stringify(inputParam));
       let url = 'http://192.168.1.101:8016/ide_step_data/add';
        _this.$http.post(url, inputParam, {
