@@ -10,6 +10,8 @@ const state = {
     allDbTables: [],
     dbColumn: [],
     aliesCounter: 0,
+    currentStep: '',
+    archivalStep: {}, // for getting all steps internal data
     dbStepObject: {
         'id': 'default',
         'type': 'select', //step type select, merge, minus

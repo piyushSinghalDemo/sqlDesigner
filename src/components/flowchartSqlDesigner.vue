@@ -777,6 +777,8 @@
 import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
+import tableData from './data/table-selection'
+import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 export default {
   components: {
@@ -1019,6 +1021,7 @@ export default {
       var operatorData = _def.methods.oneInZeroOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
+      _this.$store.state.archivalStep[operatorId]='';
       this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData')
       this.dataStr.dbData = JSON.parse(JSON.stringify(data))
@@ -1031,6 +1034,7 @@ export default {
       var operatorData = _def.methods.oneInOneOutOperator(_this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
+      _this.$store.state.archivalStep[operatorId]=cloneDeep(tableData);
       _this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData')
       _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
@@ -1042,6 +1046,7 @@ export default {
       var operatorData = _def.methods.oneInTwoOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
+      _this.$store.state.archivalStep[operatorId]='';
       this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData');
       this.dataStr.dbData = JSON.parse(JSON.stringify(data));
@@ -1051,6 +1056,7 @@ export default {
       var operatorData = _def.methods.twoInOneOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
+      _this.$store.state.archivalStep[operatorId]='';
       this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData');
       this.dataStr.dbData = JSON.parse(JSON.stringify(data));
@@ -1061,11 +1067,11 @@ export default {
       var operatorData = _def.methods.twoInTwoOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
+      _this.$store.state.archivalStep[operatorId]='';
       var data = $('#droppable').flowchart('getData')
       this.dataStr.workflow[operatorId] = {};
       this.dataStr.dbData = JSON.parse(JSON.stringify(data));
       this.dbData = JSON.parse(JSON.stringify(data));
-      // console.log(JSON.stringify(this.dataStr.dbData));
     },
     addTableOperator(left, top, className) {
       var operatorId = 'created_table_operator_' + this.operatorI;
@@ -1155,6 +1161,7 @@ export default {
           var type = operator.className
           var op = _this.operatorOptions[type]
           _this.operatorId = operatorId
+          _this.$store.state.currentStep = operatorId; 
           console.log(op);
           if (op['dblClick'] && op["modal"]) {
             $("#" + op["modalName"]).modal()
