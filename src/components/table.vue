@@ -33,8 +33,8 @@
                               <div class="panel-heading">Selected Table</div>
                               <div class="panel-body">
                                 <v-layout row wrap>
-                                  <v-flex style="margin-right:5px;" v-for="table in tableObj.relationship.selectedTableArray">
-                                    <span style="cursor:pointer" class="badge" @click.stop="dialog2=true">{{table}}</span>
+                                  <v-flex style="margin-right:5px;" v-for="object in tableObj.relationship.selectedTableArray">
+                                    <span style="cursor:pointer" class="badge" @click.stop="dialog2=true">{{object.tableName}}</span>
                                   </v-flex>
                                 </v-layout>
                               </div>
@@ -50,9 +50,9 @@
                       <v-expansion-panel-content v-for="(item,i) in tableObj.relationshipArray" :key="i">
                         <div slot="header">
                           <v-layout row wrap>
-                            <v-flex>{{item.relationship.fromTable}}</v-flex>
+                            <v-flex>{{item.relationship.fromTable.tableName}}</v-flex>
                             <v-flex>{{item.relationship.selectedFilter}}</v-flex>
-                            <v-flex>{{item.relationship.toTable}}</v-flex>
+                            <v-flex>{{item.relationship.toTable.tableName}}</v-flex>
                           </v-layout>
                         </div>
                         <v-card>
@@ -63,9 +63,9 @@
                             <v-flex><b>To Column</b></v-flex>
                           </v-layout>
                           <v-layout row wrap v-for="column in item.colArray">
-                            <v-flex>{{column.fromColumn}}</v-flex>
+                            <v-flex>{{column.fromColumn.name}}</v-flex>
                             <v-flex>{{column.operator}}</v-flex>
-                            <v-flex>{{column.toColumn}}</v-flex>
+                            <v-flex>{{column.toColumn.name}}</v-flex>
                           </v-layout>
                           </v-card-text>
                         </v-card>
@@ -155,12 +155,11 @@
                      </v-layout>
                    </div>
                    <div class="form-views" v-show="progressbar == 3" style="width:100%;margin-left:3%;height:500px">
-                      
-                            <ul>
-                              <li @click.stop="nextScreen(1)" :class="{chevron:true,chevron_active:progressbar == 1}">Table Relationship</li>
-                              <li @click.stop="nextScreen(2)" :class="{chevron:true,chevron_active:progressbar == 2}">Criteria</li>
-                              <li @click.stop="nextScreen(3)" :class="{chevron:true,chevron_active:progressbar == 3}">Worktable Output</li>
-                            </ul>
+                      <ul>
+                        <li @click.stop="nextScreen(1)" :class="{chevron:true,chevron_active:progressbar == 1}">Table Relationship</li>
+                        <li @click.stop="nextScreen(2)" :class="{chevron:true,chevron_active:progressbar == 2}">Criteria</li>
+                        <li @click.stop="nextScreen(3)" :class="{chevron:true,chevron_active:progressbar == 3}">Worktable Output</li>
+                      </ul>
                         
                      
                      <!-- <h1>screen3</h1> -->
@@ -265,14 +264,14 @@
                <v-layout row wrap>
                <v-flex style="margin-right:20px;">
                   <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" 
-                    label="From Table" single-line ></v-select>
+                    label="From Table" single-line item-text="tableName" item-value="tableName + aliesTableName"></v-select>
                </v-flex>
                <v-flex style="margin-right:20px;">
                   <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line ></v-select>
                </v-flex>
                <v-flex style="margin-right:20px;">
                    <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" 
-                      label="To Table" single-line></v-select>
+                      label="To Table" item-text="tableName" item-value="tableName + aliesTableName" single-line></v-select>
                </v-flex>
                </v-layout>
                <v-layout row wrap>
@@ -289,7 +288,7 @@
                <v-flex xs4 style="margin-right:20px;">
                  <!-- *********************************** Group Column ********************************************* -->
                    <v-select label="From Column" :items="tableObj.optionColumn" v-model="column.fromColumn" item-text="name" 
-                     single-line item-value="name" autocomplete></v-select>     
+                     single-line item-value="name + colAlies" autocomplete></v-select>     
                  <!-- ********************************************************************************************** -->
                </v-flex>
                <v-flex xs2 style="margin-right:20px;">
@@ -299,7 +298,7 @@
                   <v-layout>
                     <v-flex>
                       <v-select label="To Column" :items="tableObj.optionColumn" v-model="column.toColumn" item-text="name" 
-                        single-line item-value="name" autocomplete></v-select> 
+                        single-line item-value="name + colAlies" autocomplete></v-select> 
                     </v-flex>
                   </v-layout>
                </v-flex>
@@ -443,24 +442,26 @@ export default {
       let _this = this;
       console.log("Demo "+JSON.stringify(_this.demo));
       _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
-        if(obj == _this.tableObj.relationship.selectedTable){
+        if(obj.tableName == _this.tableObj.relationship.selectedTable){
           validFlag = false;
           _this.$toaster.error('Table Already Exist')
         }
       });
       if(validFlag){
-         _this.getColumn(_this.tableObj.relationship.selectedTable);
-         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(_this.tableObj.relationship.selectedTable));
+        let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable),
+                   'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable + _this.$store.state.aliesCounter++)}
+        _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
+         _this.getColumn(obj);
          _this.$toaster.success('Table Added Successfully') 
       }
     },
-    getColumn(table){
+    getColumn(tableObject){
       let _this = this;
       let url = 'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
                "conn_str": "postgresql+psycopg2://postgres:essentio@192.168.1.100:5432/erpdatacloud",
                "dest_queue": "test",
-               "table_name": table
+               "table_name": tableObject.tableName
       }
       _this.$http.post(url, inputJson, {
           headers: {
@@ -470,11 +471,12 @@ export default {
           if(_this.tableObj.optionColumn.length){
             _this.tableObj.optionColumn.push({ divider: true });
           }
-          let headerObj = { header: table};
+          let headerObj = { header: tableObject.tableName};
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = JSON.parse(response.bodyText);
           allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: table, fixed: false, tblAlies:table, colAlies: obj};
+             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
+                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
           });
           console.log("Response from all tables"+JSON.stringify(response));
@@ -584,12 +586,12 @@ export default {
     getSelectionData(){
       let _this = this;
       let dbStepInput =  cloneDeep(_this.$store.state.dbStepObject);
-      // console.log("parenthasisobject" +JSON.stringify(_this.parenthasisobject));
+      console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
       let workTablecolumns=[];
       dbStepInput.distinct=_this.tableObj.distinct;
-      dbStepInput.output_table = _this.tableObj.relationship.selectedTableArray[0];
-      dbStepInput.select_table.name = _this.tableObj.relationship.selectedTableArray[0];
-      dbStepInput.select_table.alias = _this.tableObj.relationship.selectedTableArray[0];
+      dbStepInput.output_table = _this.tableObj.relationship.selectedTableArray[0].tableName;
+      dbStepInput.select_table.name = _this.tableObj.relationship.selectedTableArray[0].tableName;
+      dbStepInput.select_table.alias = _this.tableObj.relationship.selectedTableArray[0].aliesTableName;
       if(_this.tableObj.selectAllColumn){
         dbStepInput.select_table.cols.push({
                 'table_alias': 'cu',
@@ -597,16 +599,18 @@ export default {
                 'col_name': '_*_',
                 'func': '' //for now by default it will be blank
         });   
+      }else{
+        _this.tableObj.selectedColumns.map(function(obj, index){
+        let tempObj = {
+                  'table_alias': obj.tblAlies,
+                  'col_alias': obj.colAlies,
+                  'col_name': obj.name,
+                  'func': '' //for now by default it will be blank
+              }
+        dbStepInput.select_table.cols.push(cloneDeep(tempObj));     
+        });
       }
-      _this.tableObj.selectedColumns.map(function(obj, index){
-       let tempObj = {
-                'table_alias': obj.tblAlies,
-                'col_alias': obj.colAlies,
-                'col_name': obj.name,
-                'func': '' //for now by default it will be blank
-            }
-       dbStepInput.select_table.cols.push(cloneDeep(tempObj));     
-      });
+      
       let joinObject = { //Table Relationship
             'jfrom': '', //from table
             'jto': '', //to table
@@ -623,16 +627,16 @@ export default {
                 'operator': ''
             }
        _this.tableObj.relationshipArray.map(function(obj, index){
-         joinObject.jfrom = obj.relationship.fromTable;
-         joinObject.jto = obj.relationship.toTable;
-         joinObject.jfromalias = obj.relationship.fromTable;
-         joinObject.jtoalias = obj.relationship.toTable;
+         joinObject.jfrom = obj.relationship.fromTable.tableName;
+         joinObject.jto = obj.relationship.toTable.tableName;
+         joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
+         joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
          joinObject.type = obj.relationship.selectedFilter;
          obj.colArray.map(function(colObj, colIndex){
-           conditionObject.from_column = colObj.fromColumn;
-           conditionObject.to_column = colObj.toColumn;
-           conditionObject.from_alias = colObj.fromColumn;
-           conditionObject.to_alias = colObj.toColumn;
+           conditionObject.from_column = colObj.fromColumn.name;
+           conditionObject.to_column = colObj.toColumn.name;
+           conditionObject.from_alias = colObj.fromColumn.colAlies;
+           conditionObject.to_alias = colObj.toColumn.colAlies;
            conditionObject.operator =  _this.getjoinOperator(colObj.operator);
            joinObject.condition.push(cloneDeep(conditionObject));
          });
