@@ -332,7 +332,8 @@ export default {
       dataStr: _def.dataStr,
       joinOption:["AND","OR"],
       columnArray:["OrderNumber","OrderType","OrderDetail","LineNumber"],
-      filterArray:["==","<",">", "<=",">=","!="],
+      filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
+                  "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
       dialog2:false,
       dialog3:false,
       selectedColumns:[],
@@ -660,7 +661,19 @@ export default {
       return dbStepInput;
     },
     getjoinOperator(sign){
-      let operatorArray = {'==':'_eq_','<':'_lt_','>':'_gt_','<=':'_lt_eq_','>=':'_gt_eq_','!=':'_not_eq_'};
+      let operatorArray = { EQUALS_TO : '_eq_',
+                            NOT_EQUALS_TO : '_not_eq_',
+                            LESS_THAN : '_lt_',
+                            GREATER_THAN : '_gt_',
+                            LESS_THAN_EQUALS_TO : '_lt_eq_',
+                            GREATER_THAN_EQUALS_TO : '_gt_eq_',
+                            IS_NULL : '_is_n_',
+                            IS_NOT_NULL : '_is_nt_n_',
+                            LIKE_STARTS_WITH : '_sl_',
+                            LIKE_ENDS_WITH : '_el_',
+                            LIKE_CONTAINS_WITH : '_cl_',
+                            BETWEEN : '_bet_',
+                            IN : '_in_'};
        return operatorArray[sign];
     },
     saveDialog() {
