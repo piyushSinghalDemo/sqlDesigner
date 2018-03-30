@@ -135,8 +135,13 @@
                         </v-select> 
                       </v-flex>
                       <v-flex xs1>
-                        <toggle-button :width=80 :height=30 :value="obj.logOperator" v-model="obj.logOperator" 
+                        <toggle-button v-show="obj.showLogicalOperator" :width=80 :height=30 :value="obj.logOperator" v-model="obj.logOperator" 
                           :labels="{checked: 'AND', unchecked: 'OR'}" style="margin-top:12%" :sync="true"/>
+                          <div v-show="!obj.showLogicalOperator">
+                            <i class="fa fa-plus criteria-opr" @click.stop="addCriteria()" aria-hidden="true"></i>
+                            <span class="ft-30">|</span>
+                            <i class="fa fa-trash criteria-opr" @click.stop="deleteCriteria(index)" aria-hidden="true"></i>
+                          </div>                          
                       </v-flex>  
                      </v-layout>
                      <v-layout row>
@@ -418,6 +423,21 @@ export default {
     source: String
   },
   methods: {
+    deleteCriteria(index){
+      let _this = this;
+      if(!index){
+        return;
+      }
+      _this.tableObj.criteriaArray.splice(index,1);
+      let length = _this.tableObj.criteriaArray.length;
+      _this.tableObj.criteriaArray[length-1].showLogicalOperator = false; 
+    },
+    addCriteria(){
+      let _this = this;
+      let length = _this.tableObj.criteriaArray.length;
+      _this.tableObj.criteriaArray[length-1].showLogicalOperator = true;
+      _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject)); 
+    },
     addTable(){
       let validFlag=true;
       let _this = this;
@@ -792,7 +812,6 @@ export default {
         line-height: 20px;
         opacity: 1;
         padding: 10px;
-        /*   border: 1px solid black; */
         background: white;
     }
     
@@ -842,6 +861,17 @@ export default {
 
     .chevron_active {
       background:#666;
+    }
+    .criteria-opr{
+      font-size: 20px;
+      cursor: pointer;
+      position: relative;
+      margin: auto;
+      padding: auto;
+      margin-top: 24%;
+    }
+    .ft-30{
+      font-size: 30px;
     }
   
 </style>

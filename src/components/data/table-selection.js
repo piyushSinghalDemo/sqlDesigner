@@ -22,6 +22,7 @@ export default {
         menu: false,
         modal: false,
         field: '',
+        showLogicalOperator: false
     },
     criteriaArray: [{
         openbrsis: '',
