@@ -106,7 +106,7 @@
                            item-text="name" single-line item-value="name + tblAlies"></v-select> 
                       </v-flex>  
                       <v-flex xs1>
-                        <v-select :items="relOperatorArray" single-line label="Select Operator" v-model="obj.relOperator">
+                        <v-select :items="filterArray" single-line label="Select Operator" v-model="obj.relOperator">
                         </v-select>
                       </v-flex>  
                       <v-flex xs2>
@@ -160,8 +160,6 @@
                         <li @click.stop="nextScreen(2)" :class="{chevron:true,chevron_active:progressbar == 2}">Criteria</li>
                         <li @click.stop="nextScreen(3)" :class="{chevron:true,chevron_active:progressbar == 3}">Worktable Output</li>
                       </ul>
-                        
-                     
                      <!-- <h1>screen3</h1> -->
                   <div id="createScroll2" class="createScroll2" style="width:100%">
                   <div id="droppable2" class="">
@@ -320,11 +318,13 @@ import _def from './various/defnitions'
 import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep';
 import sortBy from 'lodash/sortBy';
+import contextMenu from 'vue-context-menu'
 import tableData from './data/table-selection';
 const message = [ 'vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based' , 'on', 'Sortablejs' ]
 export default {
   components: {
             draggable,
+            contextMenu 
   },
   data() {
     return {
@@ -460,7 +460,7 @@ export default {
       let _this = this;
       let url = 'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
-               "conn_str": "postgresql+psycopg2://postgres:essentio@192.168.1.100:5432/erpdatacloud",
+               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
                "dest_queue": "test",
                "table_name": tableObject.tableName
       }
@@ -494,7 +494,7 @@ export default {
         let _this = this;
         let url = 'http://192.168.1.100:8010/get_tables';
         let inputJson = {
-               "conn_str": "postgresql+psycopg2://postgres:essentio@192.168.1.100:5432/erpdatacloud",
+               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
                "dest_queue": "test",
                "table_name": value
       }

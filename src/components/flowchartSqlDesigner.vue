@@ -688,7 +688,7 @@
               <div class="accordion collapse in" style="position:relative">
                 <h3>Steps</h3>
                 <div style="padding-bottom:25px;position:relative;">
-                  <div class="draggable" id="db" style="display:inline-block;">
+                  <div class="draggable" @contextmenu.prevent="$refs.ctx.open($event)" id="db" style="display:inline-block;">
                     <h5>Step</h5>
                     <img src="../../static/flowchart/images/db_icon.png" alt="" height="40" width="40">
                   </div>
@@ -769,6 +769,11 @@
           </simplert>
         </div>
       </div>
+
+      <context-menu id="testingctx" ref="ctx" @ctx-open="onCtxOpen" @ctx-cancel="resetCtxLocals" @ctx-close="onCtxClose">
+        <li class="ctx-header">Delete</li>
+    </context-menu>
+
     </div>
   </v-app>
 </template>
@@ -780,11 +785,13 @@ import table from './table.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
+import contextMenu from 'vue-context-menu'
 export default {
   components: {
     Simplert,
     'table-modal': table,
-     draggable
+     draggable,
+     contextMenu 
   },
   data() {
     return {
@@ -830,7 +837,9 @@ export default {
       name: "Edgard"
     }, {
       name: "Johnson"
-    }]
+    }],
+    showCtx: false,
+    contextClicks: []
     }
   },
   computed: {
@@ -842,6 +851,12 @@ export default {
     var title = '';
     var blockId = ''
     var _this = this
+    window.addEventListener('keyup', function(ev) {
+      debugger;
+      if(ev.key == 'Delete'){
+         _this.deleteOperator(); 
+      }
+    });
     $(".draggable").draggable({
       appendTo: '#droppable',
       cursor: 'move',
@@ -882,11 +897,33 @@ export default {
     }.bind(this), 1000)
   },
   methods: {
+
+    onCtxOpen(locals) {
+        console.log('open', locals)
+      },
+
+      onCtxClose(locals) {
+        console.log('close', locals)
+      },
+
+      resetCtxLocals() {
+        return;
+      },
+
+      logClick(e,context) {
+        
+        return true
+      },
+      sayColor(color) {
+        window.alert('left click on ' + color)
+      },
+
     gettables(){
       let _this = this;
       let url = 'http://192.168.1.100:8010/get_tables';
       let inputJson = {
-               "conn_str": "postgresql+psycopg2://postgres:essentio@192.168.1.100:5432/erpdatacloud",
+              //  "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
+               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
                "dest_queue": "test",
                "table_name": ""
       }
