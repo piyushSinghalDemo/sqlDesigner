@@ -774,6 +774,34 @@
         <li class="ctx-header">Delete</li>
     </context-menu>
 
+    <v-dialog v-model="addTitle" persistent max-width="290">
+      <!-- <v-btn color="primary" dark slot="activator">Open Dialog</v-btn> -->
+      <v-card>
+        <v-form v-model="validateStep" ref="form" lazy-validation>
+        <v-card-title class="headline">Provide Step Details</v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12>
+                <v-text-field label="Step Name" v-model="stepName" :rules="stepNameRules" required>
+                </v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field label="Step Description" v-model="stepDetail" :rules="stepDetailRules"
+                 multi-line required></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" flat @click.native="submitStep" :disabled='!validateStep' >Submit</v-btn>
+          <v-btn @click.native="clearStep">Crear</v-btn>
+        </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
+
     </div>
   </v-app>
 </template>
@@ -839,7 +867,16 @@ export default {
       name: "Johnson"
     }],
     showCtx: false,
-    contextClicks: []
+    contextClicks: [],
+    addTitle:false,
+    stepName:'',
+    stepNameRules:[v => !!v || 'Step Name is required'],
+    stepDetail:'',
+    stepDetailRules:[v => !!v || 'Step Description is required'],
+    leftPosition:0,
+    topPosition:0,
+    type:'',
+    validateStep:true,
     }
   },
   computed: {
@@ -852,7 +889,6 @@ export default {
     var blockId = ''
     var _this = this
     window.addEventListener('keyup', function(ev) {
-      debugger;
       if(ev.key == 'Delete'){
          _this.deleteOperator(); 
       }
@@ -862,7 +898,6 @@ export default {
       cursor: 'move',
       helper: 'clone',
       refreshPositions: true,
-      
     });
     $("#droppable").droppable({
       accept: ".draggable",
@@ -870,19 +905,20 @@ export default {
       drop: function (event, ui) {
         var pos = ui.position;
         var $obj = ui.helper.clone();
-        var leftPosition = pos.left; //ui.offset.left - $(this).offset().left;
-        var topPosition = pos.top; //ui.offset.top - $(this).offset().top;
-        var type = ui.draggable.attr("id");
+        _this.leftPosition = pos.left; //ui.offset.left - $(this).offset().left;
+        _this.topPosition = pos.top; //ui.offset.top - $(this).offset().top;
+        _this.type = ui.draggable.attr("id");
         var className = '';
         var imageClass = '';
-         var operator = _this.operatorOptions[type]
-         _this[operator['operatorType']](leftPosition, topPosition, type)
+        //  var operator = _this.operatorOptions[type]
+         _this.getStepDetails();
+        //  _this[operator['operatorType']](leftPosition, topPosition, type)
         // _this.dragType = type
         // _this.oneInOneOutOperator(leftPosition, topPosition, type)
-        if (type == "db" || type == 'spstep') {
+        if (_this.type == "db" || _this.type == 'spstep') {
           _this.dragType = 'db'
         }
-        if (type == "table" || type == "sale_order" || type == "work_order" || type == "pur_order") {
+        if (_this.type == "table" || _this.type == "sale_order" || _this.type == "work_order" || _this.type == "pur_order") {
           _this.dragType = 'table'
         }
         _this.minimapImage();
@@ -897,7 +933,20 @@ export default {
     }.bind(this), 1000)
   },
   methods: {
-
+    getStepDetails(){
+      let _this = this;
+      _this.addTitle = true;
+    },
+    submitStep(){
+      let _this = this;
+       if (this.$refs.form.validate()) {
+         _this.addTitle = false;
+         _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type)
+       }
+    },
+    clearStep(){
+       this.$refs.form.reset()
+    },
     onCtxOpen(locals) {
         console.log('open', locals)
       },
@@ -1051,10 +1100,12 @@ export default {
     getData() {
       var ideData = getData()
       console.log(ideData);
-    },
+    },//
 
     oneInZeroOutOperator(left, top, className) {
+      var _this = this
       var operatorId = 'created_' + className + '_operator_' + this.operatorI;
+    
       var operatorData = _def.methods.oneInZeroOutOperator(this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
@@ -1068,9 +1119,12 @@ export default {
     oneInOneOutOperator(left, top, className) {
       var _this = this
       var operatorId = 'created_' + className + '_operator_' + _this.operatorI;
-      var operatorData = _def.methods.oneInOneOutOperator(_this.operatorI, className, top, left);
+      var operatorData = _def.methods.oneInOneOutOperator(_this.stepName, _this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
+      tableData.title = cloneDeep(_this.stepName); 
+      tableData.description = cloneDeep(_this.stepDetail);
+      _this.$refs.form.reset()
       _this.$store.state.archivalStep[operatorId]=cloneDeep(tableData);
       _this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData')
@@ -1114,6 +1168,7 @@ export default {
       this.dbData = JSON.parse(JSON.stringify(data));
     },
     addTableOperator(left, top, className) {
+      var _this = this
       var operatorId = 'created_table_operator_' + this.operatorI;
       var operatorData = {
         new: true,
@@ -1410,19 +1465,19 @@ body {
 .content--wrap {
   height: 100%;
 }
-/* .flowchart-operator-inputs-outputs{
+ .flowchart-operator-inputs-outputs{
     background-image: url("./eagle.jpg");
     height: 100%; 
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     height: 60px;
-} */
+} 
 
 /*
 sql designer
  */
- @import "/static/flowchart/css/jquery.flowchart.css";
+ @import "/static/flowchart/css/jquery.flowchart.min.css";
  /* @import "/static/minimap/minimap.css"; */
  /*@import "/static/sqldesigner/styles/print.css";*/
 </style>

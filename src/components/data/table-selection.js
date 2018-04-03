@@ -41,5 +41,7 @@ export default {
     selectAllColumn: false,
     optionColumn: [],
     selectedColumns: [],
-    distinct: false
+    distinct: false,
+    colObj: { "fromColumn": '', 'toColumn': '', 'operator': '' },
+    colArray: [{ "fromColumn": '', 'toColumn': '', 'operator': '' }],
 }

@@ -53,7 +53,7 @@ export default {
             };
             return operatorData
         },
-        oneInOneOutOperator(operatorI, className, top, left) {
+        oneInOneOutOperator(title, operatorI, className, top, left) {
             var operatorData = {
                 new: true,
                 className: className,
@@ -61,7 +61,7 @@ export default {
                 left: left,
                 data: {},
                 properties: {
-                    title: 'Table ' + (operatorI + 3),
+                    title: title,
                     inputs: {
                         ins: {
                             label: '',
@@ -152,7 +152,6 @@ export default {
                             label: '',
                             multiple: true
                         }
-
                     }
                 }
             }

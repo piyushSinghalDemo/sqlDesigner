@@ -282,7 +282,7 @@
                  </v-layout>
                 </v-flex>  
                </v-layout>
-               <v-layout row wrap v-for="column in colArray">
+               <v-layout row wrap v-for="column in tableObj.colArray">
                <v-flex xs4 style="margin-right:20px;">
                  <!-- *********************************** Group Column ********************************************* -->
                    <v-select label="From Column" :items="tableObj.optionColumn" v-model="column.fromColumn" item-text="name" 
@@ -318,13 +318,11 @@ import _def from './various/defnitions'
 import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep';
 import sortBy from 'lodash/sortBy';
-import contextMenu from 'vue-context-menu'
 import tableData from './data/table-selection';
 const message = [ 'vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based' , 'on', 'Sortablejs' ]
 export default {
   components: {
             draggable,
-            contextMenu 
   },
   data() {
     return {
@@ -345,7 +343,7 @@ export default {
       e1:"",
       joinType:["join","left join","right join","full join"],
       colObj:{"fromColumn":'','toColumn':'','operator':''},
-      colArray:[{"fromColumn":'','toColumn':'','operator':''}],
+      
       progressbar:1,
       loading: false,
       search: null,
@@ -519,7 +517,8 @@ export default {
       this.progressbar = number;
     },
     addColumn(){
-      this.colArray.push(this.colObj);
+      let _this = this;
+      _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
     },
     updateGroup(event){
       this.orderList();
@@ -548,12 +547,11 @@ export default {
       this.$store.state.dataSelectionArray.splice(this.$store.state.dataSelectionIndex,1);
       this.dialog3 = false;
     },
-    showData(index){
-      this.tableObj.relationship = this.tableObj.relationshipArray[index].relationship;
-      this.colArray = this.tableObj.relationshipArray[index].colArray
-      this.dialog2 = true;
-      // console.log(JSON.stringify(object));
-    },
+    // showData(index){
+    //   this.tableObj.relationship = this.tableObj.relationshipArray[index].relationship;
+    //   this.colArray = this.tableObj.relationshipArray[index].colArray
+    //   this.dialog2 = true;
+    // },
     setData(){
       let index=this.$store.state.dataSelectionIndex;
       this.$store.state.dataSelectionIndex = null;
@@ -571,7 +569,7 @@ export default {
             arrayIndex = index;
           }
       });
-      let object = {'relationship':_this.tableObj.relationship,'colArray':this.colArray};
+      let object = {'relationship':_this.tableObj.relationship,'colArray':_this.tableObj.colArray};
       if(arrayIndex){
         _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
         _this.$toaster.info('Relationship Updated successfully');
@@ -590,7 +588,7 @@ export default {
       console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
       let workTablecolumns=[];
       dbStepInput.distinct=_this.tableObj.distinct;
-      dbStepInput.output_table = _this.tableObj.relationship.selectedTableArray[0].tableName;
+      dbStepInput.output_table = 'table_1';//_this.tableObj.relationship.selectedTableArray[0].tableName;
       dbStepInput.select_table.name = _this.tableObj.relationship.selectedTableArray[0].tableName;
       dbStepInput.select_table.alias = _this.tableObj.relationship.selectedTableArray[0].aliesTableName;
       if(_this.tableObj.selectAllColumn){
@@ -633,11 +631,12 @@ export default {
          joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
          joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
          joinObject.type = obj.relationship.selectedFilter;
+         joinObject.condition=[];
          obj.colArray.map(function(colObj, colIndex){
            conditionObject.from_column = colObj.fromColumn.name;
            conditionObject.to_column = colObj.toColumn.name;
-           conditionObject.from_alias = colObj.fromColumn.colAlies;
-           conditionObject.to_alias = colObj.toColumn.colAlies;
+           conditionObject.from_alias = colObj.fromColumn.tblAlies;
+           conditionObject.to_alias = colObj.toColumn.tblAlies;
            conditionObject.operator =  _this.getjoinOperator(colObj.operator);
            joinObject.condition.push(cloneDeep(conditionObject));
          });
@@ -647,7 +646,7 @@ export default {
          let CriteriaObject = { 
             'alias': obj.column.tblAlies, //table alies
             'column_name': obj.column.name, //column alies
-            'operator':  _this.getjoinOperator(obj.column.name), //relational operator
+            'operator':  _this.getjoinOperator(obj.relOperator), //relational operator
             'value': obj.value, //may be value date or column
             'operand': obj.logOperator ? 'AND':'OR',
             'pre_braces': obj.openbrsis,
@@ -657,8 +656,11 @@ export default {
             'with_col':obj.field.name
         }
         dbStepInput.where.push(cloneDeep(CriteriaObject));
-       });    
-      return dbStepInput;
+       });  
+       dbStepInput.where[dbStepInput.where.length-1].operand = '';
+       dbStepInput.name=_this.tableObj.title;
+       dbStepInput.desc=_this.tableObj.description;  
+       return dbStepInput;
     },
     getjoinOperator(sign){
       let operatorArray = { EQUALS_TO : '_eq_',
