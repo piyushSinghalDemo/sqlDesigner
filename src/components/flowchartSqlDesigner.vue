@@ -735,7 +735,7 @@
                   Accordion content 3
                 </div> -->
               </div>
-              <button type="button" class="btn btn-danger" @click.stop="deleteOperator">Delete Selected Step/Link</button>
+              <button type="button" class="btn btn-danger" @click.stop="executeProcess">Execute Process</button>
               <!-- <button>deleteOperator</button> -->
             </div>
           </div>
@@ -933,6 +933,52 @@ export default {
     }.bind(this), 1000)
   },
   methods: {
+    executeProcess(){
+      let _this = this;
+      let $flowchart = $("#droppable");
+      var flowchartData = $flowchart.flowchart('getData');
+      let objectLength = Object.keys(flowchartData.links).length;
+      let archivalStepKeys = Object.keys(_this.$store.state.archivalStep);
+      let linkObject = {'source':'',"target":''};
+      let linkArray = [];
+      let stepObject = {'id':'','name':''};
+      let stepArray = [];
+      let sourceName='';
+      let destinationName='';
+      // _this.$store.state.archivalStep.map(function(obj, index){
+      //   if(obj.title == )
+      // })
+      // debugger;
+      for(var flowIndex = 0; flowIndex < objectLength; flowIndex++){
+        for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
+            if(flowchartData.links[flowIndex].fromTable == _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title){
+              //linkObject.sourceName = flowchartData.links[flowIndex].fromTable;
+              linkObject.source = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
+              break;
+            }
+        }//we got our source Name
+        for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
+            if(flowchartData.links[flowIndex].toTable == _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title){
+            //linkObject.destinationName = flowchartData.links[flowIndex].toTable;
+            linkObject.target = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
+          }
+        }//we got our dest name
+       linkArray.push(cloneDeep(linkObject)); 
+      }
+      for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
+        stepObject.id =  _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
+        stepObject.name = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title;
+        stepArray.push(cloneDeep(stepObject)); 
+      }
+      // console.log("linkArray "+ JSON.stringify(linkArray));
+      // console.log("stepArray "+JSON.stringify(stepArray));
+      // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
+      archivalStepKeys.map(function(obj, index){
+        let operatorData =  $flowchart.flowchart('getOperatorData',obj);
+        console.log("operatorData " +JSON.stringify(operatorData));
+      })
+      // console.log("archivalStep :" +JSON.stringify(this.$store.state.archivalStep));
+    },
     getStepDetails(){
       let _this = this;
       _this.addTitle = true;
@@ -1465,12 +1511,7 @@ body {
 .content--wrap {
   height: 100%;
 }
- .flowchart-operator-inputs-outputs{
-    background-image: url("./eagle.jpg");
-    height: 100%; 
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+  .flowchart-operator-inputs-outputs{
     height: 60px;
 } 
 
@@ -1478,6 +1519,7 @@ body {
 sql designer
  */
  @import "/static/flowchart/css/jquery.flowchart.min.css";
+ @import "/static/flowchart/css/custom.css";
  /* @import "/static/minimap/minimap.css"; */
  /*@import "/static/sqldesigner/styles/print.css";*/
 </style>

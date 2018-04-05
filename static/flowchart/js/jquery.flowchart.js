@@ -481,7 +481,7 @@ $(function() {
             var infos = this.getOperatorCompleteData(operatorData);
             var $parent = $("#droppable");
             var childrenFragment = document.createDocumentFragment();
-            var $operator = $('<div class="flowchart-operator ' + operatorData.className + '"></div>');
+            var $operator = $('<div class="flowchart-operator"></div>');
             // console.log($operator[0]);
             // $("#minimap .minimap-viewport").remove()
             // childrenFragment.appendChild( $operator[ 0 ] )
@@ -494,7 +494,7 @@ $(function() {
             // $operator_title.html(infos.title + "hell");
             // $operator_title.appendTo($operator);
 
-            var $operator_inputs_outputs = $('<div class="flowchart-operator-inputs-outputs" style="padding-top:15px;margin-top:0px !important"></div>');
+            var $operator_inputs_outputs = $('<div class="flowchart-operator-inputs-outputs ' + operatorData.className + ' " style="padding-top:15px;margin-top:0px !important;"></div>');
 
             $operator_inputs_outputs.appendTo($operator);
             var $operator_inputs = $('<div class="flowchart-operator-inputs"></div>');
@@ -503,7 +503,7 @@ $(function() {
             var $operator_outputs = $('<div class="flowchart-operator-outputs"></div>');
             $operator_outputs.appendTo($operator_inputs_outputs);
 
-            var $operator_title = $('<div class="flowchart-operator-title"></div>');
+            var $operator_title = $('<div class="flowchart-operator-title" style="text-align:center;"></div>');
             $operator_title.html(infos.title);
             $operator_title.appendTo($operator);
 
