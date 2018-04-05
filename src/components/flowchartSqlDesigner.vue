@@ -970,14 +970,28 @@ export default {
         stepObject.name = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title;
         stepArray.push(cloneDeep(stepObject)); 
       }
+      for(var archivalStepIndex = 0; archivalStepIndex < stepArray.length; archivalStepIndex++){
+        let found = false;
+        for(var flowIndex = 0; flowIndex < objectLength; flowIndex++){
+          if(stepArray[archivalStepIndex].name == flowchartData.links[flowIndex].toTable){
+            found = true;
+            break;
+          }
+        }
+        if(found){
+          stepArray[archivalStepIndex].is_parallel = false;
+          found = false
+        }else{
+          stepArray[archivalStepIndex].is_parallel = true;
+        }
+      }
+      let ideInputData = {'steps': stepArray,
+            'links': linkArray,
+            'step_data': _this.$store.state.processArray};
       // console.log("linkArray "+ JSON.stringify(linkArray));
       // console.log("stepArray "+JSON.stringify(stepArray));
       // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
-      archivalStepKeys.map(function(obj, index){
-        let operatorData =  $flowchart.flowchart('getOperatorData',obj);
-        console.log("operatorData " +JSON.stringify(operatorData));
-      })
-      // console.log("archivalStep :" +JSON.stringify(this.$store.state.archivalStep));
+      console.log("ideInputData " +JSON.stringify(ideInputData));
     },
     getStepDetails(){
       let _this = this;

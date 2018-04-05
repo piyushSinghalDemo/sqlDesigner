@@ -75,7 +75,7 @@
       </v-flex>
       <v-flex xs9></v-flex>
       <v-flex xs2>
-        <v-btn class="next" @click.stop="updateStep" color="info">Save</v-btn>
+        <v-btn class="next" :loading="saveData" @click.stop="updateStep" color="info">Save</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
@@ -94,6 +94,7 @@ export default {
         SearchTable:"",
         isDragging: false,
         selectedSearch:"",
+        saveData:false,
     }},
     props: ['tableObj'],
      computed: {
@@ -108,7 +109,9 @@ export default {
     methods: {
       updateStep(){
         let _this = this;
+        _this.saveData = true;
         _this.$emit('update-step', _this.tableObj);
+        setTimeout(function(){ _this.saveData = false }, 2000);
       },
       switchScreen(num){
         let _this = this;
