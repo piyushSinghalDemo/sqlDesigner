@@ -142,8 +142,6 @@ export default {
       _this.tableObj = obj;
       _this.dialog2 = false; 
     },
-  
-
     previousScreen(number){
       this.progressbar = number;
     },
