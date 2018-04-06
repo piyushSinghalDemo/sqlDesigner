@@ -13,6 +13,7 @@ const state = {
     currentStep: '',
     archivalStep: {}, // for getting all steps internal data
     processArray: [],
+    process_designer_id: '',
     dbStepObject: {
         'id': 'default',
         'type': 'select', //step type select, merge, minus

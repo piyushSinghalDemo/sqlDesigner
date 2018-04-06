@@ -17,63 +17,9 @@
 <!-- ************************************************************************************************************************** -->
                 <v-flex d-flex xs12>
                  <div class="form-views" v-show="progressbar == 1" style="width:100%;margin-left:3%;height:500px">
-                    <ul>
-                      <li @click.stop="nextScreen(1)" :class="{chevron:true,chevron_active:progressbar == 1}">Table Relationship</li>
-                      <li @click.stop="nextScreen(2)" :class="{chevron:true,chevron_active:progressbar == 2}">Criteria</li>
-                      <li @click.stop="nextScreen(3)" :class="{chevron:true,chevron_active:progressbar == 3}">Worktable Output</li>
-                    </ul>
-                    <v-layout row wrap>
-                      <v-flex xs6>
-                        <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" 
-                          :search-input.sync="search" cache-items label="Select Table" autocomplete></v-select>
-                        <v-btn color="info" @click.native="addTable">Add</v-btn>
-                      </v-flex>
-                      <v-flex xs6> 
-                            <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
-                              <div class="panel-heading">Selected Table</div>
-                              <div class="panel-body">
-                                <v-layout row wrap>
-                                  <v-flex style="margin-right:5px;" v-for="object in tableObj.relationship.selectedTableArray">
-                                    <span style="cursor:pointer" class="badge" @click.stop="dialog2=true">{{object.tableName}}</span>
-                                  </v-flex>
-                                </v-layout>
-                              </div>
-                            </div> 
-                      </v-flex>  
-                    </v-layout>
-                    <v-layout row wrap v-show="tableObj.relationshipArray.length">
-                      <v-flex><b>From Table</b></v-flex>
-                      <v-flex><b>Join</b></v-flex>
-                      <v-flex><b>To Table</b></v-flex>
-                    </v-layout>
-                    <v-expansion-panel expand>
-                      <v-expansion-panel-content v-for="(item,i) in tableObj.relationshipArray" :key="i">
-                        <div slot="header">
-                          <v-layout row wrap>
-                            <v-flex>{{item.relationship.fromTable.tableName}}</v-flex>
-                            <v-flex>{{item.relationship.selectedFilter}}</v-flex>
-                            <v-flex>{{item.relationship.toTable.tableName}}</v-flex>
-                          </v-layout>
-                        </div>
-                        <v-card>
-                          <v-card-text class="grey lighten-3">
-                          <v-layout row wrap >
-                            <v-flex><b>From Column</b></v-flex>
-                            <v-flex><b>Operator</b></v-flex>
-                            <v-flex><b>To Column</b></v-flex>
-                          </v-layout>
-                          <v-layout row wrap v-for="column in item.colArray">
-                            <v-flex>{{column.fromColumn.name}}</v-flex>
-                            <v-flex>{{column.operator}}</v-flex>
-                            <v-flex>{{column.toColumn.name}}</v-flex>
-                          </v-layout>
-                          </v-card-text>
-                        </v-card>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                    <v-layout justify-end>
-                              <v-btn class="next" @click.stop="nextScreen(2)" color="info">Next</v-btn>
-                    </v-layout> 
+                  
+                     <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj"></table-relationship>
+                  
                   </div>
                    <div class="form-views" v-show="progressbar == 2" style="width:100%;margin-left:3%;height:500px">
                      
@@ -114,6 +60,7 @@ import tableData from './data/table-selection';
 import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
 import workTableOutput from './workTableOutput.vue';
+import tableRelationship from './tableRelationship.vue';
 const message = [ 'vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based' , 'on', 'Sortablejs' ]
 export default {
   components: {
@@ -121,6 +68,7 @@ export default {
             'table-joins':tableJoins,
             'add-criteria':criteria,
             'work-table-output':workTableOutput,
+            'table-relationship':tableRelationship
   },
   data() {
     return {
@@ -136,16 +84,12 @@ export default {
       e1:"",
       colObj:{"fromColumn":'','toColumn':'','operator':''},      
       progressbar:1,
-      loading: false,
-      search: null,
       relOperatorArray:["==","<",">", "<=",">=","!="],
       tableObj:cloneDeep(tableData)   
     }
   },
   computed: {
-    selectTable(){
-      return this.$store.state.allDbTables;
-    },
+    
     dialog() {
       return this.$store.state.dialog
     },
@@ -178,14 +122,16 @@ export default {
            this.delayedDragging =false
       })
     },
-    search (val) {
-        val && this.querySelections(val)
-    }
+    
   },
   props: {
     source: String
   },
   methods: {
+    updateJoin(){
+      let _this = this;
+      _this.dialog2 = true;
+    },
     updateTableObj(arr){
       let _this = this;
       _this.tableObj = arr[0];
@@ -196,80 +142,8 @@ export default {
       _this.tableObj = obj;
       _this.dialog2 = false; 
     },
-    addTable(){
-      let validFlag=true;
-      let _this = this;
-      console.log("Demo "+JSON.stringify(_this.demo));
-      _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
-        if(obj.tableName == _this.tableObj.relationship.selectedTable){
-          validFlag = false;
-          _this.$toaster.error('Table Already Exist')
-        }
-      });
-      if(validFlag){
-        let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable),
-                   'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable + _this.$store.state.aliesCounter++)}
-        _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-         _this.getColumn(obj);
-         _this.$toaster.success('Table Added Successfully') 
-      }
-    },
-    getColumn(tableObject){
-      let _this = this;
-      let url = 'http://192.168.1.100:8010/get_all_columns';
-      let inputJson = {
-               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
-               "dest_queue": "test",
-               "table_name": tableObject.tableName
-      }
-      _this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
-          if(_this.tableObj.optionColumn.length){
-            _this.tableObj.optionColumn.push({ divider: true });
-          }
-          let headerObj = { header: tableObject.tableName};
-          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-          let allColumn = JSON.parse(response.bodyText);
-          allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
-            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-          });
-          console.log("Response from all tables"+JSON.stringify(response));
-        },response => {}).catch(e => {
-              console.log(e)
-            this.ErrorMessage = 'Something went wrong.'
-      })
-    },
-    querySelections (value) {
-      if(value.length %3 !== 0){
-        return 
-      }
-        this.loading = true;
-        let _this = this;
-        let url = 'http://192.168.1.100:8010/get_tables';
-        let inputJson = {
-               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
-               "dest_queue": "test",
-               "table_name": value
-      }
-      this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
-          _this.$store.state.allDbTables = JSON.parse(response.bodyText);
-          this.loading = false;
-          console.log("Response from all tables"+JSON.stringify(response));
-        },response => {}).catch(e => {
-          console.log(e)
-          this.loading = false;
-          this.ErrorMessage = 'Something went wrong.'
-          })
-      },
+  
+
     previousScreen(number){
       this.progressbar = number;
     },
@@ -395,15 +269,18 @@ export default {
       let _this = this;
       _this.tableObj = objData; 
       let inputParam = this.getSelectionData();
+      inputParam.process_designer_id=_this.$store.state.process_designer_id;//To add net step on the same process designer
       // let inputParam = _this.$store.state.dbStepObject;
       console.log("inputParam"+JSON.stringify(inputParam));
-      let url = 'http://192.168.1.101:8016/ide_step_data/add';
+      let url = 'http://192.168.1.106:8016/ide_step_data/add';
        _this.$http.post(url, inputParam, {
           headers: {
             'Content-Type': 'application/json'
           }
         }).then(response => {
           _this.tableObj.stepId = response.body.id;
+          _this.$store.state.process_designer_id = response.body.process_designer_id;
+          _this.tableObj.process_designer_id = response.body.process_designer_id;
           _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
           _this.$store.state.processArray.push(cloneDeep(inputParam));
           console.log("Response from all tables"+JSON.stringify(response));

@@ -982,12 +982,26 @@ export default {
           stepArray[archivalStepIndex].is_parallel = false;
           found = false
         }else{
-          stepArray[archivalStepIndex].is_parallel = true;
+          stepArray[archivalStepIndex].is_parallel =  false;       //true; for hordcode false
         }
       }
       let ideInputData = {'steps': stepArray,
             'links': linkArray,
-            'step_data': _this.$store.state.processArray};
+            'step_data': _this.$store.state.processArray,
+            'process_designer_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_designer_id};
+        let url = 'http://192.168.1.106:8016/add_ide_data';
+       _this.$http.post(url, ideInputData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => {
+          _this.$toaster.success('Data save successfully') 
+        },response => {
+           _this.$toaster.error('There is some internal error please try again later.')
+        }).catch(e => {
+              console.log(e)
+            _this.$toaster.error('Something went wrong...')
+      })    
       // console.log("linkArray "+ JSON.stringify(linkArray));
       // console.log("stepArray "+JSON.stringify(stepArray));
       // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
