@@ -86,24 +86,6 @@ export default {
     computed: {
        selectTable() {
          let _this = this;
-        //  if(this.$store.state.allDbTables.length){
-        //    let headerObj = { header: 'Database Table'};
-        //    _this.allTables.push(cloneDeep(headerObj));
-        //     this.$store.state.allDbTables.map(function(obj, index){
-        //    let tempObj = {name: obj, group:'Database Table'}
-        //    _this.allTables.push(cloneDeep(tempObj));   
-        //   });
-        //  }
-        //  if(_this.tableObj.previousSteps.length){
-        //    _this.allTables.push({ divider: true });
-        //   let headerObj = { header: 'Previous Steps'};
-        //    _this.allTables.push(cloneDeep(headerObj));
-        //    _this.tableObj.previousSteps.map(function(obj, index){
-        //    let prevObj = {'name':obj.name, 'columns':obj.selectedColumns, group:'Previous Steps'};
-        //    _this.allTables.push(cloneDeep(prevObj));
-        //   }); 
-        //  }
-        debugger;
         return _this.tableObj.allDbTables;
       },
     },
@@ -157,33 +139,13 @@ export default {
              _this.allTables.push(cloneDeep(prevObj));
           }); 
          }
-          // _this.$store.state.allDbTables = JSON.parse(response.bodyText);
           this.loading = false;
           console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
           this.loading = false;
           _this.$toaster.error('Something went wrong...')
-        //   this.ErrorMessage = 'Something went wrong.'
         })
-      },
-      setTableData(tableArray){
-        let _this = this;
-         _this.allTables=[];
-         let headerObj = { header: 'Database Table'};
-         _this.allTables.push(cloneDeep(headerObj));
-         allTables.map(function(obj, index){
-           let tempObj = {name: obj, group:'Database Table'}
-           _this.allTables.push(cloneDeep(tempObj));   
-         });
-         _this.allTables.push({ divider: true });
-         headerObj = { header: 'Previous Steps'};
-         _this.allTables.push(cloneDeep(headerObj));
-         _this.tableObj.previousSteps.map(function(obj, index){
-          let prevObj = {'name':obj.name, 'columns':obj.selectedColumns, group:'Previous Steps'};
-         _this.allTables.push(cloneDeep(prevObj));
-         });
-         return _this.allTables;
       },
     addTable(){
       let validFlag=true;
@@ -198,12 +160,29 @@ export default {
       if(validFlag){
         let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
                    'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable.name + _this.$store.state.aliesCounter++),
-                   'group':_this.tableObj.relationship.selectedTable.group,
-                   'columns':_this.tableObj.relationship.selectedTable.columns}
+                   'group':_this.tableObj.relationship.selectedTable.group}
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-         _this.getColumn(obj);
-         _this.$toaster.success('Table Added Successfully') 
+        if(_this.tableObj.relationship.selectedTable.group == 'Previous Steps'){
+           obj.columns = _this.tableObj.relationship.selectedTable.columns;
+          _this.getPrevStepCol(cloneDeep(obj));
+        }else{
+          _this.getColumn(obj);
+        }
+         _this.$toaster.success('Table Added Successfully'); 
       }
+    },
+    getPrevStepCol(object){
+      let _this = this;
+      if(_this.tableObj.optionColumn.length){
+        _this.tableObj.optionColumn.push({ divider: true });
+      }
+          let headerObj = { header: object.tableName};
+          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+          let allColumn = object.columns;
+          allColumn.map(function(obj, index){
+            obj.group = object.tableName;
+            _this.tableObj.optionColumn.push(cloneDeep(obj));
+          });
     },
     getColumn(tableObject){
       let _this = this;
@@ -213,23 +192,10 @@ export default {
                "dest_queue": "test",
                "table_name": tableObject.tableName
       }
-      if(tableObject.group == 'Previous Steps'){
-          if(_this.tableObj.optionColumn.length){
-            _this.tableObj.optionColumn.push({ divider: true });
-          }
-          let headerObj = { header: tableObject.tableName};
-          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-          let allColumn = _this.tableObj.columns;
-          allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
-            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-          });
-      }else{
-          _this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      _this.$http.post(url, inputJson, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
         }).then(response => {
           if(_this.tableObj.optionColumn.length){
             _this.tableObj.optionColumn.push({ divider: true });
@@ -247,8 +213,6 @@ export default {
               console.log(e)
             this.ErrorMessage = 'Something went wrong.'
       })
-
-      }
     
     },
     }
