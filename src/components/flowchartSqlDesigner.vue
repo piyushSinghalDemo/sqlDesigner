@@ -988,7 +988,7 @@ export default {
       let ideInputData = {'steps': stepArray,
             'links': linkArray,
             'step_data': _this.$store.state.processArray,
-            'process_designer_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_designer_id};
+            'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id};
         let url = 'http://192.168.1.106:8016/add_ide_data';
        _this.$http.post(url, ideInputData, {
           headers: {
@@ -1055,7 +1055,13 @@ export default {
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          _this.$store.state.allDbTables = JSON.parse(response.bodyText);
+          // _this.$store.state.allDbTables = [];
+          // _this.$store.state.allDbTables = JSON.parse(response.bodyText);
+          let allDbTables = JSON.parse(response.bodyText);
+          allDbTables.map(function(obj, index){
+            let temp = {'name':obj, 'group':'Database Table'};
+            _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables.push(cloneDeep(temp));             
+          });
           console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {
           console.log(e)

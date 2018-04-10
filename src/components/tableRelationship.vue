@@ -8,7 +8,7 @@
     <v-layout row wrap>
       <v-flex xs6>
         <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
-          cache-items label="Select Table" autocomplete></v-select>
+          cache-items label="Select Table" item-text="name" item-value="name + group" autocomplete></v-select>
         <v-btn color="info" @click.native="addTable">Add</v-btn>
       </v-flex>
       <v-flex xs6>
@@ -79,17 +79,37 @@ export default {
       return {
         loading: false,
         search: null,
+        allTables:[]
       }
     },
     props: ['tableObj'],
     computed: {
-      selectTable() {
-        return this.$store.state.allDbTables;
+       selectTable() {
+         let _this = this;
+        //  if(this.$store.state.allDbTables.length){
+        //    let headerObj = { header: 'Database Table'};
+        //    _this.allTables.push(cloneDeep(headerObj));
+        //     this.$store.state.allDbTables.map(function(obj, index){
+        //    let tempObj = {name: obj, group:'Database Table'}
+        //    _this.allTables.push(cloneDeep(tempObj));   
+        //   });
+        //  }
+        //  if(_this.tableObj.previousSteps.length){
+        //    _this.allTables.push({ divider: true });
+        //   let headerObj = { header: 'Previous Steps'};
+        //    _this.allTables.push(cloneDeep(headerObj));
+        //    _this.tableObj.previousSteps.map(function(obj, index){
+        //    let prevObj = {'name':obj.name, 'columns':obj.selectedColumns, group:'Previous Steps'};
+        //    _this.allTables.push(cloneDeep(prevObj));
+        //   }); 
+        //  }
+        debugger;
+        return _this.tableObj.allDbTables;
       },
     },
     watch: {
       search(val) {
-        val && this.querySelections(val)
+        //val && this.querySelections(val)
       }
     },
     methods: {
@@ -118,7 +138,26 @@ export default {
             'Content-Type': 'application/json'
           }
         }).then(response => {
+          _this.allTables= [];
           _this.$store.state.allDbTables = JSON.parse(response.bodyText);
+          if(this.$store.state.allDbTables.length){
+              let headerObj = { header: 'Database Table'};
+              _this.allTables.push(cloneDeep(headerObj));
+              this.$store.state.allDbTables.map(function(obj, index){
+              let tempObj = {name: obj, group:'Database Table'}
+              _this.allTables.push(cloneDeep(tempObj));   
+            });
+          }
+         if(_this.tableObj.previousSteps.length){
+           _this.allTables.push({ divider: true });
+          let headerObj = { header: 'Previous Steps'};
+           _this.allTables.push(cloneDeep(headerObj));
+           _this.tableObj.previousSteps.map(function(obj, index){
+             let prevObj = {'name':obj.name, 'columns':obj.selectedColumns, group:'Previous Steps'};
+             _this.allTables.push(cloneDeep(prevObj));
+          }); 
+         }
+          // _this.$store.state.allDbTables = JSON.parse(response.bodyText);
           this.loading = false;
           console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
@@ -128,19 +167,39 @@ export default {
         //   this.ErrorMessage = 'Something went wrong.'
         })
       },
+      setTableData(tableArray){
+        let _this = this;
+         _this.allTables=[];
+         let headerObj = { header: 'Database Table'};
+         _this.allTables.push(cloneDeep(headerObj));
+         allTables.map(function(obj, index){
+           let tempObj = {name: obj, group:'Database Table'}
+           _this.allTables.push(cloneDeep(tempObj));   
+         });
+         _this.allTables.push({ divider: true });
+         headerObj = { header: 'Previous Steps'};
+         _this.allTables.push(cloneDeep(headerObj));
+         _this.tableObj.previousSteps.map(function(obj, index){
+          let prevObj = {'name':obj.name, 'columns':obj.selectedColumns, group:'Previous Steps'};
+         _this.allTables.push(cloneDeep(prevObj));
+         });
+         return _this.allTables;
+      },
     addTable(){
       let validFlag=true;
       let _this = this;
       console.log("Demo "+JSON.stringify(_this.demo));
       _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
-        if(obj.tableName == _this.tableObj.relationship.selectedTable){
+        if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
           validFlag = false;
           _this.$toaster.error('Table Already Exist')
         }
       });
       if(validFlag){
-        let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable),
-                   'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable + _this.$store.state.aliesCounter++)}
+        let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
+                   'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable.name + _this.$store.state.aliesCounter++),
+                   'group':_this.tableObj.relationship.selectedTable.group,
+                   'columns':_this.tableObj.relationship.selectedTable.columns}
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
          _this.getColumn(obj);
          _this.$toaster.success('Table Added Successfully') 
@@ -154,7 +213,20 @@ export default {
                "dest_queue": "test",
                "table_name": tableObject.tableName
       }
-      _this.$http.post(url, inputJson, {
+      if(tableObject.group == 'Previous Steps'){
+          if(_this.tableObj.optionColumn.length){
+            _this.tableObj.optionColumn.push({ divider: true });
+          }
+          let headerObj = { header: tableObject.tableName};
+          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+          let allColumn = _this.tableObj.columns;
+          allColumn.map(function(obj, index){
+             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
+                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
+            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+          });
+      }else{
+          _this.$http.post(url, inputJson, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -175,6 +247,9 @@ export default {
               console.log(e)
             this.ErrorMessage = 'Something went wrong.'
       })
+
+      }
+    
     },
     }
   }

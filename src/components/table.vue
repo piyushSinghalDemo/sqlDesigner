@@ -64,7 +64,6 @@ import tableRelationship from './tableRelationship.vue';
 const message = [ 'vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based' , 'on', 'Sortablejs' ]
 export default {
   components: {
-           
             'table-joins':tableJoins,
             'add-criteria':criteria,
             'work-table-output':workTableOutput,
@@ -110,7 +109,7 @@ export default {
    watch: {
      dialog (newValue){
        if(newValue){
-          this.tableObj =cloneDeep(this.$store.state.archivalStep[this.$store.state.currentStep]);
+          this.tableObj = this.$store.state.archivalStep[this.$store.state.currentStep];
        }
      },
      isDragging (newValue) {
@@ -171,7 +170,7 @@ export default {
     getSelectionData(){
       let _this = this;
       let dbStepInput =  cloneDeep(_this.$store.state.dbStepObject);
-      console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
+      // console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
       let workTablecolumns=[];
       dbStepInput.distinct=_this.tableObj.distinct;
       dbStepInput.output_table = 'table_1';//_this.tableObj.relationship.selectedTableArray[0].tableName;
@@ -267,9 +266,7 @@ export default {
       let _this = this;
       _this.tableObj = objData; 
       let inputParam = this.getSelectionData();
-      inputParam.process_designer_id=_this.$store.state.process_designer_id;//To add net step on the same process designer
-      // let inputParam = _this.$store.state.dbStepObject;
-      console.log("inputParam"+JSON.stringify(inputParam));
+      inputParam.process_definition_id=_this.$store.state.process_definition_id;//To add net step on the same process designer
       let url = 'http://192.168.1.106:8016/ide_step_data/add';
        _this.$http.post(url, inputParam, {
           headers: {
@@ -277,11 +274,21 @@ export default {
           }
         }).then(response => {
           _this.tableObj.stepId = response.body.id;
-          _this.$store.state.process_designer_id = response.body.process_designer_id;
-          _this.tableObj.process_designer_id = response.body.process_designer_id;
+          _this.$store.state.process_definition_id = response.body.process_definition_id;
+          _this.tableObj.process_definition_id = response.body.process_definition_id;
           _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
           _this.$store.state.processArray.push(cloneDeep(inputParam));
-          console.log("Response from all tables"+JSON.stringify(response));
+          let $flowchart = $("#droppable");
+          var flowchartData = $flowchart.flowchart('getData');
+          let objectLength = Object.keys(flowchartData.links).length;
+          for(var i=0;i<objectLength;i++){
+            if(flowchartData.links[i].fromOperator == _this.$store.state.currentStep){
+              let obj = {'name':_this.tableObj.title,'columns':_this.tableObj.selectedColumns,'group':'Previous Steps'}
+              _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
+            }
+          }
+          console.log("flowchartData in save step"+JSON.stringify(flowchartData));
+          console.log("tableObj in save step"+JSON.stringify(_this.tableObj));
           _this.$toaster.success('Data save successfully') 
         },response => {
            _this.$toaster.error('There is some internal error please try again later.')

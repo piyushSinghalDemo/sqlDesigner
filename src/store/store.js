@@ -13,9 +13,9 @@ const state = {
     currentStep: '',
     archivalStep: {}, // for getting all steps internal data
     processArray: [],
-    process_designer_id: '',
+    process_definition_id: '',
     dbStepObject: {
-        'id': 'default',
+        'id': 1,
         'type': 'select', //step type select, merge, minus
         'name': 'temp', //temp
         'desc': 'table description', //table_2
