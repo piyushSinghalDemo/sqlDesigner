@@ -78,12 +78,24 @@ export default {
     savedata(){
       let arrayIndex = 0;
       let _this = this;
+      // debugger;
+      console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
       // _this.tableObj = data.tableObj;
       _this.tableObj.relationshipArray.map(function(obj, index){
           if(obj.relationship.fromTable == _this.tableObj.relationship.fromTable){
             arrayIndex = index;
           }
       });
+      if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
+        _this.tableObj.relationship.jfrom_drv_table = true;
+      }else{
+        _this.tableObj.relationship.jfrom_drv_table = false;
+      }
+      if(_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
+        _this.tableObj.relationship.jto_drv_table = true;  
+      }else{
+        _this.tableObj.relationship.jto_drv_table = false;  
+      }
       let object = {'relationship':_this.tableObj.relationship,'colArray':_this.tableObj.colArray};
       if(arrayIndex){
         _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);

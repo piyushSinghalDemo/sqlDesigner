@@ -6,7 +6,8 @@ export default {
         fromTable: null,
         toTable: null,
         selectedColumn: null,
-        selectedFilter: null
+        selectedFilter: null,
+        driverTable: null,
     },
     relationshipArray: [],
     parenthasisobject: {
@@ -43,7 +44,10 @@ export default {
     previousSteps: [],
     selectedColumns: [],
     allDbTables: [],
+    allArchiveTables: [],
     distinct: false,
+    type: '',
+    is_drv_table: false,
     colObj: { "fromColumn": '', 'toColumn': '', 'operator': '' },
     colArray: [{ "fromColumn": '', 'toColumn': '', 'operator': '' }],
 }

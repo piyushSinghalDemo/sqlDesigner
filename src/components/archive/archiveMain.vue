@@ -18,17 +18,18 @@
                 <v-flex d-flex xs12>
                   <div class="form-views" v-show="progressbar == 1" style="width:100%;margin-left:3%;height:500px">
 
-                    <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj"></table-relationship>
+                    <table-relationship @update-object='updateTableObj' @update-step="saveDialog" @update-join="updateJoin" :tableObj="tableObj">                      
+                    </table-relationship>
 
                   </div>
                   <div class="form-views" v-show="progressbar == 2" style="width:100%;margin-left:3%;height:500px">
 
-                    <add-criteria @update-object='updateTableObj' :tableObj="tableObj"></add-criteria>
+                    <!-- <add-criteria @update-object='updateTableObj' :tableObj="tableObj"></add-criteria> -->
 
                   </div>
                   <div class="form-views" v-show="progressbar == 3" style="width:100%;margin-left:3%;height:500px">
 
-                    <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj"></work-table-output>
+                    <!-- <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj"></work-table-output> -->
 
                   </div>
                 </v-flex>
@@ -41,30 +42,30 @@
         </v-card>
       </v-dialog>
     </v-layout>
-    <v-dialog v-model="dialog2" max-width="40%" max-height="50%">
+    <v-dialog v-model="dialog2" max-width="60%" max-height="50%">
 
       <!-- ********** tableObj is used to pass data(props) to table-joins vue &
           save-data is used to emit data from table-joins vue ************* -->
 
       <table-joins @save-data="saveData" :tableObj="tableObj" v-on:close="dialog2=false"></table-joins>
+
     </v-dialog>
   </div>
 </template>
 
 <script>
-import _def from './various/defnitions'
+import _def from '../various/defnitions'
 import cloneDeep from 'lodash/cloneDeep';
-import tableData from './data/table-selection';
+import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
-import workTableOutput from './workTableOutput.vue';
 import tableRelationship from './tableRelationship.vue';
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
     'table-joins': tableJoins,
     'add-criteria': criteria,
-    'work-table-output': workTableOutput,
+    // 'work-table-output': workTableOutput,
     'table-relationship': tableRelationship
   },
   data() {
@@ -82,7 +83,7 @@ export default {
   },
   computed: {
     dialog() {
-      return this.$store.state.dialog
+      return this.$store.state.openArchivePanel
     },
   },
   watch: {
@@ -121,90 +122,111 @@ export default {
     //   this.dialog3 = true;
     // },
     closeDialog() {
-      this.$store.state.dialog = false
+      this.$store.state.openArchivePanel = false
     },
     getSelectionData() {
-      let _this = this;
-      let dbStepInput = cloneDeep(_this.$store.state.dbStepObject);
-      // console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
-      let workTablecolumns = [];
-      dbStepInput.distinct = _this.tableObj.distinct;
-      // dbStepInput.output_table = _this.tableObj.relationship.selectedTableArray[0].tableName;
-      dbStepInput.select_table.name = _this.tableObj.relationship.selectedTableArray[0].tableName;
-      dbStepInput.select_table.alias = _this.tableObj.relationship.selectedTableArray[0].aliesTableName;
-      dbStepInput.select_table.is_drv_table = _this.tableObj.is_drv_table;
-      if (_this.tableObj.selectAllColumn) {
-        dbStepInput.select_table.cols.push({
-          'table_alias': 'cu',
-          'col_alias': '',
-          'col_name': '_*_',
-          'func': '' //for now by default it will be blank
-        });
-      } else {
-        _this.tableObj.selectedColumns.map(function (obj, index) {
-          let tempObj = {
-            'table_alias': obj.tblAlies,
-            'col_alias': obj.colAlies,
-            'col_name': obj.name,
-            'func': '', //for now by default it will be blank
-          }
-          dbStepInput.select_table.cols.push(cloneDeep(tempObj));
-        });
-      }
-      let joinObject = { //Table Relationship
-        'jfrom': '', //from table
-        'jto': '', //to table
-        'jfromalias': 't1', // alies name of from table
-        'jtoalias': 'gc', //alies name to table
-        'type': 'INNER JOIN',
-        'condition': [] // will push condition object here
-      }
-      let conditionObject = {
-        'from_column': '', //from column
-        'to_column': '', //to column alies
-        'from_alias': '', //from column alies
-        'to_alias': '', //to column
-        'operator': ''
-      }
-      _this.tableObj.relationshipArray.map(function (obj, index) {
-        joinObject.jfrom = obj.relationship.fromTable.tableName;
+          let _this = this;
+          console.log("selectedTableArray" + JSON.stringify(_this.tableObj.relationshipArray));
+           let archiveStepInput = cloneDeep(_this.$store.state.archiveStepObject);
+           archiveStepInput.name = _this.tableObj.title;
+           archiveStepInput.desc = _this.tableObj.description;
+           debugger;
+           let DrvTableObj = {
+            "select_table": {
+                "alias": _this.tableObj.relationship.driverTable.aliesTableName,
+                "name": _this.tableObj.relationship.driverTable.name,
+                "is_drv_table": _this.tableObj.is_drv_table,
+                "cols": [{
+                    "table_alias": _this.tableObj.relationship.driverTable.aliesTableName,
+                    "col_alias": "",
+                    "col_name": "_*_"
+                }]
+            }
+        }
+        archiveStepInput.drv_table.push(DrvTableObj);
+        let colsObject = { // all column dont have work table o/p as data selection
+                    "table_alias": "",
+                    "func": "",
+                    "col_alias": "",
+                    "col_name": "_*_"
+                }
+        let joinObject = {
+                "condition": [],
+                "jfrom": "gold_customer",
+                "jto": "table_1",
+                "type": "INNER JOIN",
+                "jfromalias": "gc",
+                "jtoalias": "tbl1",
+                "jto_drv_table": true,
+                "jfrom_drv_table": false
+            }
+         let conditionObject = {
+                    "from_column": "pincode_id",
+                    "to_column": "pincode_id",
+                    "from_alias": "gc",
+                    "to_alias": "tbl1",
+                    "operator": "_eq_"
+                }   
+         let whereObject ={
+                "post_braces": ")",
+                "alias": "gc",
+                "column_name": "pincode_id",
+                "operator": "_lt_",
+                "value": "120",
+                "pre_braces": "(",
+                "operand":"",
+                "is_col_compare":"",
+            }
+          let relationObject ={
+            "output_table": "", //From table
+            "select_table": {
+                "alias": "", //From Table alies
+                "name": "", //From Table
+                "cols": []
+            },
+            "joins": [],
+            "where": []
+        }
+        _this.tableObj.relationshipArray.map(function (obj, index) {
+        relationObject.output_table = obj.relationship.fromTable.tableName;
+        relationObject.select_table.alias = obj.relationship.fromTable.aliesTableName;
+        relationObject.select_table.name = obj.relationship.fromTable.tableName;
+        colsObject.table_alias = obj.relationship.fromTable.aliesTableName;
+        relationObject.select_table.cols.push(cloneDeep(colsObject));
+
         joinObject.jto = obj.relationship.toTable.tableName;
+        joinObject.jfrom = obj.relationship.fromTable.aliesTableName;
         joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
         joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
         joinObject.type = obj.relationship.selectedFilter;
-        joinObject.jto_drv_table = obj.relationship.jto_drv_table;
-        joinObject.jfrom_drv_table = obj.relationship.jfrom_drv_table;
-        joinObject.condition = [];
+        joinObject.jto_drv_table =  obj.relationship.jto_drv_table;
+        joinObject.jfrom_drv_table =  obj.relationship.jfrom_drv_table;
         obj.colArray.map(function (colObj, colIndex) {
           conditionObject.from_column = colObj.fromColumn.name;
           conditionObject.to_column = colObj.toColumn.name;
           conditionObject.from_alias = colObj.fromColumn.tblAlies;
           conditionObject.to_alias = colObj.toColumn.tblAlies;
           conditionObject.operator = _this.getjoinOperator(colObj.operator);
-          joinObject.condition.push(cloneDeep(conditionObject));
+          joinObject.condition.push(cloneDeep(conditionObject));  
         });
-        dbStepInput.joins.push(cloneDeep(joinObject));
+        relationObject.joins.push(joinObject);
+
+        obj.where.map(function(whereObj, whereIndex){
+           whereObject.post_braces = whereObj.closebrsis;
+           whereObject.alias = whereObj.column.tblAlies; //table alies
+           whereObject.column_name = whereObj.column.name; //column alies
+           whereObject.operator = _this.getjoinOperator(whereObj.relOperator); //relational operator
+           whereObject.value = whereObj.value; //may be value date or column
+           whereObject.pre_braces = whereObj.openbrsis;
+           whereObject.operand = whereObj.logOperator ? 'AND' : 'OR';
+           whereObject.is_col_compare = whereObj.valueType == 'field' ? true : false;
+           whereObject.with_alias =whereObj.field.colAlies;
+           whereObject.with_col =  whereObj.field.name;
+           relationObject.where.push(whereObject);
+        });
+        archiveStepInput.list_of_relations.push(relationObject);                
       });
-      _this.tableObj.criteriaArray.map(function (obj, index) {
-        let CriteriaObject = {
-          'alias': obj.column.tblAlies, //table alies
-          'column_name': obj.column.name, //column alies
-          'operator': _this.getjoinOperator(obj.relOperator), //relational operator
-          'value': obj.value, //may be value date or column
-          'operand': obj.logOperator ? 'AND' : 'OR',
-          'pre_braces': obj.openbrsis,
-          'post_braces': obj.closebrsis,
-          'is_col_compare': obj.valueType == 'field' ? true : false,
-          'with_alias': obj.field.colAlies,
-          'with_col': obj.field.name
-        }
-        dbStepInput.where.push(cloneDeep(CriteriaObject));
-      });
-      dbStepInput.where[dbStepInput.where.length - 1].operand = '';
-      dbStepInput.name = _this.tableObj.title;
-      dbStepInput.output_table = _this.tableObj.title;
-      dbStepInput.desc = _this.tableObj.description;
-      return dbStepInput;
+      return archiveStepInput;
     },
     getjoinOperator(sign) {
       let operatorArray = {
@@ -229,6 +251,7 @@ export default {
       _this.tableObj = objData;
       let inputParam = this.getSelectionData();
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
+      console.log("inputParam in archive step " +JSON.stringify(inputParam));
       let url = 'http://192.168.1.106:8016/ide_step_data/add';
       _this.$http.post(url, inputParam, {
         headers: {
@@ -262,7 +285,7 @@ export default {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'
       })
-      this.$store.state.dialog = false
+      this.$store.state.openArchivePanel = false
     }
   },
 

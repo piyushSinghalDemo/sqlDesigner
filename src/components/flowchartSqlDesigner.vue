@@ -81,7 +81,6 @@
       <!---==========Archive Modal ============-->
       <div class="modal fade" id="archiveModal" role="dialog">
         <div class="modal-dialog">
-
           <!-- Modal content-->
           <div class="modal-content">
             <form class="form-horizontal" @submit.prevent="saveModalForm(archiveForm, 'archiveModal')">
@@ -764,7 +763,9 @@
               </div>
             </div>
           </div>
+
           <table-modal></table-modal>
+          <archive-panel></archive-panel>
           <simplert useRadius=true useIcon=true ref="simplert">
           </simplert>
         </div>
@@ -810,6 +811,7 @@
 import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
+import archiveMain from './archive/archiveMain.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
@@ -818,6 +820,7 @@ export default {
   components: {
     Simplert,
     'table-modal': table,
+    'archive-panel':archiveMain,
      draggable,
      contextMenu 
   },
@@ -877,6 +880,7 @@ export default {
     topPosition:0,
     type:'',
     validateStep:true,
+    openArchivePanel:false,
     }
   },
   computed: {
@@ -1007,7 +1011,7 @@ export default {
       // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
       console.log("ideInputData " +JSON.stringify(ideInputData));
     },
-    getStepDetails(){
+    getStepDetails(){ // take step name and description from user
       let _this = this;
       _this.addTitle = true;
     },
@@ -1059,7 +1063,8 @@ export default {
           // _this.$store.state.allDbTables = JSON.parse(response.bodyText);
           let allDbTables = JSON.parse(response.bodyText);
           allDbTables.map(function(obj, index){
-            let temp = {'name':obj, 'group':'Database Table'};
+            let temp = {'name':obj, 'stepId':'Database Table'};
+            _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables.push(cloneDeep(temp));
             _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables.push(cloneDeep(temp));             
           });
           console.log("Response from all tables"+JSON.stringify(response));
@@ -1204,13 +1209,13 @@ export default {
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
       tableData.title = cloneDeep(_this.stepName); 
       tableData.description = cloneDeep(_this.stepDetail);
+      tableData.type = className;
       _this.$refs.form.reset()
       _this.$store.state.archivalStep[operatorId]=cloneDeep(tableData);
       _this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData')
       _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
       _this.dbData = JSON.parse(JSON.stringify(data))
-      // console.log(JSON.stringify(_this.dataStr));
     },
     oneInTwoOutOperator(left, top, className) {
       let _this = this;
@@ -1335,16 +1340,21 @@ export default {
           console.log(operator);
           var type = operator.className
           var op = _this.operatorOptions[type]
-          _this.operatorId = operatorId
+          _this.operatorId = operatorId;
           _this.$store.state.currentStep = operatorId; 
           console.log(op);
-          if (op['dblClick'] && op["modal"]) {
-            $("#" + op["modalName"]).modal()
-          }
-          if (operator.className != 'db')
-            return
-           _this.gettables(); 
-          _this.$store.state.dialog = true;
+          // if (op['dblClick'] && op["modal"]) {
+          //   $("#" + op["modalName"]).modal()
+          // }
+          // if (operator.className != 'db')
+          //   return
+           _this.gettables();
+           if(operator.className == 'db'){
+             _this.$store.state.dialog = true;
+           }
+           else if(operator.className == 'archive'){
+             _this.$store.state.openArchivePanel = true;
+           } 
           return true;
         },
         onOperatorCreate: function (operatorId, operatorData, fullElement) {

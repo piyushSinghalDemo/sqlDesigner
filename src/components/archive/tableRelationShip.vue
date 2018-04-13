@@ -1,15 +1,23 @@
 <template>
   <v-container grid-list-md>
     <ul>
-      <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Table Relationship</li>
-      <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
-      <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li>
+      <!-- <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Table Relationship</li> -->
+      <!-- <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li> -->
+      <!-- <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li> -->
     </ul>
     <v-layout row wrap>
-      <v-flex xs6>
+      <v-flex xs3>
+        <!-- {{tableObj.relationship.driverTable}} -->
+        <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
+          cache-items label="Select Driver Table" item-text="name" item-value="name + group" autocomplete></v-select>
+          <a class="addTable" @click.stop="addDriverTable">Add</a>
+        <!-- <v-btn color="info" @click.native="addTable">Add</v-btn> -->
+      </v-flex>
+      <v-flex xs3>
         <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
-          cache-items label="Select Table" item-text="name" item-value="name + stepId" autocomplete></v-select>
-        <v-btn color="info" @click.native="addTable">Add</v-btn>
+          cache-items label="Select Table" item-text="name" item-value="name + group" autocomplete></v-select>
+        <!-- <v-btn color="info" @click.native="addTable" style="position:absolute">Add</v-btn> -->
+        <a class="addTable" @click.stop="addTable">Add Table</a>
       </v-flex>
       <v-flex xs6>
         <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
@@ -67,7 +75,7 @@
       </v-expansion-panel-content>
     </v-expansion-panel>
     <v-layout justify-end>
-      <v-btn class="next" @click.stop="switchScreen(2)" color="info">Next</v-btn>
+      <v-btn class="next" :loading="saveData" @click.stop="updateStep" color="info">Save</v-btn>
     </v-layout>
   </v-container>
 </template>
@@ -79,24 +87,54 @@ export default {
       return {
         loading: false,
         search: null,
-        allTables:[]
+        searchDriver:null,
+        allTables:[],
+        saveData:false,
       }
     },
     props: ['tableObj'],
     computed: {
        selectTable() {
          let _this = this;
+        return _this.tableObj.allArchiveTables;//allArchiveTables
+      },
+      selectDriverTable() {
+         let _this = this;
         return _this.tableObj.allDbTables;
       },
     },
     watch: {
       search(val) {
+        val && this.querySelections(val)
+      },
+      searchDriver(val) {
         //val && this.querySelections(val)
       }
     },
     methods: {
+        updateStep(){
+          let _this = this;
+          _this.saveData = true;
+          _this.$emit('update-step', _this.tableObj);
+          setTimeout(function(){ _this.saveData = false }, 2000);
+        },
+        addDriverTable(){
+          let _this = this;
+          let obj = {'tableName':cloneDeep(_this.tableObj.relationship.driverTable.name),
+                   'aliesTableName':cloneDeep(_this.tableObj.relationship.driverTable.name + _this.$store.state.aliesCounter++),
+                   'group':'Driver Table', 'stepId':_this.tableObj.relationship.driverTable.stepId}
+           _this.tableObj.relationship.driverTable.aliesTableName = obj.aliesTableName;         
+           if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))        
+            _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
+            if(_this.tableObj.relationship.driverTable.stepId == 'Previous Steps'){
+              obj.columns = _this.tableObj.relationship.driverTable.columns;
+              _this.getPrevStepCol(cloneDeep(obj));
+            }else{
+              _this.getColumn(obj);
+            }            
+        },
         updateJoin(){
-            let _this = this;
+          let _this = this;
             _this.$emit('update-join');
         },
       switchScreen(num) {
@@ -148,25 +186,26 @@ export default {
         })
       },
     addTable(){
+      // alert("Click Working");
       let validFlag=true;
       let _this = this;
       console.log("Demo "+JSON.stringify(_this.demo));
       _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
         if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
-          validFlag = false;
+           validFlag = false;
           _this.$toaster.error('Table Already Exist')
         }
       });
+      debugger;
       if(validFlag){
         let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
                    'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable.name + _this.$store.state.aliesCounter++),
-                   'stepId':_this.tableObj.relationship.selectedTable.stepId}
+                   'group':'Database Table','stepId':_this.tableObj.relationship.selectedTable.stepId}
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-        if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){           
+        if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){
            obj.columns = _this.tableObj.relationship.selectedTable.columns;
           _this.getPrevStepCol(cloneDeep(obj));
         }else{
-          // obj.is_drv_table = false;
           _this.getColumn(obj);
         }
          _this.$toaster.success('Table Added Successfully'); 
@@ -181,13 +220,11 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = object.columns;
           allColumn.map(function(obj, index){
-           let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++}; 
-            // obj.group = object.tableName;
-            _this.tableObj.is_drv_table = true;
-            //  obj.tblAlies = object.aliesTableName;
-            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+            obj.group = object.tableName;
+            obj.tblAlies = object.aliesTableName;
+            _this.tableObj.optionColumn.push(cloneDeep(obj));
           });
+         _this.tableObj.is_drv_table = true;  
     },
     getColumn(tableObject){
       let _this = this;
@@ -244,5 +281,12 @@ export default {
 
     .chevron_active {
       background:#666;
+    }
+    .addTable{
+        position: relative;
+        top: -49px;
+        right: -74%;
+        font-size: 16px;
+        background: white;
     }
 </style>

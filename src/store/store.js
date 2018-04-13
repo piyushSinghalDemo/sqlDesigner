@@ -14,6 +14,7 @@ const state = {
     archivalStep: {}, // for getting all steps internal data
     processArray: [],
     process_definition_id: '',
+    openArchivePanel: false,
     dbStepObject: {
         'id': 1,
         'type': 'select', //step type select, merge, minus
@@ -29,6 +30,15 @@ const state = {
         'joins': [],
 
         'where': []
+    },
+    archiveStepObject: {
+        "id": 2,
+        "type": "archival",
+        "name": "temp name archival",
+        "desc": "temp desc archival",
+        "limit": '',
+        "drv_table": [],
+        "list_of_relations": []
     }
 }
 const mutations = {
