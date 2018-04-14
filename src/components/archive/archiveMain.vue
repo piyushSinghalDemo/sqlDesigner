@@ -130,7 +130,6 @@ export default {
            let archiveStepInput = cloneDeep(_this.$store.state.archiveStepObject);
            archiveStepInput.name = _this.tableObj.title;
            archiveStepInput.desc = _this.tableObj.description;
-           debugger;
            let DrvTableObj = {
             "select_table": {
                 "alias": _this.tableObj.relationship.driverTable.aliesTableName,
@@ -152,28 +151,28 @@ export default {
                 }
         let joinObject = {
                 "condition": [],
-                "jfrom": "gold_customer",
-                "jto": "table_1",
-                "type": "INNER JOIN",
-                "jfromalias": "gc",
-                "jtoalias": "tbl1",
-                "jto_drv_table": true,
+                "jfrom": "",
+                "jto": "",
+                "type": "",
+                "jfromalias": "",
+                "jtoalias": "",
+                "jto_drv_table": false,
                 "jfrom_drv_table": false
             }
          let conditionObject = {
-                    "from_column": "pincode_id",
-                    "to_column": "pincode_id",
-                    "from_alias": "gc",
-                    "to_alias": "tbl1",
-                    "operator": "_eq_"
+                    "from_column": "",
+                    "to_column": "",
+                    "from_alias": "",
+                    "to_alias": "",
+                    "operator": ""
                 }   
          let whereObject ={
-                "post_braces": ")",
-                "alias": "gc",
-                "column_name": "pincode_id",
-                "operator": "_lt_",
-                "value": "120",
-                "pre_braces": "(",
+                "post_braces": "",
+                "alias": "",
+                "column_name": "",
+                "operator": "",
+                "value": "",
+                "pre_braces": "",
                 "operand":"",
                 "is_col_compare":"",
             }
@@ -188,6 +187,16 @@ export default {
             "where": []
         }
         _this.tableObj.relationshipArray.map(function (obj, index) {
+          let relationObject ={
+            "output_table": "", //From table
+            "select_table": {
+                "alias": "", //From Table alies
+                "name": "", //From Table
+                "cols": []
+            },
+            "joins": [],
+            "where": []
+        }
         relationObject.output_table = obj.relationship.fromTable.tableName;
         relationObject.select_table.alias = obj.relationship.fromTable.aliesTableName;
         relationObject.select_table.name = obj.relationship.fromTable.tableName;
@@ -195,34 +204,39 @@ export default {
         relationObject.select_table.cols.push(cloneDeep(colsObject));
 
         joinObject.jto = obj.relationship.toTable.tableName;
-        joinObject.jfrom = obj.relationship.fromTable.aliesTableName;
+        joinObject.jfrom = obj.relationship.fromTable.tableName;
         joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
         joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
         joinObject.type = obj.relationship.selectedFilter;
         joinObject.jto_drv_table =  obj.relationship.jto_drv_table;
         joinObject.jfrom_drv_table =  obj.relationship.jfrom_drv_table;
+        joinObject.condition = [];
         obj.colArray.map(function (colObj, colIndex) {
-          conditionObject.from_column = colObj.fromColumn.name;
-          conditionObject.to_column = colObj.toColumn.name;
-          conditionObject.from_alias = colObj.fromColumn.tblAlies;
-          conditionObject.to_alias = colObj.toColumn.tblAlies;
-          conditionObject.operator = _this.getjoinOperator(colObj.operator);
-          joinObject.condition.push(cloneDeep(conditionObject));  
+          if(colObj.fromColumn.name){
+            conditionObject.from_column = colObj.fromColumn.name;
+            conditionObject.to_column = colObj.toColumn.name;
+            conditionObject.from_alias = colObj.fromColumn.tblAlies;
+            conditionObject.to_alias = colObj.toColumn.tblAlies;
+            conditionObject.operator = _this.getjoinOperator(colObj.operator);
+            joinObject.condition.push(cloneDeep(conditionObject));  
+          }
         });
-        relationObject.joins.push(joinObject);
+        relationObject.joins.push(cloneDeep(joinObject));
 
         obj.where.map(function(whereObj, whereIndex){
-           whereObject.post_braces = whereObj.closebrsis;
-           whereObject.alias = whereObj.column.tblAlies; //table alies
-           whereObject.column_name = whereObj.column.name; //column alies
-           whereObject.operator = _this.getjoinOperator(whereObj.relOperator); //relational operator
-           whereObject.value = whereObj.value; //may be value date or column
-           whereObject.pre_braces = whereObj.openbrsis;
-           whereObject.operand = whereObj.logOperator ? 'AND' : 'OR';
-           whereObject.is_col_compare = whereObj.valueType == 'field' ? true : false;
-           whereObject.with_alias =whereObj.field.colAlies;
-           whereObject.with_col =  whereObj.field.name;
-           relationObject.where.push(whereObject);
+          if(whereObj.column_name  ){
+            whereObject.post_braces = whereObj.closebrsis;
+            whereObject.alias = whereObj.column.tblAlies; //table alies
+            whereObject.column_name = whereObj.column.name; //column alies
+            whereObject.operator = _this.getjoinOperator(whereObj.relOperator); //relational operator
+            whereObject.value = whereObj.value; //may be value date or column
+            whereObject.pre_braces = whereObj.openbrsis;
+            whereObject.operand = whereObj.logOperator ? 'AND' : 'OR';
+            whereObject.is_col_compare = whereObj.valueType == 'field' ? true : false;
+            whereObject.with_alias =whereObj.field.colAlies;
+            whereObject.with_col =  whereObj.field.name;
+            relationObject.where.push(whereObject);
+          }
         });
         archiveStepInput.list_of_relations.push(relationObject);                
       });

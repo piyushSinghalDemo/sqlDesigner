@@ -196,7 +196,6 @@ export default {
           _this.$toaster.error('Table Already Exist')
         }
       });
-      debugger;
       if(validFlag){
         let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
                    'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable.name + _this.$store.state.aliesCounter++),
@@ -220,9 +219,11 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = object.columns;
           allColumn.map(function(obj, index){
-            obj.group = object.tableName;
-            obj.tblAlies = object.aliesTableName;
-            _this.tableObj.optionColumn.push(cloneDeep(obj));
+             let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++};  
+            // obj.group = object.tableName;
+            // obj.tblAlies = object.aliesTableName;
+            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
           });
          _this.tableObj.is_drv_table = true;  
     },

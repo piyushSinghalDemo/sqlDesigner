@@ -142,9 +142,6 @@ export default {
            openbrsisArray:['(','((','((('],
       closebrsisArray:[')','))',')))'],
       functionArray:['count','sum'],
-      filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
-                  "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH",
-                  "LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
       valueTypeArray:['value','date','field'],             
     }},
    props: ['tableObj'],
@@ -162,7 +159,6 @@ export default {
             arrayIndex = index;
           }
       });
-      debugger;
       if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
         _this.tableObj.relationship.jfrom_drv_table = true;
       }else{
