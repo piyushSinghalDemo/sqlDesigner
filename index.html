@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <title>magellan</title>
-
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <!-- <link href="https://unpkg.com/vuetify@0.16.9/dist/vuetify.min.css" rel="stylesheet"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <script type="text/javascript" src="./static/js-core/jquery-core.js"></script>
     <script type="text/javascript" src="./static/js-core/jquery-ui-core.js"></script>
     <script type="text/javascript" src="./static/js-core/jquery-ui-widget.js"></script>
@@ -83,6 +85,10 @@
             z-index: 1;
             cursor: move;
         }
+        
+        html {
+            overflow-y: auto
+        }
     </style>
 </head>
 
@@ -91,12 +97,15 @@
 
     </div>
     <!-- <img src="./assets/logo.png"> -->
-    <div id="app"></div>
+    <div id="app">
+
+    </div>
     <!-- built files will be auto injected-->
 
     <!-- WIDGETS -->
 
     <script type="text/javascript" src="./static/bootstrap/js/bootstrap.js"></script>
+    <!-- <script type="text/javascript" src="https://unpkg.com/babel-polyfill/dist/polyfill.min.js"></script> -->
 
     <!-- Bootstrap Dropdown -->
 

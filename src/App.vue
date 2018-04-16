@@ -1,7 +1,13 @@
-
+<style src="vue2-animate/dist/vue2-animate.min.css"></style>
+<style src="vue-nav-tabs/themes/vue-tabs.css"></style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<style src="v-toaster/dist/v-toaster.css"></style>
 <style >
 @import "/static/bootstrap/css/bootstrap.css";
-@import "/node_modules/vue2-animate/dist/vue2-animate.min.css";
+@import '../node_modules/vuetify/dist/vuetify.min.css';
+/* @import "/node_modules/vue2-animate/dist/vue2-animate.min.css"; */
+/* @import 'vuetify/dist/vuetify.min.css'; */
+/* @import "/node_modules/vuetify@0.16.9/dist/vuetify.min.css"; */
 /*helpers*/
 @import "/static/helpers/animate.css";
 @import "/static/helpers/backgrounds.css";
@@ -16,7 +22,7 @@
 
 /*<!-- ELEMENTS -->*/
 
-@import "/static/assets/elements/badges.css";
+@import "/static/elements/badges.css";
 @import "/static//elements/buttons.css";
 @import "/static/elements/content-box.css";
 @import "/static/elements/dashboard-box.css";
@@ -133,8 +139,7 @@
 }
 </style>
 <template>
-  <div id="app">
-
+  <div id="app" v-cloak>
 <!-- <div id="loading">
     <div class="spinner">
         <div class="bounce1"></div>
@@ -215,11 +220,10 @@
         </div>
     </div>
 </div> -->
-<router-view></router-view>
+<v-app>
+    <router-view></router-view>
+</v-app>   
 </div>
-
-
-
 
   </div>
 </template>

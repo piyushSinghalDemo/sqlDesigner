@@ -1,0 +1,89 @@
+.table {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.sale_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.buss_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.work_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.pur_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.db {
+    background-image: url("../images/db_iconold.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.merge {
+    background-image: url("../images/merge.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.spstep {
+    background-image: url("../images/sp_icon.jpeg");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.if-else {
+    background-image: url("../images/if-else.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.purge {
+    background-image: url("../images/purge.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.archive {
+    background-image: url("../images/archive.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.minus {
+    background-image: url("../images/minus.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.copy {
+    background-image: url("../images/copy.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.report {
+    background-image: url("../images/report_icon.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.duplicate {
+    background-image: url("../images/duplicate.png");
+    background-repeat: no-repeat;
+    background-position: center
+}

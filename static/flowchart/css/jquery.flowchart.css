@@ -1,11 +1,11 @@
-
-
 .flowchart-container {
     position: relative;
     overflow: hidden;
 }
 
-.flowchart-links-layer, .flowchart-operators-layer, .flowchart-temporary-link-layer {
+.flowchart-links-layer,
+.flowchart-operators-layer,
+.flowchart-temporary-link-layer {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -13,7 +13,8 @@
     height: 100%;
 }
 
-.flowchart-operators-layer, .flowchart-temporary-link-layer {
+.flowchart-operators-layer,
+.flowchart-temporary-link-layer {
     pointer-events: none;
 }
 
@@ -21,12 +22,10 @@
     display: none;
 }
 
-
-
-.flowchart-link, .flowchart-operator {
+.flowchart-link,
+.flowchart-operator {
     cursor: default;
 }
-
 
 .flowchart-operator-connector {
     position: relative;
@@ -62,7 +61,8 @@
     height: 0px;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid transparent; /*rgb(100, 100, 100);*/
+    border-left: 5px solid transparent;
+    /*rgb(100, 100, 100);*/
     position: absolute;
     top: 5px;
     pointer-events: none;
@@ -89,16 +89,15 @@
 }
 
 .unselectable {
-   -moz-user-select: none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
-
-   /*
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    /*
      Introduced in IE 10.
      See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
    */
-   -ms-user-select: none;
-   user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 
@@ -111,7 +110,6 @@
     border: 1px solid #CCCCCC;
     background: #FAFAFA;
     pointer-events: initial;
-
 }
 
 .flowchart-operator.hover {
@@ -121,8 +119,6 @@
 .flowchart-operator.selected {
     border-color: #555;
 }
-
-
 
 .flowchart-operator .flowchart-operator-title {
     width: 100%;
@@ -146,25 +142,102 @@
     margin-bottom: 5px;
 }
 
-.flowchart-operator .flowchart-operator-inputs, .flowchart-default-operator .flowchart-operator-outputs {
+.flowchart-operator .flowchart-operator-inputs,
+.flowchart-default-operator .flowchart-operator-outputs {
     display: table-cell;
     width: 50%;
 }
-.table {background-image: url("../images/tables.png"); background-repeat: no-repeat;background-position: center}
-.sale_order {background-image: url("../images/tables.png"); background-repeat: no-repeat;background-position: center}
-.buss_order {background-image: url("../images/tables.png"); background-repeat: no-repeat;background-position: center}
-.work_order {background-image: url("../images/tables.png"); background-repeat: no-repeat;background-position: center}
-.pur_order {background-image: url("../images/tables.png"); background-repeat: no-repeat;background-position: center}
-.db {background-image: url("../images/db_iconold.png"); background-repeat: no-repeat;background-position: center}
-.merge {background-image: url("../images/merge.png"); background-repeat: no-repeat;background-position: center}
-.spstep {background-image: url("../images/sp_icon.jpeg"); background-repeat: no-repeat;background-position: center}
-.if-else {background-image: url("../images/if-else.png"); background-repeat: no-repeat;background-position: center}
-.purge {background-image: url("../images/purge.png"); background-repeat: no-repeat;background-position: center}
-.archive {background-image: url("../images/archive.png"); background-repeat: no-repeat;background-position: center}
-.minus {background-image: url("../images/minus.png"); background-repeat: no-repeat;background-position: center}
-.copy {background-image: url("../images/copy.png"); background-repeat: no-repeat;background-position: center}
-.report {background-image: url("../images/report_icon.png"); background-repeat: no-repeat;background-position: center}
-.duplicate {background-image: url("../images/duplicate.png"); background-repeat: no-repeat;background-position: center}
-.flowchart-operator{
-  position: absolute;
+
+.table {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.sale_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.buss_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.work_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.pur_order {
+    background-image: url("../images/tables.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.db {
+    background-image: url("../images/db_iconold.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.merge {
+    background-image: url("../images/merge.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.spstep {
+    background-image: url("../images/sp_icon.jpeg");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.if-else {
+    background-image: url("../images/if-else.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.purge {
+    background-image: url("../images/purge.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.archive {
+    background-image: url("../images/archive.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.minus {
+    background-image: url("../images/minus.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.copy {
+    background-image: url("../images/copy.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.report {
+    background-image: url("../images/report_icon.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.duplicate {
+    background-image: url("../images/duplicate.png");
+    background-repeat: no-repeat;
+    background-position: center
+}
+
+.flowchart-operator {
+    position: absolute;
 }
