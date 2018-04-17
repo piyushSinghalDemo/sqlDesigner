@@ -74,7 +74,7 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
-import config from '../../config.json'
+import config from '../config.json'
 export default {
   data() {
       return {

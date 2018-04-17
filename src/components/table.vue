@@ -59,7 +59,7 @@ import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
 import workTableOutput from './workTableOutput.vue';
 import tableRelationship from './tableRelationship.vue';
-import config from '../../config.json'
+import config from '../config.json'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {

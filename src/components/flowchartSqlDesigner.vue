@@ -816,7 +816,7 @@ import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
-import config from '../../config.json'
+import config from '../config.json'
 export default {
   components: {
     Simplert,

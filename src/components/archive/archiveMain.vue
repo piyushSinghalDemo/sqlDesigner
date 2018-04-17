@@ -60,7 +60,7 @@ import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
 import tableRelationship from './tableRelationShip.vue';
-import config from '../../../config.json'
+import config from '../../config.json'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
