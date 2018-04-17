@@ -59,7 +59,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
-import tableRelationship from './tableRelationship.vue';
+import tableRelationship from './tableRelationShip.vue';
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
@@ -198,10 +198,10 @@ export default {
             "joins": [],
             "where": []
         }
-        relationObject.output_table = obj.relationship.fromTable.tableName;
-        relationObject.select_table.alias = obj.relationship.fromTable.aliesTableName;
-        relationObject.select_table.name = obj.relationship.fromTable.tableName;
-        colsObject.table_alias = obj.relationship.fromTable.aliesTableName;
+        relationObject.output_table = obj.relationship.toTable.tableName;
+        relationObject.select_table.alias = obj.relationship.toTable.aliesTableName;
+        relationObject.select_table.name = obj.relationship.toTable.tableName;
+        colsObject.table_alias = obj.relationship.toTable.aliesTableName;
         relationObject.select_table.cols.push(cloneDeep(colsObject));
 
         joinObject.jto = obj.relationship.toTable.tableName;
