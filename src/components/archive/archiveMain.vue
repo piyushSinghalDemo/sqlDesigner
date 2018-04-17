@@ -60,6 +60,7 @@ import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
 import tableRelationship from './tableRelationShip.vue';
+import config from '../../../config.json'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
@@ -271,7 +272,7 @@ export default {
       let inputParam = this.getSelectionData();
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       console.log("inputParam in archive step " +JSON.stringify(inputParam));
-      let url = 'http://192.168.1.101:8016/ide_step_data/add';
+      let url = config.SAVE_DATA_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
       _this.$http.post(url, inputParam, {
         headers: {
           'Content-Type': 'application/json',

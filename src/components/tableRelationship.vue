@@ -74,6 +74,7 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
+import config from '../../config.json'
 export default {
   data() {
       return {
@@ -109,7 +110,7 @@ export default {
         }
         this.loading = true;
         let _this = this;
-        let url = 'http://192.168.1.100:8010/get_tables';
+        let url = config.GET_DATA_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
         let inputJson = {
           "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
           "dest_queue": "test",
@@ -191,7 +192,7 @@ export default {
     },
     getColumn(tableObject){
       let _this = this;
-      let url = 'http://192.168.1.100:8010/get_all_columns';
+      let url = config.GET_DATA_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
                "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
                "dest_queue": "test",

@@ -59,6 +59,7 @@ import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
 import workTableOutput from './workTableOutput.vue';
 import tableRelationship from './tableRelationship.vue';
+import config from '../../config.json'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
@@ -187,7 +188,8 @@ export default {
         dbStepInput.joins.push(cloneDeep(joinObject));
       });
       _this.tableObj.criteriaArray.map(function (obj, index) {
-        let CriteriaObject = {
+        if(obj.relOperator){
+          let CriteriaObject = {
           'alias': obj.column.tblAlies, //table alies
           'column_name': obj.column.name, //column alies
           'operator': _this.getjoinOperator(obj.relOperator), //relational operator
@@ -200,6 +202,7 @@ export default {
           'with_col': obj.field.name
         }
         dbStepInput.where.push(cloneDeep(CriteriaObject));
+        }
       });
       dbStepInput.where[dbStepInput.where.length - 1].operand = '';
       dbStepInput.name = _this.tableObj.title;
@@ -233,9 +236,8 @@ export default {
       _this.tableObj = objData;
       _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let inputParam = this.getSelectionData();
-      debugger;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
-      let url = 'http://192.168.1.101:8016/ide_step_data/add';
+      let url = config.SAVE_DATA_URL+'ide_step_data/add';//'http://192.168.1.101:8016/ide_step_data/add';
       _this.$http.post(url, inputParam, {
         headers: {
           'Content-Type': 'application/json',
