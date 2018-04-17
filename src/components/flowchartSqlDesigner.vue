@@ -881,6 +881,7 @@ export default {
     type:'',
     validateStep:true,
     openArchivePanel:false,
+    userInfo:""
     }
   },
   computed: {
@@ -889,9 +890,17 @@ export default {
     }
   },
   mounted() {
+    var _this = this
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    _this.userInfo ={
+      'client_id':url.searchParams.getAll('client_id'),
+      'accessToken':url.searchParams.getAll('accessToken'),
+      'user_id': url.searchParams.getAll('user_id'),
+    } 
+    sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
     var blockId = ''
-    var _this = this
     window.addEventListener('keyup', function(ev) {
       if(ev.key == 'Delete'){
          _this.deleteOperator(); 
@@ -992,11 +1001,15 @@ export default {
       let ideInputData = {'steps': stepArray,
             'links': linkArray,
             'step_data': _this.$store.state.processArray,
-            'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id};
-        let url = 'http://192.168.1.106:8016/add_ide_data';
+            'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id,
+            'client_id':_this.userInfo.client_id[0],
+            'user_id':_this.userInfo.user_id[0],
+            };
+        let url = 'http://192.168.1.101:8016/add_ide_data';
        _this.$http.post(url, ideInputData, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization':_this.userInfo.accessToken[0]
           }
         }).then(response => {
           _this.$toaster.success('Data save successfully') 
@@ -1057,6 +1070,7 @@ export default {
       this.$http.post(url, inputJson, {
           headers: {
             'Content-Type': 'application/json'
+
           }
         }).then(response => {
           // _this.$store.state.allDbTables = [];

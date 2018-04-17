@@ -16,7 +16,7 @@ const state = {
     process_definition_id: '',
     openArchivePanel: false,
     dbStepObject: {
-        'id': 1,
+        'id': '',
         'type': 'select', //step type select, merge, minus
         'name': 'temp', //temp
         'desc': 'table description', //table_2
@@ -32,7 +32,7 @@ const state = {
         'where': []
     },
     archiveStepObject: {
-        "id": 2,
+        "id": '',
         "type": "archival",
         "name": "temp name archival",
         "desc": "temp desc archival",

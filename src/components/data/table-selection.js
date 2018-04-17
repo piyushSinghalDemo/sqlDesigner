@@ -47,6 +47,7 @@ export default {
     allArchiveTables: [],
     distinct: false,
     type: '',
+    stepId: '',
     is_drv_table: false,
     colObj: { "fromColumn": '', 'toColumn': '', 'operator': '' },
     colArray: [{ "fromColumn": '', 'toColumn': '', 'operator': '' }],

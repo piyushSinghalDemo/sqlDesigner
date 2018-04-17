@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="">
     <v-layout row justify-center>
-      <v-dialog v-model="dialog" fullscreen transition="dialog-bottom-transition" :overlay="false" scrollable>
+      <v-dialog :value="dialog" fullscreen transition="dialog-bottom-transition" :overlay="false" scrollable>
         <v-card tile style="height:650px">
           <!-- ******************************Start ************************************* -->
           <v-toolbar card dark color="primary" app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
@@ -77,7 +77,8 @@ export default {
       delayedDragging: false,
       e1: "",
       progressbar: 1,
-      tableObj: cloneDeep(tableData)
+      tableObj: cloneDeep(tableData),
+      userData:''
     }
   },
   computed: {
@@ -204,6 +205,9 @@ export default {
       dbStepInput.name = _this.tableObj.title;
       dbStepInput.output_table = _this.tableObj.title;
       dbStepInput.desc = _this.tableObj.description;
+      dbStepInput.client_id=_this.userData.client_id[0],
+      dbStepInput.user_id=_this.userData.user_id[0],
+      dbStepInput.id = _this.tableObj.stepId
       return dbStepInput;
     },
     getjoinOperator(sign) {
@@ -227,15 +231,18 @@ export default {
     saveDialog(objData) {
       let _this = this;
       _this.tableObj = objData;
+      _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let inputParam = this.getSelectionData();
+      debugger;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
-      let url = 'http://192.168.1.106:8016/ide_step_data/add';
+      let url = 'http://192.168.1.101:8016/ide_step_data/add';
       _this.$http.post(url, inputParam, {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':_this.userData.accessToken[0]
         }
       }).then(response => {
-        _this.tableObj.stepId = response.body.id;
+        _this.tableObj.stepId = response.body.id;        
         _this.$store.state.process_definition_id = response.body.process_definition_id;
         _this.tableObj.process_definition_id = response.body.process_definition_id;
         _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
