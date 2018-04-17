@@ -1,15 +1,9 @@
 <template>
   <v-container grid-list-md>
-    <ul>
-      <!-- <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Table Relationship</li> -->
-      <!-- <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li> -->
-      <!-- <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li> -->
-    </ul>
     <v-layout row wrap>
       <v-flex xs3>
-        <!-- {{tableObj.relationship.driverTable}} -->
         <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-          cache-items label="Select Driver Table" item-text="name" item-value="name + group" autocomplete></v-select>
+          cache-items label="Select Driver Table" :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
         <!-- <v-btn color="info" @click.native="addTable">Add</v-btn> -->
       </v-flex>
@@ -82,6 +76,7 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
+import config from '../../../config.json';
 export default {
   data() {
       return {
@@ -90,6 +85,7 @@ export default {
         searchDriver:null,
         allTables:[],
         saveData:false,
+        isDriverTable:false
       }
     },
     props: ['tableObj'],
@@ -126,6 +122,7 @@ export default {
            _this.tableObj.relationship.driverTable.aliesTableName = obj.aliesTableName;         
            if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))        
             _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
+            _this.isDriverTable = true;
             if(_this.tableObj.relationship.driverTable.stepId == 'Previous Steps'){
               obj.columns = _this.tableObj.relationship.driverTable.columns;
               _this.getPrevStepCol(cloneDeep(obj));
@@ -147,7 +144,7 @@ export default {
         }
         this.loading = true;
         let _this = this;
-        let url = 'http://192.168.1.100:8010/get_tables';
+        let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
         let inputJson = {
           "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
           "dest_queue": "test",
@@ -229,7 +226,7 @@ export default {
     },
     getColumn(tableObject){
       let _this = this;
-      let url = 'http://192.168.1.100:8010/get_all_columns';
+      let url = config.GET_DATA_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
                "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
                "dest_queue": "test",

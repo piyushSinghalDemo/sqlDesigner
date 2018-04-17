@@ -816,6 +816,7 @@ import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
+import config from '../../config.json'
 export default {
   components: {
     Simplert,
@@ -1005,7 +1006,7 @@ export default {
             'client_id':_this.userInfo.client_id[0],
             'user_id':_this.userInfo.user_id[0],
             };
-        let url = 'http://192.168.1.101:8016/add_ide_data';
+        let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
        _this.$http.post(url, ideInputData, {
           headers: {
             'Content-Type': 'application/json',
@@ -1060,7 +1061,7 @@ export default {
 
     gettables(){
       let _this = this;
-      let url = 'http://192.168.1.100:8010/get_tables';
+      let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
       let inputJson = {
               //  "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
                "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
