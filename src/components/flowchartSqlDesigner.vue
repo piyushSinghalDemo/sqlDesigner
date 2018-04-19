@@ -816,7 +816,7 @@ import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
-import config from '../config.json'
+import config from './../config.json'
 export default {
   components: {
     Simplert,
@@ -898,6 +898,8 @@ export default {
       'client_id':url.searchParams.getAll('client_id'),
       'accessToken':url.searchParams.getAll('accessToken'),
       'user_id': url.searchParams.getAll('user_id'),
+      'table_count':url.searchParams.getAll('table_count'),
+      'datasource_id':url.searchParams.getAll('datasource_id'),
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -1061,23 +1063,27 @@ export default {
 
     gettables(){
       let _this = this;
+      debugger;
       let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
       let inputJson = {
               //  "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
-               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
-               "dest_queue": "test",
-               "table_name": ""
+              //  "dest_queue": "test",
+               "table_name": "",
+               "table_count":_this.userInfo.table_count[0],
+               "datasource_id":_this.userInfo.datasource_id[0]
       }
       this.$http.post(url, inputJson, {
           headers: {
             'Content-Type': 'application/json'
-
           }
         }).then(response => {
-          // _this.$store.state.allDbTables = [];
-          // _this.$store.state.allDbTables = JSON.parse(response.bodyText);
           let allDbTables = JSON.parse(response.bodyText);
-          allDbTables.map(function(obj, index){
+          _this.$store.state.schema = allDbTables.schema;
+          debugger;
+           _this.$store.state.conn_str = allDbTables.conn_str;
+           _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables=[];
+            _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables=[];             
+          allDbTables.table_name_list.map(function(obj, index){
             let temp = {'name':obj, 'stepId':'Database Table'};
             _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables.push(cloneDeep(temp));
             _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables.push(cloneDeep(temp));             
