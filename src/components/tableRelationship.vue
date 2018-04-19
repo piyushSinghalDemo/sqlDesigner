@@ -80,7 +80,9 @@ export default {
       return {
         loading: false,
         search: null,
-        allTables:[]
+        allTables:[],
+        conn_str:this.$store.state.conn_str,
+        schema :_this.$store.state.schema,
       }
     },
     props: ['tableObj'],
@@ -192,7 +194,8 @@ export default {
       let _this = this;
       let url = config.GET_DATA_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
-               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
+               "conn_str": _this.conn_str,
+               "schema": _this.schema,
                "dest_queue": "test",
                "table_name": tableObject.tableName
       }

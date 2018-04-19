@@ -816,7 +816,7 @@ import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
-import config from '../config.json'
+import config from './../config.json'
 export default {
   components: {
     Simplert,
@@ -1063,6 +1063,7 @@ export default {
 
     gettables(){
       let _this = this;
+      debugger;
       let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
       let inputJson = {
               //  "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
@@ -1078,6 +1079,7 @@ export default {
         }).then(response => {
           let allDbTables = JSON.parse(response.bodyText);
           _this.$store.state.schema = allDbTables.schema;
+          debugger;
            _this.$store.state.conn_str = allDbTables.conn_str;
            _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables=[];
             _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables=[];             

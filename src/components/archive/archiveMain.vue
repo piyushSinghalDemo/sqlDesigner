@@ -132,6 +132,7 @@ export default {
            let archiveStepInput = cloneDeep(_this.$store.state.archiveStepObject);
            archiveStepInput.name = _this.tableObj.title;
            archiveStepInput.desc = _this.tableObj.description;
+           archiveStepInput.limit = _this.tableObj.limit;
            let DrvTableObj = {
             "select_table": {
                 "alias": _this.tableObj.relationship.driverTable.aliesTableName,

@@ -1,18 +1,33 @@
 <template>
   <v-container grid-list-md>
     <v-layout row wrap>
-      <v-flex xs3>
+      <v-flex xs6>
+        <v-layout row wrap>
+          <v-flex xs6>
+              <v-text-field name="limit" label="Limit" v-model="tableObj.limit"></v-text-field>
+          </v-flex>
+          <v-flex xs6>
+            <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
+          cache-items label="Select Driver Table" :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
+          <a class="addTable" @click.stop="addDriverTable">Add</a>
+          </v-flex>
+          <v-flex xs12>
+            <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
+              cache-items label="Select Table" item-text="name" item-value="name + group" autocomplete></v-select>
+          <a class="addTable" @click.stop="addTable">Add Table</a>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <!-- <v-flex xs3>
         <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
           cache-items label="Select Driver Table" :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
-        <!-- <v-btn color="info" @click.native="addTable">Add</v-btn> -->
-      </v-flex>
-      <v-flex xs3>
+      </v-flex> -->
+      <!-- <v-flex xs6>
         <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
           cache-items label="Select Table" item-text="name" item-value="name + group" autocomplete></v-select>
-        <!-- <v-btn color="info" @click.native="addTable" style="position:absolute">Add</v-btn> -->
         <a class="addTable" @click.stop="addTable">Add Table</a>
-      </v-flex>
+      </v-flex> -->
       <v-flex xs6>
         <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
           <div class="panel-heading">Selected Table</div>
@@ -85,7 +100,9 @@ export default {
         searchDriver:null,
         allTables:[],
         saveData:false,
-        isDriverTable:false
+        isDriverTable:false,
+        // conn_str:this.$store.state.conn_str,
+        // schema :_this.$store.state.schema,
       }
     },
     props: ['tableObj'],
@@ -98,6 +115,12 @@ export default {
          let _this = this;
         return _this.tableObj.allDbTables;
       },
+      conn_str(){
+        return this.$store.state.conn_str;
+      },
+      schema(){
+        return this.$store.state.schema;
+      }
     },
     watch: {
       search(val) {
@@ -228,7 +251,8 @@ export default {
       let _this = this;
       let url = config.GET_DATA_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
-               "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
+               "conn_str": _this.conn_str,
+               "schema": _this.schema,
                "dest_queue": "test",
                "table_name": tableObject.tableName
       }
