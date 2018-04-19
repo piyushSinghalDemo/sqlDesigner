@@ -92,7 +92,7 @@ export default {
     },
     watch: {
       search(val) {
-        val && this.querySelections(val)
+        //val && this.querySelections(val)
       }
     },
     methods: {
