@@ -39,7 +39,9 @@ const state = {
         "limit": '',
         "drv_table": [],
         "list_of_relations": []
-    }
+    },
+    schema: '',
+    conn_str: ''
 }
 const mutations = {
     mutateUpdateSchedulerId: function(state, id) {

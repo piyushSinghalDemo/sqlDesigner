@@ -8,7 +8,7 @@
     <v-layout row wrap>
       <v-flex xs6>
         <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
-          cache-items label="Select Table" item-text="name" item-value="name + stepId" autocomplete></v-select>
+           label="Select Table" item-text="name" item-value="name + stepId" autocomplete></v-select>
         <v-btn color="info" @click.native="addTable">Add</v-btn>
       </v-flex>
       <v-flex xs6>
@@ -92,7 +92,7 @@ export default {
     },
     watch: {
       search(val) {
-        //val && this.querySelections(val)
+        val && this.querySelections(val)
       }
     },
     methods: {
@@ -105,42 +105,40 @@ export default {
         _this.$emit('update-object', [_this.tableObj, num]);
       },
       querySelections(value) {
+        //debugger;
         if (value.length % 3 !== 0) {
           return
         }
         this.loading = true;
         let _this = this;
         let url = config.GET_DATA_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let conn_str=_this.$store.state.conn_str;
+        let schema =_this.$store.state.schema;
+        let userData = JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
-          "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
-          "dest_queue": "test",
-          "table_name": value
+          "conn_str": conn_str,
+          "schema":schema,
+          "table_name": value,
+          "table_count":userData.table_count[0]
         }
+        // debugger;
         this.$http.post(url, inputJson, {
           headers: {
             'Content-Type': 'application/json'
           }
         }).then(response => {
-          _this.allTables= [];
-          _this.$store.state.allDbTables = JSON.parse(response.bodyText);
-          if(this.$store.state.allDbTables.length){
-              let headerObj = { header: 'Database Table'};
-              _this.allTables.push(cloneDeep(headerObj));
-              this.$store.state.allDbTables.map(function(obj, index){
+          // _this.tableObj.allDbTables= [];
+          let tableList = response.body.table_name_list;
+          let dummyTableList=[];
+          if(tableList.length){
+              tableList.map(function(obj, index){
               let tempObj = {name: obj, stepId:'Database Table'}
-              _this.allTables.push(cloneDeep(tempObj));   
+              dummyTableList.push(cloneDeep(tempObj));   
             });
           }
-         if(_this.tableObj.previousSteps.length){
-           _this.allTables.push({ divider: true });
-          let headerObj = { header: 'Previous Steps'};
-           _this.allTables.push(cloneDeep(headerObj));
-           _this.tableObj.previousSteps.map(function(obj, index){
-             let prevObj = {'name':obj.name, 'columns':obj.selectedColumns, stepId:'Previous Steps'};
-             _this.allTables.push(cloneDeep(prevObj));
-          }); 
-         }
           this.loading = false;
+         // debugger;
+          _this.tableObj.allDbTables = dummyTableList;
           console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
