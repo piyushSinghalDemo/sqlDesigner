@@ -917,7 +917,6 @@ export default {
     });
     $("#droppable").droppable({
       accept: ".draggable",
-      // tolerance: "intersect",
       drop: function (event, ui) {
         var pos = ui.position;
         var $obj = ui.helper.clone();
@@ -926,11 +925,7 @@ export default {
         _this.type = ui.draggable.attr("id");
         var className = '';
         var imageClass = '';
-        //  var operator = _this.operatorOptions[type]
          _this.getStepDetails();
-        //  _this[operator['operatorType']](leftPosition, topPosition, type)
-        // _this.dragType = type
-        // _this.oneInOneOutOperator(leftPosition, topPosition, type)
         if (_this.type == "db" || _this.type == 'spstep') {
           _this.dragType = 'db'
         }
@@ -961,10 +956,6 @@ export default {
       let stepArray = [];
       let sourceName='';
       let destinationName='';
-      // _this.$store.state.archivalStep.map(function(obj, index){
-      //   if(obj.title == )
-      // })
-      // debugger;
       for(var flowIndex = 0; flowIndex < objectLength; flowIndex++){
         for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
             if(flowchartData.links[flowIndex].fromTable == _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title){

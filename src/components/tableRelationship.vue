@@ -81,8 +81,6 @@ export default {
         loading: false,
         search: null,
         allTables:[],
-        conn_str:this.$store.state.conn_str,
-        schema :_this.$store.state.schema,
       }
     },
     props: ['tableObj'],
@@ -91,6 +89,12 @@ export default {
          let _this = this;
         return _this.tableObj.allDbTables;
       },
+      conn_str(){
+        return this.$store.state.conn_str;
+      },
+      schema(){
+        return this.$store.state.schema;
+      }
     },
     watch: {
       search(val) {
