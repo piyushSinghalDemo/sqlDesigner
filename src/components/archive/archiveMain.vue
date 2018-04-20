@@ -225,9 +225,9 @@ export default {
           }
         });
         relationObject.joins.push(cloneDeep(joinObject));
-
+        debugger;
         obj.where.map(function(whereObj, whereIndex){
-          if(whereObj.column_name  ){
+          if(whereObj.column){
             whereObject.post_braces = whereObj.closebrsis;
             whereObject.alias = whereObj.column.tblAlies; //table alies
             whereObject.column_name = whereObj.column.name; //column alies
