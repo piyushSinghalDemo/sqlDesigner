@@ -43,11 +43,27 @@ const state = {
     schema: '',
     conn_str: ''
 }
+const getters = {
+    currentStep: state => {
+        return state.currentStep
+    }
+}
 const mutations = {
-    mutateUpdateSchedulerId: function(state, id) {
-        state.schedulerId = id
+    // mutateUpdateSchedulerId: function(state, id) {
+    //     state.schedulerId = id
+    // },
+    setCurrentStep: (state, stepId) => {
+        state.currentStep = stepId;
+    }
+}
+const actions = {
+    setCurrentStep: (context, stepId) => {
+        context.commit('setCurrentStep', stepId);
     }
 }
 export default new Vuex.Store({
-    state
+    state,
+    getters,
+    mutations,
+    actions
 })

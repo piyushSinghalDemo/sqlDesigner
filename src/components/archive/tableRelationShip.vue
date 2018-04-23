@@ -92,6 +92,7 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import config from '../../config.json';
+import { post as postToServer  } from '../methods/serverCall'
 export default {
   data() {
       return {
@@ -173,11 +174,12 @@ export default {
           "dest_queue": "test",
           "table_name": value
         }
-        this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
+        // this.$http.post(url, inputJson, {
+        //   headers: {
+        //     'Content-Type': 'application/json'
+        //   }
+        // }).then(response => {
+        postToServer(this, url, inputJson).then(response=>{  
           _this.allTables= [];
           _this.$store.state.allDbTables = JSON.parse(response.bodyText);
           if(this.$store.state.allDbTables.length){
@@ -256,11 +258,12 @@ export default {
                "dest_queue": "test",
                "table_name": tableObject.tableName
       }
-      _this.$http.post(url, inputJson, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-        }).then(response => {
+      // _this.$http.post(url, inputJson, {
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // }
+      //   }).then(response => {
+        postToServer(this, url, inputJson).then(response=>{  
           if(_this.tableObj.optionColumn.length){
             _this.tableObj.optionColumn.push({ divider: true });
           }

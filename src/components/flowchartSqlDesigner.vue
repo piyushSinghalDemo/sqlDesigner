@@ -817,6 +817,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
 import config from './../config.json'
+import { post as postToServer  } from './methods/serverCall'
+import {getProcessData} from './methods/processDefenationInput'
 export default {
   components: {
     Simplert,
@@ -948,64 +950,66 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-      let objectLength = Object.keys(flowchartData.links).length;
-      let archivalStepKeys = Object.keys(_this.$store.state.archivalStep);
-      let linkObject = {'source':'',"target":''};
-      let linkArray = [];
-      let stepObject = {'id':'','name':''};
-      let stepArray = [];
-      let sourceName='';
-      let destinationName='';
-      for(var flowIndex = 0; flowIndex < objectLength; flowIndex++){
-        for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
-            if(flowchartData.links[flowIndex].fromTable == _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title){
-              //linkObject.sourceName = flowchartData.links[flowIndex].fromTable;
-              linkObject.source = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
-              break;
-            }
-        }//we got our source Name
-        for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
-            if(flowchartData.links[flowIndex].toTable == _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title){
-            //linkObject.destinationName = flowchartData.links[flowIndex].toTable;
-            linkObject.target = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
-          }
-        }//we got our dest name
-       linkArray.push(cloneDeep(linkObject)); 
-      }
-      for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
-        stepObject.id =  _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
-        stepObject.name = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title;
-        stepArray.push(cloneDeep(stepObject)); 
-      }
-      for(var archivalStepIndex = 0; archivalStepIndex < stepArray.length; archivalStepIndex++){
-        let found = false;
-        for(var flowIndex = 0; flowIndex < objectLength; flowIndex++){
-          if(stepArray[archivalStepIndex].name == flowchartData.links[flowIndex].toTable){
-            found = true;
-            break;
-          }
-        }
-        if(found){
-          stepArray[archivalStepIndex].is_parallel = false;
-          found = false
-        }else{
-          stepArray[archivalStepIndex].is_parallel =  false;       //true; for hordcode false
-        }
-      }
-      let ideInputData = {'steps': stepArray,
-            'links': linkArray,
-            'step_data': _this.$store.state.processArray,
-            'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id,
-            'client_id':_this.userInfo.client_id[0],
-            'user_id':_this.userInfo.user_id[0],
-            };
+      // let objectLength = Object.keys(flowchartData.links).length;
+      // let archivalStepKeys = Object.keys(_this.$store.state.archivalStep);
+      // let linkObject = {'source':'',"target":''};
+      // let linkArray = [];
+      // let stepObject = {'id':'','name':''};
+      // let stepArray = [];
+      // let sourceName='';
+      // let destinationName='';
+      // for(var flowIndex = 0; flowIndex < objectLength; flowIndex++){
+      //   for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
+      //       if(flowchartData.links[flowIndex].fromTable == _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title){
+      //         //linkObject.sourceName = flowchartData.links[flowIndex].fromTable;
+      //         linkObject.source = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
+      //         break;
+      //       }
+      //   }//we got our source Name
+      //   for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
+      //       if(flowchartData.links[flowIndex].toTable == _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title){
+      //       //linkObject.destinationName = flowchartData.links[flowIndex].toTable;
+      //       linkObject.target = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
+      //     }
+      //   }//we got our dest name
+      //  linkArray.push(cloneDeep(linkObject)); 
+      // }
+      // for(var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++){
+      //   stepObject.id =  _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
+      //   stepObject.name = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title;
+      //   stepArray.push(cloneDeep(stepObject)); 
+      // }
+      // for(var archivalStepIndex = 0; archivalStepIndex < stepArray.length; archivalStepIndex++){
+      //   let found = false;
+      //   for(var flowIndex = 0; flowIndex < objectLength; flowIndex++){
+      //     if(stepArray[archivalStepIndex].name == flowchartData.links[flowIndex].toTable){
+      //       found = true;
+      //       break;
+      //     }
+      //   }
+      //   if(found){
+      //     stepArray[archivalStepIndex].is_parallel = false;
+      //     found = false
+      //   }else{
+      //     stepArray[archivalStepIndex].is_parallel =  false;       //true; for hordcode false
+      //   }
+      // }
+      // let ideInputData = {'steps': stepArray,
+      //       'links': linkArray,
+      //       'step_data': _this.$store.state.processArray,
+      //       'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id,
+      //       'client_id':_this.userInfo.client_id[0],
+      //       'user_id':_this.userInfo.user_id[0],
+      //       };
         let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
-       _this.$http.post(url, ideInputData, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':_this.userInfo.accessToken[0]
-          }
-        }).then(response => {
+      //  _this.$http.post(url, ideInputData, {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Authorization':_this.userInfo.accessToken[0]
+      //     }
+      //   }).then(response => {
+        let ideInputData = getProcessData(_this, flowchartData);
+        postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
         },response => {
            _this.$toaster.error('There is some internal error please try again later.')
@@ -1054,7 +1058,7 @@ export default {
 
     gettables(){
       let _this = this;
-      debugger;
+      // debugger;
       let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
       let inputJson = {
               //  "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
@@ -1063,23 +1067,24 @@ export default {
                "table_count":_this.userInfo.table_count[0],
                "datasource_id":_this.userInfo.datasource_id[0]
       }
-      this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
-          let allDbTables = JSON.parse(response.bodyText);
+      // this.$http.post(url, inputJson, {
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     }
+      //   }).then(response => {
+        postToServer(this, url, inputJson).then(response=>{
+
+          let allDbTables = response;//JSON.parse(response.bodyText);
           _this.$store.state.schema = allDbTables.schema;
-          debugger;
-           _this.$store.state.conn_str = allDbTables.conn_str;
-           _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables=[];
-            _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables=[];             
+          _this.$store.state.conn_str = allDbTables.conn_str;
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables=[];
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables=[];             
           allDbTables.table_name_list.map(function(obj, index){
             let temp = {'name':obj, 'stepId':'Database Table'};
             _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables.push(cloneDeep(temp));
             _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables.push(cloneDeep(temp));             
           });
-          console.log("Response from all tables"+JSON.stringify(response));
+          // console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {
           console.log(e)
             this.ErrorMessage = 'Something went wrong.'
@@ -1353,7 +1358,9 @@ export default {
           var type = operator.className
           var op = _this.operatorOptions[type]
           _this.operatorId = operatorId;
-          _this.$store.state.currentStep = operatorId; 
+          // _this.$store.state.currentStep = operatorId;
+          //  _this.$store.commit('setCurrentStep', operatorId);
+          _this.$store.dispatch('setCurrentStep', operatorId);
           console.log(op);
           // if (op['dblClick'] && op["modal"]) {
           //   $("#" + op["modalName"]).modal()
