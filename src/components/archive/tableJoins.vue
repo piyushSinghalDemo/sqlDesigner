@@ -179,7 +179,28 @@ export default {
         _this.tableObj.relationshipArray.push(cloneDeep(object));
         _this.$toaster.success('Relationship added successfully');
       }
+      this.resetForm();
       this.$emit('save-data', _this.tableObj)
+    },
+    resetForm(){
+      this.tableObj.relationship.fromTable = '';
+      this.tableObj.relationship.selectedFilter = '';
+      this.tableObj.relationship.toTable = '';
+      this.tableObj.colArray = [{ "fromColumn": '', 'toColumn': '', 'operator': '' }];
+      this.tableObj.criteriaArray = [{
+        openbrsis: '',
+        function: '',
+        column: '',
+        relOperator: '',
+        valueType: '',
+        value: '',
+        closebrsis: '',
+        logOperator: true,
+        date: null,
+        menu: false,
+        modal: false,
+        field: '',
+    }];
     },  
     deleteCriteria(index){
       let _this = this;

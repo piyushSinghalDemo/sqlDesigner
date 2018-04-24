@@ -227,7 +227,6 @@ export default {
           }
         });
         relationObject.joins.push(cloneDeep(joinObject));
-        debugger;
         obj.where.map(function(whereObj, whereIndex){
           if(whereObj.column){
             whereObject.post_braces = whereObj.closebrsis;
@@ -282,10 +281,11 @@ export default {
       //     'Authorization':_this.userData.accessToken[0]
       //   }
       // }).then(response => {
-        postToServer(this, url, inputParam).then(response=>{  
-        _this.tableObj.stepId = response.body.id;
-        _this.$store.state.process_definition_id = response.body.process_definition_id;
-        _this.tableObj.process_definition_id = response.body.process_definition_id;
+        postToServer(this, url, inputParam).then(response=>{
+
+        _this.tableObj.stepId = response.id;
+        _this.$store.state.process_definition_id = response.process_definition_id;
+        _this.tableObj.process_definition_id = response.process_definition_id;
         _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
         _this.$store.state.processArray.push(cloneDeep(inputParam));
         let $flowchart = $("#droppable");
@@ -301,6 +301,7 @@ export default {
             _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
           }
         }
+        // this.resetForm(); // clear all field value
         console.log("flowchartData in save step" + JSON.stringify(flowchartData));
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully')
@@ -311,7 +312,8 @@ export default {
         this.ErrorMessage = 'Something went wrong.'
       })
       this.$store.state.openArchivePanel = false
-    }
+    },
+    
   },
 
   mounted() {

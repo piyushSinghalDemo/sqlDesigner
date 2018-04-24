@@ -10,7 +10,7 @@ export function get(that, endPoint) {
     }
     return new Promise(function(resolve, reject) {
         that.$http.get(endPoint, { headers: headerData }).then(response => {
-            return resolve(response.bodyText)
+            return resolve(response.body)
         })
     })
 }
