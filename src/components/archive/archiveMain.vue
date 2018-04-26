@@ -291,17 +291,46 @@ export default {
         let $flowchart = $("#droppable");
         var flowchartData = $flowchart.flowchart('getData');
         let objectLength = Object.keys(flowchartData.links).length;
-        for (var i = 0; i < objectLength; i++) {
-          if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
-            let obj = {
-              'name': _this.tableObj.title,
-              'columns': _this.tableObj.selectedColumns,
-              'stepId': 'Previous Steps'
-            }
-            _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
-          }
-        }
+        // for (var i = 0; i < objectLength; i++) {
+        //   if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
+        //     let obj = {
+        //       'name': _this.tableObj.title,
+        //       'columns': _this.tableObj.selectedColumns,
+        //       'stepId': 'Previous Steps'
+        //     }
+        //     _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
+        //   }
+        // }
         // this.resetForm(); // clear all field value
+        let findLink=[],
+        addData = [];
+        let currentStep = _this.$store.state.currentStep;
+        findLink.push(cloneDeep(currentStep));
+
+        /**@augments For previous Step data Tree traversal BFS Algo Implemented
+         */
+        do{
+          for (var i = 0; i < objectLength; i++) {
+            if (flowchartData.links[i].fromOperator == currentStep) {
+              findLink.push(cloneDeep(flowchartData.links[i].toOperator));
+              addData.push(cloneDeep(flowchartData.links[i].toOperator));
+            }
+         }
+        findLink.splice(0,1);
+        if(findLink.length){
+          currentStep = findLink[0];
+        } 
+        }while(findLink.length)
+        
+        addData = uniq(addData);
+         let obj = {
+                'name': _this.tableObj.title,
+                'columns': _this.tableObj.selectedColumns,
+                'stepId': 'Previous Steps'
+              }
+        addData.map(linkObj=>{
+          _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
+        })
         console.log("flowchartData in save step" + JSON.stringify(flowchartData));
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully')

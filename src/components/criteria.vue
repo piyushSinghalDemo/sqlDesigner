@@ -17,20 +17,20 @@
     </v-layout>
     <v-layout v-for="(obj,index) in tableObj.criteriaArray" :key="index">
       <v-flex xs2>
-        <v-select :items="openbrsisArray" single-line label="Select Parenthisis" v-model="obj.openbrsis"></v-select>
+        <v-select :items="openbrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.openbrsis"></v-select>
       </v-flex>
       <v-flex xs1>
-        <v-select :items="functionArray" single-line label="Select Function" v-model="obj.function"></v-select>
+        <v-select :items="functionArray" clearable single-line label="Select Function" v-model="obj.function"></v-select>
       </v-flex>
       <v-flex xs1>
-        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
+        <v-select label="Select Column" clearable :items="tableObj.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
       </v-flex>
       <v-flex xs1>
-        <v-select :items="filterArray" single-line label="Select Operator" v-model="obj.relOperator">
+        <v-select :items="filterArray" clearable single-line label="Select Operator" v-model="obj.relOperator">
         </v-select>
       </v-flex>
       <v-flex xs2>
-        <v-select :items="valueTypeArray" single-line label="Select ValueType" v-model="obj.valueType">
+        <v-select :items="valueTypeArray" clearable single-line label="Select ValueType" v-model="obj.valueType">
         </v-select>
       </v-flex>
       <v-flex xs2>
@@ -47,7 +47,7 @@
           item-text="name" item-value="name + tblAlies"></v-select>
       </v-flex>
       <v-flex xs2>
-        <v-select :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
+        <v-select :items="closebrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.closebrsis">
         </v-select>
       </v-flex>
       <v-flex xs1>

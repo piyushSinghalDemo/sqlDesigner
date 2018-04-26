@@ -1,6 +1,6 @@
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
-export function getProcessData(_this, flowchartData) {
+export function getProcessData(_this, flowchartData, processName) {
     let userData = JSON.parse(sessionStorage.getItem("userInfo"));
     let objectLength = Object.keys(flowchartData.links).length;
     let archivalStepKeys = Object.keys(_this.$store.state.archivalStep);
@@ -51,6 +51,7 @@ export function getProcessData(_this, flowchartData) {
         'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id,
         'client_id': userData.client_id[0],
         'user_id': userData.user_id[0],
+        'process_definition_name': processName
     };
     return ideInputData;
 };
