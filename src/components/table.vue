@@ -205,7 +205,7 @@ export default {
         dbStepInput.where.push(cloneDeep(CriteriaObject));
         }
       });
-      dbStepInput.where[dbStepInput.where.length - 1].operand = '';
+      dbStepInput.where.length ? dbStepInput.where[dbStepInput.where.length - 1].operand = '':'';
       dbStepInput.name = _this.tableObj.title;
       dbStepInput.output_table = _this.tableObj.title;
       dbStepInput.desc = _this.tableObj.description;

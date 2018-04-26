@@ -8,7 +8,7 @@
           </v-flex>
           <v-flex xs6>
             <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-           label="Select Driver Table" clearable :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
+           label="Select Driver Table"  :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
           </v-flex>
           <v-flex xs12>
