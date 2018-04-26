@@ -734,7 +734,7 @@
                   Accordion content 3
                 </div> -->
               </div>
-              <button type="button" class="btn btn-danger" @click.stop="executeProcess">Execute Process</button>
+              <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
               <!-- <button>deleteOperator</button> -->
             </div>
           </div>
@@ -950,6 +950,7 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
+  // console.log("flowchartData "+ JSON.stringify(flowchartData));
       // let objectLength = Object.keys(flowchartData.links).length;
       // let archivalStepKeys = Object.keys(_this.$store.state.archivalStep);
       // let linkObject = {'source':'',"target":''};

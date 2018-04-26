@@ -75,6 +75,7 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import config from '../config.json'
+import union from 'lodash/union';
 export default {
   data() {
       return {
@@ -89,7 +90,7 @@ export default {
     computed: {
        selectTable() {
          let _this = this;
-        return _this.tableObj.allDbTables;
+        return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
       },
       conn_str(){
         return this.$store.state.conn_str;
@@ -113,9 +114,10 @@ export default {
         _this.$emit('update-object', [_this.tableObj, num]);
       },
       querySelections(value) {
+        console.log("_this.tableObj.allDbTables" +JSON.stringify(this.tableObj.allDbTables));
         let _this = this;
        // this search will work only on every third character
-        if (value.length % 3 !== 0) {
+        if (value && value.length % 3 !== 0) {
           return
         }
         // if search input is blank, It will load all previous tables

@@ -51,5 +51,6 @@ export default {
     is_drv_table: false,
     colObj: { "fromColumn": '', 'toColumn': '', 'operator': '' },
     colArray: [{ "fromColumn": '', 'toColumn': '', 'operator': '' }],
-    limit: ''
+    limit: '',
+    allPrevStepTables: []
 }
