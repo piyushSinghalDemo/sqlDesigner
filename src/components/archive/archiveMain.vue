@@ -58,14 +58,16 @@ import _def from '../various/defnitions'
 import cloneDeep from 'lodash/cloneDeep';
 import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
-import criteria from './criteria.vue'
+// import criteria from './criteria.vue'
 import tableRelationship from './tableRelationShip.vue';
 import config from '../../config.json'
+import { post as postToServer  } from '../methods/serverCall'
+import {getStepData} from '../methods/stepInputData'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
     'table-joins': tableJoins,
-    'add-criteria': criteria,
+    // 'add-criteria': criteria,
     // 'work-table-output': workTableOutput,
     'table-relationship': tableRelationship
   },
@@ -225,7 +227,6 @@ export default {
           }
         });
         relationObject.joins.push(cloneDeep(joinObject));
-        debugger;
         obj.where.map(function(whereObj, whereIndex){
           if(whereObj.column){
             whereObject.post_braces = whereObj.closebrsis;
@@ -270,34 +271,66 @@ export default {
       let _this = this;
       _this.tableObj = objData;
       _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
-      let inputParam = this.getSelectionData();
+      let inputParam =  getStepData(this, _this.tableObj);     //this.getSelectionData();
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       console.log("inputParam in archive step " +JSON.stringify(inputParam));
       let url = config.SAVE_DATA_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
-      _this.$http.post(url, inputParam, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization':_this.userData.accessToken[0]
-        }
-      }).then(response => {
-        _this.tableObj.stepId = response.body.id;
-        _this.$store.state.process_definition_id = response.body.process_definition_id;
-        _this.tableObj.process_definition_id = response.body.process_definition_id;
+      // _this.$http.post(url, inputParam, {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization':_this.userData.accessToken[0]
+      //   }
+      // }).then(response => {
+        postToServer(this, url, inputParam).then(response=>{
+
+        _this.tableObj.stepId = response.id;
+        _this.$store.state.process_definition_id = response.process_definition_id;
+        _this.tableObj.process_definition_id = response.process_definition_id;
         _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
         _this.$store.state.processArray.push(cloneDeep(inputParam));
         let $flowchart = $("#droppable");
         var flowchartData = $flowchart.flowchart('getData');
         let objectLength = Object.keys(flowchartData.links).length;
-        for (var i = 0; i < objectLength; i++) {
-          if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
-            let obj = {
-              'name': _this.tableObj.title,
-              'columns': _this.tableObj.selectedColumns,
-              'stepId': 'Previous Steps'
+        // for (var i = 0; i < objectLength; i++) {
+        //   if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
+        //     let obj = {
+        //       'name': _this.tableObj.title,
+        //       'columns': _this.tableObj.selectedColumns,
+        //       'stepId': 'Previous Steps'
+        //     }
+        //     _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
+        //   }
+        // }
+        // this.resetForm(); // clear all field value
+        let findLink=[],
+        addData = [];
+        let currentStep = _this.$store.state.currentStep;
+        findLink.push(cloneDeep(currentStep));
+
+        /**@augments For previous Step data Tree traversal BFS Algo Implemented
+         */
+        do{
+          for (var i = 0; i < objectLength; i++) {
+            if (flowchartData.links[i].fromOperator == currentStep) {
+              findLink.push(cloneDeep(flowchartData.links[i].toOperator));
+              addData.push(cloneDeep(flowchartData.links[i].toOperator));
             }
-            _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
-          }
-        }
+         }
+        findLink.splice(0,1);
+        if(findLink.length){
+          currentStep = findLink[0];
+        } 
+        }while(findLink.length)
+        
+        addData = uniq(addData);
+         let obj = {
+                'name': _this.tableObj.title,
+                'columns': _this.tableObj.selectedColumns,
+                'stepId': 'Previous Steps'
+              }
+        addData.map(linkObj=>{
+          _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
+        })
         console.log("flowchartData in save step" + JSON.stringify(flowchartData));
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully')
@@ -308,7 +341,8 @@ export default {
         this.ErrorMessage = 'Something went wrong.'
       })
       this.$store.state.openArchivePanel = false
-    }
+    },
+    
   },
 
   mounted() {

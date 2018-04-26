@@ -75,19 +75,22 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import config from '../config.json'
+import union from 'lodash/union';
 export default {
   data() {
       return {
         loading: false,
         search: null,
         allTables:[],
+        createCopy : false,
+        allDbTablesCopy : []
       }
     },
     props: ['tableObj'],
     computed: {
        selectTable() {
          let _this = this;
-        return _this.tableObj.allDbTables;
+        return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
       },
       conn_str(){
         return this.$store.state.conn_str;
@@ -98,7 +101,7 @@ export default {
     },
     watch: {
       search(val) {
-        //val && this.querySelections(val)
+         this.querySelections(val)
       }
     },
     methods: {
@@ -111,12 +114,33 @@ export default {
         _this.$emit('update-object', [_this.tableObj, num]);
       },
       querySelections(value) {
-        //debugger;
-        if (value.length % 3 !== 0) {
+        console.log("_this.tableObj.allDbTables" +JSON.stringify(this.tableObj.allDbTables));
+        let _this = this;
+       // this search will work only on every third character
+        if (value && value.length % 3 !== 0) {
           return
         }
+        // if search input is blank, It will load all previous tables
+        if(!value && _this.createCopy){
+          _this.tableObj.allDbTables = cloneDeep(_this.allDbTablesCopy); 
+          return;
+        }
+        //Firstly It will search data in current list   
+        let found = false;
+        _this.tableObj.allDbTables.map((obj, index)=>{
+          if(obj.name.indexOf(value)!== -1){
+            found = true;  
+          }
+        });
+        if(found){
+          return;
+        }else{
+        if(!_this.createCopy){
+          // _this.tableObj.allDbTables = _this.allDbTablesCopy
+           _this.allDbTablesCopy = cloneDeep(_this.tableObj.allDbTables);
+          _this.createCopy = true;
+          }
         this.loading = true;
-        let _this = this;
         let url = config.GET_DATA_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
@@ -127,7 +151,6 @@ export default {
           "table_name": value,
           "table_count":userData.table_count[0]
         }
-        // debugger;
         this.$http.post(url, inputJson, {
           headers: {
             'Content-Type': 'application/json'
@@ -151,6 +174,7 @@ export default {
           this.loading = false;
           _this.$toaster.error('Something went wrong...')
         })
+        }
       },
     addTable(){
       let validFlag=true;

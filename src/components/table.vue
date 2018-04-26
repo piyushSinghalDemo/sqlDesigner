@@ -54,6 +54,7 @@
 <script>
 import _def from './various/defnitions'
 import cloneDeep from 'lodash/cloneDeep';
+import uniq from 'lodash/uniq'
 import tableData from './data/table-selection';
 import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
@@ -204,7 +205,7 @@ export default {
         dbStepInput.where.push(cloneDeep(CriteriaObject));
         }
       });
-      dbStepInput.where[dbStepInput.where.length - 1].operand = '';
+      dbStepInput.where.length ? dbStepInput.where[dbStepInput.where.length - 1].operand = '':'';
       dbStepInput.name = _this.tableObj.title;
       dbStepInput.output_table = _this.tableObj.title;
       dbStepInput.desc = _this.tableObj.description;
@@ -252,18 +253,47 @@ export default {
         let $flowchart = $("#droppable");
         var flowchartData = $flowchart.flowchart('getData');
         let objectLength = Object.keys(flowchartData.links).length;
-        for (var i = 0; i < objectLength; i++) {
-          if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
-            let obj = {
-              'name': _this.tableObj.title,
-              'columns': _this.tableObj.selectedColumns,
-              'stepId': 'Previous Steps'
+        // for (var i = 0; i < objectLength; i++) {
+        //   if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
+        //     let obj = {
+        //       'name': _this.tableObj.title,
+        //       'columns': _this.tableObj.selectedColumns,
+        //       'stepId': 'Previous Steps'
+        //     }
+        //     _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
+        //   }
+        // }
+        // let i = 0,
+        let findLink=[],
+        addData = [];
+        let currentStep = _this.$store.state.currentStep;
+        findLink.push(cloneDeep(currentStep));
+
+        /**@augments For previous Step data Tree traversal BFS Algo Implemented
+         */
+        do{
+          for (var i = 0; i < objectLength; i++) {
+            if (flowchartData.links[i].fromOperator == currentStep) {
+              findLink.push(cloneDeep(flowchartData.links[i].toOperator));
+              addData.push(cloneDeep(flowchartData.links[i].toOperator));
             }
-            _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
-          }
-        }
-        console.log("flowchartData in save step" + JSON.stringify(flowchartData));
-        console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
+         }
+        findLink.splice(0,1);
+        if(findLink.length){
+          currentStep = findLink[0];
+        } 
+        }while(findLink.length)
+        
+        addData = uniq(addData);
+         let obj = {
+                'name': _this.tableObj.title,
+                'columns': _this.tableObj.selectedColumns,
+                'stepId': 'Previous Steps'
+              }
+        addData.map(linkObj=>{
+          _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
+        })
+        console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
         _this.$toaster.success('Data save successfully')
       }, response => {
         _this.$toaster.error('There is some internal error please try again later.')
