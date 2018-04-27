@@ -171,7 +171,7 @@ export default {
 
         let _this = this;
        // this search will work only on every third character
-        if (value.length % 3 !== 0) {
+        if (value && value.length % 3 !== 0) {
           return
         }
         // if search input is blank, It will load all previous tables
@@ -234,7 +234,7 @@ export default {
 
         let _this = this;
        // this search will work only on every third character
-        if (value.length % 3 !== 0) {
+        if (value && value.length % 3 !== 0) {
           return
         }
         // if search input is blank, It will load all previous tables

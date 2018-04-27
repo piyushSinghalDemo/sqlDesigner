@@ -12,14 +12,14 @@
                </v-layout>
                <v-layout row wrap>
                <v-flex style="margin-right:20px;">
-                  <v-select  :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" 
+                  <v-select clearable :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" 
                     label="From Table" single-line item-text="tableName" item-value="tableName + aliesTableName"></v-select>
                </v-flex>
                <v-flex style="margin-right:20px;">
-                  <v-select :items="joinType"  v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line ></v-select>
+                  <v-select clearable :items="joinType"  v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line ></v-select>
                </v-flex>
                <v-flex style="margin-right:20px;">
-                   <v-select :items="tableObj.relationship.selectedTableArray"  v-model="tableObj.relationship.toTable" 
+                   <v-select clearable :items="tableObj.relationship.selectedTableArray"  v-model="tableObj.relationship.toTable" 
                       label="To Table" item-text="tableName" item-value="tableName + aliesTableName" single-line></v-select>
                </v-flex>
                </v-layout>
@@ -36,17 +36,17 @@
                <v-layout row wrap v-for="(column, index) in tableObj.colArray" :key="index">
                <v-flex xs4 style="margin-right:20px;">
                  <!-- *********************************** Group Column ********************************************* -->
-                   <v-select label="From Column" :items="tableObj.optionColumn"  v-model="column.fromColumn" item-text="name" 
+                   <v-select clearable label="From Column" :items="tableObj.optionColumn"  v-model="column.fromColumn" item-text="name" 
                      single-line item-value="name + colAlies" autocomplete></v-select>     
                  <!-- ********************************************************************************************** -->
                </v-flex>
                <v-flex xs2 style="margin-right:20px;">
-                  <v-select :items="filterArray" v-model="column.operator"  label="Operator" single-line ></v-select>
+                  <v-select clearable :items="filterArray" v-model="column.operator"  label="Operator" single-line ></v-select>
                </v-flex>
                <v-flex xs4 style="margin-right:20px;">
                   <v-layout>
                     <v-flex>
-                      <v-select label="To Column" :items="tableObj.optionColumn"  v-model="column.toColumn" item-text="name" 
+                      <v-select clearable label="To Column" :items="tableObj.optionColumn"  v-model="column.toColumn" item-text="name" 
                         single-line item-value="name + colAlies" autocomplete></v-select> 
                     </v-flex>
                   </v-layout>
