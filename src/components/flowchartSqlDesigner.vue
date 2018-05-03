@@ -830,6 +830,7 @@ import { post as postToServer  } from './methods/serverCall'
 import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
 import debounce from 'lodash/debounce'
+import processDefenationInput from './methods/processDefenationInput'
 export default {
   components: {
     Simplert,
@@ -919,8 +920,12 @@ export default {
       'user_id': url.searchParams.getAll('user_id'),
       'table_count':url.searchParams.getAll('table_count'),
       'datasource_id':url.searchParams.getAll('datasource_id'),
+      'process_definition_id':url.searchParams.getAll('process_definition_id'),
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
+    if(_this.userInfo.process_definition_id[0]){
+        this.createProcess();
+    }
     var title = '';
     var blockId = ''
     window.addEventListener('keyup', function(ev) {
