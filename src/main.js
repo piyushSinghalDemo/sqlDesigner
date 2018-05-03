@@ -30,29 +30,29 @@ Vue.prototype.yaml_host = process.env.YAML_HOST
 
 
 
-Vue.http.interceptors.push(function(request, next) {
-    $('body').addClass("loading");
-    // request.headers.set("Access-Control-Allow-Origin", "*")
-    // request.headers.set("Access-Control-Allow-Methods", "*");
-    // request.headers.set("Access-Control-Allow-Headers", "*");
-    next(function(response) {
-        $('body').removeClass("loading");
-        switch (response.status) {
-            case 404:
-                alert('page not found');
-                break;
-            case 200:
-                //alert('page not found');
-                break;
-            case 204:
-                //alert('page not found');
-                break;
-            default:
-                alert('ERROR: ' + response.status)
+// Vue.http.interceptors.push(function(request, next) {
+//     $('body').addClass("loading");
+//     // request.headers.set("Access-Control-Allow-Origin", "*")
+//     // request.headers.set("Access-Control-Allow-Methods", "*");
+//     // request.headers.set("Access-Control-Allow-Headers", "*");
+//     next(function(response) {
+//         $('body').removeClass("loading");
+//         switch (response.status) {
+//             case 404:
+//                 alert('page not found');
+//                 break;
+//             case 200:
+//                 //alert('page not found');
+//                 break;
+//             case 204:
+//                 //alert('page not found');
+//                 break;
+//             default:
+//                 alert('ERROR: ' + response.status)
 
-        }
-    });
-});
+//         }
+//     });
+// });
 
 var vm = new Vue({
         el: '#app',
