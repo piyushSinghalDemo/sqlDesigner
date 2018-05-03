@@ -305,8 +305,10 @@ export default {
         }
       });
       if(validFlag){
+        let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
+        let tableName = tempName.join("");
         let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
-                   'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable.name + _this.$store.state.aliesCounter++),
+                   'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
                    'group':'Database Table','stepId':_this.tableObj.relationship.selectedTable.stepId}
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
         if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){

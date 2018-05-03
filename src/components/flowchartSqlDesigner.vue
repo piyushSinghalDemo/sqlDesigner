@@ -271,7 +271,6 @@
                       </select>
                     </div>
                   </div>
-
                   <br>
                   <h4>With: </h4>
                   <div class="form-group">
@@ -684,8 +683,15 @@
           </ul>
           <div id="storage" class="definition" style="position:relative">
             <div class="files-box" style="position:relative">
+              <!-- <div>
+                <input type="text" class="srch-def-text"  placeholder="Search Id" />
+                <i class="fa fa-search srch-def-icon"></i>
+              </div> -->
+              <div>
+                <h3 contenteditable="true" class="docs-title-input" @blur="setProcessName">{{processDocName}}</h3>
+              </div>
               <div class="accordion collapse in" style="position:relative">
-                <h3>Steps</h3>
+                <h3 contenteditable="true">Steps</h3>
                 <div style="padding-bottom:25px;position:relative;">
                   <div class="draggable" @contextmenu.prevent="$refs.ctx.open($event)" id="db" style="display:inline-block;">
                     <h5>Step</h5>
@@ -727,6 +733,8 @@
                     <h5>Duplicate</h5>
                     <img src="../../static/flowchart/images/duplicate.png" alt="" height="40" width="40">
                   </div>
+
+                  <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
                 </div>
             
                 <!-- <h3>Header 3</h3>
@@ -734,7 +742,6 @@
                   Accordion content 3
                 </div> -->
               </div>
-              <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
               <!-- <button>deleteOperator</button> -->
             </div>
           </div>
@@ -822,6 +829,7 @@ import config from './../config.json'
 import { post as postToServer  } from './methods/serverCall'
 import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
+import debounce from 'lodash/debounce'
 export default {
   components: {
     Simplert,
@@ -889,10 +897,14 @@ export default {
     validateStep:true,
     openArchivePanel:false,
     userInfo:"",
-    dialog2:false
+    dialog2:false,
+    // processDocName:this.$store.state.process_definition_name
     }
   },
   computed: {
+    processDocName: function(){
+      return this.$store.state.process_definition_name;
+    },
     total: function () {
       return this.value.interval ? (this.value.interval * this.value.multiplier).toFixed(2) : 0
     }
@@ -951,21 +963,29 @@ export default {
     }.bind(this), 1000)
   },
   methods: {
+    setProcessName(ev){
+      this.$store.state.process_definition_name = ev.target.textContent;
+    },
     saveName(name){
       let _this = this;
       _this.saveProcessData(name);
-      _this.dialog2 = false;
-      console.log("Name: "+name);
+      // _this.dialog2 = false;
+      // console.log("Name: "+name);
     },
     executeProcess(){
-      this.dialog2 = true;
+      // let $flowchart = $("#droppable");
+      // var flowchartData = $flowchart.flowchart('getData');
+      // console.log("flowchartData "+JSON.stringify(flowchartData));
+      this.saveProcessData();
+      // this.dialog2 = true;
     },
-    saveProcessData(processName){
+    saveProcessData(){
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
         let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
-        let ideInputData = getProcessData(_this, flowchartData, processName);
+        let ideInputData = getProcessData(_this, flowchartData);
+        // console.log("ideInputData "+JSON.stringify(ideInputData));
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
         },response => {
@@ -987,7 +1007,41 @@ export default {
       let _this = this;
        if (this.$refs.form.validate()) {
          _this.addTitle = false;
-         _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type)
+         let url = config.SAVE_DATA_URL+'ide_step_data/add';
+         let stepType = "";
+         if(_this.type == "db"){
+           stepType = 'select'
+         }else if(_this.type == "archive"){
+           stepType = 'archival'
+         }else{
+           return ;
+         }
+        //  let stringArray = _this.stepName.split(" ");
+        //  let joinString = stringArray.join("");
+        //  console.log("joinString " +joinString);
+         let inputJson = {
+           process_definition_id : _this.$store.state.process_definition_id,
+           name:_this.stepName,
+           description:_this.stepDetail,
+           type:stepType
+         }
+         postToServer(this, url, inputJson).then(response=>{
+           console.log("Response from step save:"+JSON.stringify(response));
+           if(response == "Data not valid"){
+              _this.$toaster.error('Due to some internal error , Step not created');
+              return; 
+           }else{
+             _this.$store.state.process_definition_id = response.process_definition_id;
+             tableData.title = cloneDeep(_this.stepName); 
+             tableData.description = cloneDeep(_this.stepDetail);
+             tableData.type = _this.type;
+             tableData.stepId = response.id+"";
+             _this.$store.state.archivalStep[response.id]=cloneDeep(tableData);
+             _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type, response.id)
+           }
+          //  if(response.process_definition_id)
+           
+         });
        }
     },
     clearStep(){
@@ -1175,17 +1229,18 @@ export default {
       this.dbData = JSON.parse(JSON.stringify(data))
       // console.log(JSON.stringify(this.dataStr.dbData));
     },
-    oneInOneOutOperator(left, top, className) {
-      var _this = this
-      var operatorId = 'created_' + className + '_operator_' + _this.operatorI;
+    oneInOneOutOperator(left, top, className, operatorId) {
+      var _this = this;
+      // var operatorId = 'created_' + className + '_operator_' + _this.operatorI;
       var operatorData = _def.methods.oneInOneOutOperator(_this.stepName, _this.operatorI, className, top, left);
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
-      tableData.title = cloneDeep(_this.stepName); 
-      tableData.description = cloneDeep(_this.stepDetail);
-      tableData.type = className;
-      _this.$refs.form.reset()
-      _this.$store.state.archivalStep[operatorId]=cloneDeep(tableData);
+      _this.$refs.form.reset();
+      // tableData.title = cloneDeep(_this.stepName); 
+      // tableData.description = cloneDeep(_this.stepDetail);
+      // tableData.type = className;
+      // _this.$refs.form.reset()
+      // _this.$store.state.archivalStep[operatorId]=cloneDeep(tableData);
       _this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData')
       _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
@@ -1386,7 +1441,13 @@ export default {
         return usr.token === token
       });
     }
-  }
+  },
+//   watch: {
+//   processDocName(newValue) {  
+//     debugger;
+//     this.$store.state.process_definition_name = newValue;
+//   },
+// }
 }
 
 </script>
@@ -1534,7 +1595,37 @@ body {
   .flowchart-operator-inputs-outputs{
     height: 60px;
 } 
-
+.srch-def-text{
+  border-bottom: 01px solid cadetblue;
+  width: 97%;
+  /* height: 100%; */
+  height: 30px;
+  margin-bottom: 10px;
+  margin-left: 3%
+}
+.srch-def-icon{
+    position: absolute;
+    top: 2%;
+    right: 3%;
+    cursor: pointer;
+}
+.docs-title-input:hover {
+    border-color: #e5e5e5;
+}
+.docs-title-input:focus {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 1px solid #4d90fe!important;
+    -webkit-box-shadow: inset 0px 1px 2px rgba(0,0,0,0.1);
+    -moz-box-shadow: inset 0px 1px 2px rgba(0,0,0,0.1);
+    box-shadow: inset 0px 1px 2px rgba(0,0,0,0.1);
+    color: #000;
+    outline: none;
+}
+.docs-title-input{
+    text-align: center;
+    margin: 5px 0px;
+}
 /*
 sql designer
  */

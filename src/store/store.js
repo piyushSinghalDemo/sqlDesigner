@@ -14,9 +14,11 @@ const state = {
     archivalStep: {}, // for getting all steps internal data
     processArray: [],
     process_definition_id: '',
+    process_definition_name: 'Untitled Document',
     openArchivePanel: false,
     dbStepObject: {
         'id': '',
+        'process_definition_name': '',
         'type': 'select', //step type select, merge, minus
         'name': 'temp', //temp
         'desc': 'table description', //table_2
@@ -28,11 +30,12 @@ const state = {
             'cols': []
         },
         'joins': [],
-
-        'where': []
+        'where': [],
+        links: []
     },
     archiveStepObject: {
         "id": '',
+        "process_definition_name": '',
         "type": "archival",
         "name": "temp name archival",
         "desc": "temp desc archival",

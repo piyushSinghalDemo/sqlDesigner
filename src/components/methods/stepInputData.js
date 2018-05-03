@@ -117,9 +117,10 @@ export function getStepData(_this, tableObj) {
             }
         });
         archiveStepInput.list_of_relations.push(relationObject);
-        archiveStepInput.client_id = userData.client_id[0],
-            archiveStepInput.user_id = userData.user_id[0],
-            archiveStepInput.id = tableObj.stepId
+        archiveStepInput.client_id = userData.client_id[0];
+        archiveStepInput.user_id = userData.user_id[0];
+        archiveStepInput.id = tableObj.stepId;
+        archiveStepInput.process_definition_name = _this.$store.state.process_definition_name;
     });
     return archiveStepInput;
 };

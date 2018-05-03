@@ -129,6 +129,10 @@ export default {
     getSelectionData() {
       let _this = this;
       let dbStepInput = cloneDeep(_this.$store.state.dbStepObject);
+      let $flowchart = $("#droppable");
+      var flowchartData = $flowchart.flowchart('getData');
+      let objectLength = Object.keys(flowchartData.links).length;
+        // for (var i = 0; i < objectLength; i++) {
       // console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
       let workTablecolumns = [];
       dbStepInput.distinct = _this.tableObj.distinct;
@@ -205,6 +209,19 @@ export default {
         dbStepInput.where.push(cloneDeep(CriteriaObject));
         }
       });
+      let link = {
+        source:'',
+        target:'',
+        sourceName:'',
+        targetName:''
+      }
+      for (var i = 0; i < objectLength; i++) {
+          link.source = flowchartData.links[i].fromOperator;
+          link.target = flowchartData.links[i].toOperator;
+          link.sourceName = flowchartData.links[i].fromTable;
+          link.targetName = flowchartData.links[i].toTable
+          dbStepInput.links.push(cloneDeep(link));
+      }
       dbStepInput.where.length ? dbStepInput.where[dbStepInput.where.length - 1].operand = '':'';
       dbStepInput.name = _this.tableObj.title;
       dbStepInput.output_table = _this.tableObj.title;
@@ -212,6 +229,7 @@ export default {
       dbStepInput.client_id=_this.userData.client_id[0],
       dbStepInput.user_id=_this.userData.user_id[0],
       dbStepInput.id = _this.tableObj.stepId
+      dbStepInput.process_definition_name = _this.$store.state.process_definition_name;
       return dbStepInput;
     },
     getjoinOperator(sign) {
@@ -236,7 +254,15 @@ export default {
       let _this = this;
       _this.tableObj = objData;
       _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
+      let flowchart$ = $("#droppable");
+      var operatorData = flowchart$.flowchart('getOperatorData', _this.$store.state.currentStep);
+      let $flowchart = $("#droppable");
+      var flowchartData = $flowchart.flowchart('getData');
+      console.log("flowchartData "+JSON.stringify(flowchartData));
       let inputParam = this.getSelectionData();
+      inputParam.top = operatorData.top+"";
+      inputParam.left = operatorData.left+"";
+      inputParam.data_source_id = _this.userData.datasource_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       let url = config.SAVE_DATA_URL+'ide_step_data/add';//'http://192.168.1.101:8016/ide_step_data/add';
       _this.$http.post(url, inputParam, {
@@ -250,8 +276,7 @@ export default {
         _this.tableObj.process_definition_id = response.body.process_definition_id;
         _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
         _this.$store.state.processArray.push(cloneDeep(inputParam));
-        let $flowchart = $("#droppable");
-        var flowchartData = $flowchart.flowchart('getData');
+        
         let objectLength = Object.keys(flowchartData.links).length;
         // for (var i = 0; i < objectLength; i++) {
         //   if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
