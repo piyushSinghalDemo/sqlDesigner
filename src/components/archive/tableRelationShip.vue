@@ -8,7 +8,7 @@
           </v-flex>
           <v-flex xs6>
             <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-           label="Select Driver Table"  :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
+           label="Select Driver Table"   item-text="name" item-value="name + group" autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
           </v-flex>
           <v-flex xs12>
@@ -18,7 +18,7 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <!-- <v-flex xs3>
+      <!-- <v-flex xs3> :disabled=isDriverTable
         <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
           cache-items label="Select Driver Table" :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
@@ -305,8 +305,10 @@ export default {
         }
       });
       if(validFlag){
+        let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
+        let tableName = tempName.join("");
         let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
-                   'aliesTableName':cloneDeep(_this.tableObj.relationship.selectedTable.name + _this.$store.state.aliesCounter++),
+                   'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
                    'group':'Database Table','stepId':_this.tableObj.relationship.selectedTable.stepId}
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
         if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){

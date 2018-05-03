@@ -56,6 +56,7 @@
 <script>
 import _def from '../various/defnitions'
 import cloneDeep from 'lodash/cloneDeep';
+import uniq from 'lodash/uniq'
 import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
 // import criteria from './criteria.vue'
@@ -271,8 +272,14 @@ export default {
       let _this = this;
       _this.tableObj = objData;
       _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
+      let flowchart$ = $("#droppable");
+      var operatorData = flowchart$.flowchart('getOperatorData', _this.$store.state.currentStep);
       let inputParam =  getStepData(this, _this.tableObj);     //this.getSelectionData();
+      inputParam.top = operatorData.top+"";
+      inputParam.left = operatorData.left+"";
+      inputParam.data_source_id = _this.userData.datasource_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
+      inputParam.process_definition_name = _this.$store.state.process_definition_name;
       console.log("inputParam in archive step " +JSON.stringify(inputParam));
       let url = config.SAVE_DATA_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
       // _this.$http.post(url, inputParam, {
@@ -282,7 +289,11 @@ export default {
       //   }
       // }).then(response => {
         postToServer(this, url, inputParam).then(response=>{
-
+          debugger;
+          if(response.message){
+            _this.$toaster.error(response.message);
+            return;
+          }
         _this.tableObj.stepId = response.id;
         _this.$store.state.process_definition_id = response.process_definition_id;
         _this.tableObj.process_definition_id = response.process_definition_id;
@@ -333,14 +344,18 @@ export default {
         })
         console.log("flowchartData in save step" + JSON.stringify(flowchartData));
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
-        _this.$toaster.success('Data save successfully')
+        _this.$toaster.success('Data save successfully');
+        this.$store.state.openArchivePanel = false;
       }, response => {
-        _this.$toaster.error('There is some internal error please try again later.')
+        if(response.message){
+            _this.$toaster.error(response.message);
+        }
       }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'
+        // _this.$toaster.error('There is some internal error please try again later.')
       })
-      this.$store.state.openArchivePanel = false
+
     },
     
   },

@@ -52,5 +52,8 @@ export default {
     colObj: { "fromColumn": '', 'toColumn': '', 'operator': '' },
     colArray: [{ "fromColumn": '', 'toColumn': '', 'operator': '' }],
     limit: '',
-    allPrevStepTables: []
+    allPrevStepTables: [],
+    top: '',
+    left: '',
+    data_source_id: ''
 }

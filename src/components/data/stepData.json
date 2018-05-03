@@ -1,0 +1,39 @@
+{
+    "operators": {
+        "operator_id": {
+            "new": true,
+            "className": "",
+            "top": "",
+            "left": "",
+            "data": {},
+            "properties": {
+                "title": "",
+                "inputs": {
+                    "ins": {
+                        "label": "",
+                        "multiple": true
+                    }
+                },
+                "outputs": {
+                    "outs": {
+                        "label": "",
+                        "multiple": true
+                    }
+                }
+            }
+        }
+    },
+    "links": {
+        "0": {
+            "fromOperator": "created_db_operator_0",
+            "fromConnector": "outs",
+            "fromSubConnector": 0,
+            "toOperator": "created_archive_operator_1",
+            "toConnector": "ins",
+            "toSubConnector": 0,
+            "fromTable": "Step1",
+            "toTable": "Step2"
+        }
+    },
+    "operatorTypes": {}
+}
