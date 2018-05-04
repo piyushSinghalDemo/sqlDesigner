@@ -41,7 +41,8 @@ const state = {
         "desc": "temp desc archival",
         "limit": '',
         "drv_table": [],
-        "list_of_relations": []
+        "list_of_relations": [],
+        links: []
     },
     schema: '',
     conn_str: ''

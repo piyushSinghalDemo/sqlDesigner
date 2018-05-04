@@ -3,6 +3,9 @@ import cloneDeep from 'lodash/cloneDeep';
 export function getStepData(_this, tableObj) {
     // let _this = this;
     // console.log("selectedTableArray" + JSON.stringify(_this.tableObj.relationshipArray));
+    let $flowchart = $("#droppable");
+    var flowchartData = $flowchart.flowchart('getData');
+    let objectLength = Object.keys(flowchartData.links).length;
     let userData = JSON.parse(sessionStorage.getItem("userInfo"));
     let archiveStepInput = cloneDeep(_this.$store.state.archiveStepObject);
     archiveStepInput.name = tableObj.title;
@@ -116,11 +119,27 @@ export function getStepData(_this, tableObj) {
                 relationObject.where.push(whereObject);
             }
         });
+        let link = {
+            source: '',
+            target: '',
+            sourceName: '',
+            targetName: '',
+            fromSubConnector: '',
+            toSubConnector: ''
+        }
+        for (var i = 0; i < objectLength; i++) {
+            link.source = flowchartData.links[i].fromOperator;
+            link.target = flowchartData.links[i].toOperator;
+            link.sourceName = flowchartData.links[i].fromTable;
+            link.targetName = flowchartData.links[i].toTable;
+            link.fromSubConnector = flowchartData.links[i].fromSubConnector;
+            link.toSubConnector = flowchartData.links[i].toSubConnector;
+            archiveStepInput.links.push(cloneDeep(link));
+        }
         archiveStepInput.list_of_relations.push(relationObject);
-        archiveStepInput.client_id = userData.client_id[0];
-        archiveStepInput.user_id = userData.user_id[0];
-        archiveStepInput.id = tableObj.stepId;
-        archiveStepInput.process_definition_name = _this.$store.state.process_definition_name;
+        archiveStepInput.client_id = userData.client_id[0],
+            archiveStepInput.user_id = userData.user_id[0],
+            archiveStepInput.id = tableObj.stepId
     });
     return archiveStepInput;
 };

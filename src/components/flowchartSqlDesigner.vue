@@ -826,11 +826,11 @@ import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
 import config from './../config.json'
-import { post as postToServer  } from './methods/serverCall'
+import { post as postToServer, get as getFromServer  } from './methods/serverCall'
 import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
 import debounce from 'lodash/debounce'
-import processDefenationInput from './methods/processDefenationInput'
+import {createStepData} from './methods/createStep'
 export default {
   components: {
     Simplert,
@@ -923,9 +923,6 @@ export default {
       'process_definition_id':url.searchParams.getAll('process_definition_id'),
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
-    if(_this.userInfo.process_definition_id[0]){
-        this.createProcess();
-    }
     var title = '';
     var blockId = ''
     window.addEventListener('keyup', function(ev) {
@@ -962,12 +959,31 @@ export default {
 
     setTimeout(function () {
       var data = {}
-      this.loadData(data)
+      let _this = this;
+      debugger;
+        if(_this.userInfo.process_definition_id[0]){
+          this.createProcessData();
+        }else{
+          this.loadData(data)
+        }
       var object = $(".createScroll");
       $("#minimap").minimap(object);
     }.bind(this), 1000)
   },
   methods: {
+     createProcessData(){
+       debugger;
+      let _this = this;
+      let inputJson = _this.userInfo.process_definition_id[0];
+      let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
+        // let ideInputData = processDefenationInput(_this, flowchartData);
+        getFromServer(this, url).then(response=>{
+          console.log("Data for step creation "+JSON.stringify(response));
+          let ideInputData = createStepData(_this, response);
+          debugger;
+              _this.loadData(ideInputData);
+        });  
+    },
     setProcessName(ev){
       this.$store.state.process_definition_name = ev.target.textContent;
     },
@@ -978,16 +994,13 @@ export default {
       // console.log("Name: "+name);
     },
     executeProcess(){
-      // let $flowchart = $("#droppable");
-      // var flowchartData = $flowchart.flowchart('getData');
-      // console.log("flowchartData "+JSON.stringify(flowchartData));
       this.saveProcessData();
-      // this.dialog2 = true;
     },
     saveProcessData(){
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
+      console.log("flowchartData"+JSON.stringify(flowchartData));
         let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         // console.log("ideInputData "+JSON.stringify(ideInputData));

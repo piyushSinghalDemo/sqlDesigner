@@ -213,13 +213,18 @@ export default {
         source:'',
         target:'',
         sourceName:'',
-        targetName:''
+        targetName:'',
+        fromSubConnector:'',
+        toSubConnector:''
       }
       for (var i = 0; i < objectLength; i++) {
+        debugger;
           link.source = flowchartData.links[i].fromOperator;
           link.target = flowchartData.links[i].toOperator;
           link.sourceName = flowchartData.links[i].fromTable;
-          link.targetName = flowchartData.links[i].toTable
+          link.targetName = flowchartData.links[i].toTable;
+          link.fromSubConnector = flowchartData.links[i].fromSubConnector;
+          link.toSubConnector = flowchartData.links[i].toSubConnector;
           dbStepInput.links.push(cloneDeep(link));
       }
       dbStepInput.where.length ? dbStepInput.where[dbStepInput.where.length - 1].operand = '':'';
@@ -320,13 +325,17 @@ export default {
         })
         console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
         _this.$toaster.success('Data save successfully')
+        this.$store.state.dialog = false;
       }, response => {
-        _this.$toaster.error('There is some internal error please try again later.')
-      }).catch(e => {
+            // debugger;
+            if (response.body.message) {
+                _this.$toaster.error(response.body.message);
+            }
+        }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'
       })
-      this.$store.state.dialog = false
+      
     }
   },
 

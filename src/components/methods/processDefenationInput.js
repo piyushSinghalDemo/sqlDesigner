@@ -1,5 +1,6 @@
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
+import { debug } from 'util';
 export function getProcessData(_this, flowchartData) {
     let userData = JSON.parse(sessionStorage.getItem("userInfo"));
     let objectLength = Object.keys(flowchartData.links).length;
@@ -8,7 +9,9 @@ export function getProcessData(_this, flowchartData) {
         source: '',
         target: '',
         sourceName: '',
-        targetName: ''
+        targetName: '',
+        fromSubConnector: '',
+        toSubConnector: ''
     };
     let linkArray = [];
     let stepObject = { 'id': '', 'name': '' };
@@ -34,6 +37,8 @@ export function getProcessData(_this, flowchartData) {
         link.target = flowchartData.links[i].toOperator;
         link.sourceName = flowchartData.links[i].fromTable;
         link.targetName = flowchartData.links[i].toTable
+        link.fromSubConnector = flowchartData.links[i].fromSubConnector;
+        link.toSubConnector = flowchartData.links[i].toSubConnector;
         linkArray.push(cloneDeep(link));
     }
     for (var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++) {
