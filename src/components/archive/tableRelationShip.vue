@@ -29,6 +29,7 @@
         <a class="addTable" @click.stop="addTable">Add Table</a>
       </v-flex> -->
       <v-flex xs6>
+        <!-- {{tableObj.relationship}} -->
         <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
           <div class="panel-heading">Selected Table</div>
           <div class="panel-body">

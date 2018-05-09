@@ -105,7 +105,7 @@ export function getStepData(_this, tableObj) {
         relationObject.joins.push(cloneDeep(joinObject));
 
         obj.where.map(function(whereObj, whereIndex) {
-            if (whereObj.column_name) {
+            if (whereObj.column) {
                 whereObject.post_braces = whereObj.closebrsis;
                 whereObject.alias = whereObj.column.tblAlies; //table alies
                 whereObject.column_name = whereObj.column.name; //column alies

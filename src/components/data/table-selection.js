@@ -13,7 +13,7 @@ export default {
     parenthasisobject: {
         openbrsis: '',
         function: '',
-        column: '',
+        column: {},
         relOperator: '',
         valueType: '',
         value: '',

@@ -24,6 +24,7 @@
         </div>
       </v-flex>
     </v-layout>
+    <!-- table data : {{tableObj}} -->
     <v-layout row wrap v-show="tableObj.relationshipArray.length">
       <v-flex>
         <b>From Table</b>
@@ -89,7 +90,7 @@ export default {
     props: ['tableObj'],
     computed: {
        selectTable() {
-         let _this = this;
+        let _this = this;
         return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
       },
       conn_str(){
@@ -101,7 +102,12 @@ export default {
     },
     watch: {
       search(val) {
-         this.querySelections(val)
+         //this.querySelections(val)
+      },
+      tableObj(newVal){
+        // debugger;
+        console.log("newVal"+JSON.stringify(newVal));
+        console.log(this.tableObj);
       }
     },
     methods: {

@@ -831,6 +831,7 @@ import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
 import debounce from 'lodash/debounce'
 import {createStepData} from './methods/createStep'
+import {setStepInfo} from './methods/setStepInfo'
 export default {
   components: {
     Simplert,
@@ -960,7 +961,6 @@ export default {
     setTimeout(function () {
       var data = {}
       let _this = this;
-      debugger;
         if(_this.userInfo.process_definition_id[0]){
           this.createProcessData();
         }else{
@@ -971,17 +971,36 @@ export default {
     }.bind(this), 1000)
   },
   methods: {
-     createProcessData(){
-       debugger;
+    async createProcessData(){       
       let _this = this;
       let inputJson = _this.userInfo.process_definition_id[0];
       let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
-        // let ideInputData = processDefenationInput(_this, flowchartData);
         getFromServer(this, url).then(response=>{
-          console.log("Data for step creation "+JSON.stringify(response));
-          let ideInputData = createStepData(_this, response);
-          debugger;
-              _this.loadData(ideInputData);
+          if(response && response.steps.length)
+          _this.userInfo.datasource_id[0] = response.steps[0].data_source_id;
+          // console.log("Data for step creation "+JSON.stringify(response));
+        let ideInputData = createStepData(_this, response);          
+        let tableUrl = config.GET_DATA_URL + 'get_tables'; //'http://192.168.1.100:8010/get_tables';
+        let inputJson = {
+            "table_name": "",
+            "table_count": "",
+            "datasource_id": response.steps[0].data_source_id
+        }
+        postToServer(this, tableUrl, inputJson).then(tableResponse => {
+            if (tableResponse && tableResponse.table_name_list) {
+                _this.$store.state.schema = tableResponse.schema;
+                _this.$store.state.conn_str = tableResponse.conn_str;
+                setStepInfo(_this, response);
+                debugger;
+                console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));   
+            }
+        }, tableResponse => {}).catch(e => {
+            console.log(e)
+            this.ErrorMessage = 'Error in getting connection string.'
+        });
+          
+          // console.log("archivalStep step information " +JSON.stringify(_this.$store.state.archivalStep));
+          _this.loadData(ideInputData);
         });  
     },
     setProcessName(ev){
@@ -1000,7 +1019,8 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-      console.log("flowchartData"+JSON.stringify(flowchartData));
+      console.log("archivalStep"+JSON.stringify(this.$store.state.archivalStep));
+      // console.log("flowchartData"+JSON.stringify(flowchartData));
         let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         // console.log("ideInputData "+JSON.stringify(ideInputData));
@@ -1087,32 +1107,25 @@ export default {
 
     gettables(){
       let _this = this;
-      // debugger;
       let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
       let inputJson = {
-              //  "conn_str": "mssql://archivist:archivist@192.168.1.143:1433/demoAgent?driver=ODBC Driver 17 for SQL Server&; odbc_options='TDS_Version=7.2'",
-              //  "dest_queue": "test",
                "table_name": "",
                "table_count":_this.userInfo.table_count[0],
                "datasource_id":_this.userInfo.datasource_id[0]
       }
-      // this.$http.post(url, inputJson, {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   }).then(response => {
         postToServer(this, url, inputJson).then(response=>{
-
-          let allDbTables = response;//JSON.parse(response.bodyText);
-          _this.$store.state.schema = allDbTables.schema;
-          _this.$store.state.conn_str = allDbTables.conn_str;
-          _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables=[];
-          _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables=[];             
-          allDbTables.table_name_list.map(function(obj, index){
-            let temp = {'name':obj, 'stepId':'Database Table'};
-            _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables.push(cloneDeep(temp));
-            _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables.push(cloneDeep(temp));             
-          });
+          if(response && response.table_name_list){
+              let allDbTables = response;//JSON.parse(response.bodyText);
+              _this.$store.state.schema = allDbTables.schema;
+              _this.$store.state.conn_str = allDbTables.conn_str;
+              _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables=[];
+              _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables=[];             
+              allDbTables.table_name_list.map(function(obj, index){
+                let temp = {'name':obj, 'stepId':'Database Table'};
+                _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables.push(cloneDeep(temp));
+                _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables.push(cloneDeep(temp));             
+              });
+          }
           // console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {
           console.log(e)
@@ -1376,12 +1389,7 @@ export default {
       var _this = this
       $('#droppable').flowchart({
         data: data,
-        // onOperatorSelect: (operatorId) => {
-        //   _this.getOperatorData(operatorId);
-        //   _this.operatorId = operatorId;
-        //   $(".sb-slidebar").addClass("toggleshow");
-        //   return true;
-        // },
+        
         onOperatorDoubleClick: function (operatorId) {
           var operator = $('#droppable').flowchart('getOperatorData', operatorId);
           console.log(operator);
@@ -1462,7 +1470,7 @@ export default {
   },
 //   watch: {
 //   processDocName(newValue) {  
-//     debugger;
+//     
 //     this.$store.state.process_definition_name = newValue;
 //   },
 // }
