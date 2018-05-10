@@ -7,7 +7,6 @@ import config from '../../config.json';
 export async function setStepInfo(_this, processData) {
     let step = {};
     let userInfo = sessionStorage.getItem("userInfo");
-    console.log("Console in set step information");
     _this.$store.state.process_definition_name = processData.process_definition_name;
     _this.$store.state.process_definition_id = processData.process_definition_id;
     // let selectedTable = {};
