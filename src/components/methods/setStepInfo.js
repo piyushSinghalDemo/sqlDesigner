@@ -28,71 +28,74 @@ export async function setStepInfo(_this, processData) {
         if (stpObj.limit) {
             tableObj.limit = stpObj.limit;
         }
+        debugger;
         // For selection step
-        if (!stpObj.joins || !stpObj.joins.length) {
-            let colObj = {
-                    'fromColumn': {},
-                    'toColumn': {},
-                    'operator': '',
-                },
-                fromTableObj = {},
-                toTableObj = {};
-            fromTableObj.tableName = stpObj.select_table.name;
-            fromTableObj.aliesTableName = stpObj.select_table.alias;
-            fromTableObj.stepId = stpObj.select_table.is_drv_table ? "Previous Steps" : "Database Table";
-            toTableObj.tableName = stpObj.select_table.name;
-            toTableObj.aliesTableName = stpObj.select_table.alias;
-            toTableObj.stepId = stpObj.select_table.is_drv_table ? "Previous Steps" : "Database Table";
-            tableObj.joins = false;
-            tableObj.relationship.fromTable = fromTableObj;
-            tableObj.relationship.toTable = toTableObj;
-            // tableObj.relationship.selectedFilter = "dummy";
-            // tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
-            tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
-            // tableObj.relationship.colArray = colArray;
-            let tempObj = { 'relationship': tableObj.relationship, 'colArray': [] };
-            tableObj.relationshipArray.push(cloneDeep(tempObj));
-        } else {
-            stpObj.joins.map((joinObj, index) => {
-                let fromTableObj = {},
-                    toTableObj = {},
-                    colObj = {
+        if (stpObj.type == "select") {
+            if (!stpObj.joins || !stpObj.joins.length) {
+                let colObj = {
                         'fromColumn': {},
                         'toColumn': {},
                         'operator': '',
                     },
-                    colArray = [];
-                fromTableObj.tableName = joinObj.jfrom;
-                fromTableObj.aliesTableName = joinObj.jfromalias;
-                fromTableObj.stepId = joinObj.jfrom_drv_table ? "Previous Steps" : "Database Table";
-                toTableObj.tableName = joinObj.jto;
-                toTableObj.aliesTableName = joinObj.jtoalias;
-                toTableObj.stepId = joinObj.jto_drv_table ? "Previous Steps" : "Database Table";
+                    fromTableObj = {},
+                    toTableObj = {};
+                fromTableObj.tableName = stpObj.select_table.name;
+                fromTableObj.aliesTableName = stpObj.select_table.alias;
+                fromTableObj.stepId = stpObj.select_table.is_drv_table ? "Previous Steps" : "Database Table";
+                toTableObj.tableName = stpObj.select_table.name;
+                toTableObj.aliesTableName = stpObj.select_table.alias;
+                toTableObj.stepId = stpObj.select_table.is_drv_table ? "Previous Steps" : "Database Table";
+                tableObj.joins = false;
                 tableObj.relationship.fromTable = fromTableObj;
                 tableObj.relationship.toTable = toTableObj;
-                tableObj.relationship.selectedFilter = joinObj.type;
-                joinObj.condition.map((conditionObj, conditionIndex) => {
-                    colObj.fromColumn.name = conditionObj.from_column;
-                    colObj.fromColumn.group = joinObj.jfrom;
-                    colObj.fromColumn.tblAlies = conditionObj.from_alias;
-                    colObj.fromColumn.fixed = false;
-                    colObj.fromColumn.colAlies = ""; // Need to discuss and fill details
-                    colObj.toColumn.name = conditionObj.to_column;
-                    colObj.toColumn.group = joinObj.jto;
-                    colObj.toColumn.tblAlies = conditionObj.to_alias;
-                    colObj.toColumn.fixed = false;
-                    colObj.toColumn.colAlies = ""; // Need to discuss and fill details
-                    colObj.operator = getjoinOperator(conditionObj.operator); //conditionObj.operator;
-                    colArray.push(cloneDeep(colObj));
-                });
-                tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
+                // tableObj.relationship.selectedFilter = "dummy";
+                // tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
                 tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
                 // tableObj.relationship.colArray = colArray;
-                let tempObj = { 'relationship': tableObj.relationship, 'colArray': colArray };
+                let tempObj = { 'relationship': tableObj.relationship, 'colArray': [] };
                 tableObj.relationshipArray.push(cloneDeep(tempObj));
-            });
-        }
+            } else {
+                stpObj.joins.map((joinObj, index) => {
+                    let fromTableObj = {},
+                        toTableObj = {},
+                        colObj = {
+                            'fromColumn': {},
+                            'toColumn': {},
+                            'operator': '',
+                        },
+                        colArray = [];
+                    fromTableObj.tableName = joinObj.jfrom;
+                    fromTableObj.aliesTableName = joinObj.jfromalias;
+                    fromTableObj.stepId = joinObj.jfrom_drv_table ? "Previous Steps" : "Database Table";
+                    toTableObj.tableName = joinObj.jto;
+                    toTableObj.aliesTableName = joinObj.jtoalias;
+                    toTableObj.stepId = joinObj.jto_drv_table ? "Previous Steps" : "Database Table";
+                    tableObj.relationship.fromTable = fromTableObj;
+                    tableObj.relationship.toTable = toTableObj;
+                    tableObj.relationship.selectedFilter = joinObj.type;
+                    joinObj.condition.map((conditionObj, conditionIndex) => {
+                        colObj.fromColumn.name = conditionObj.from_column;
+                        colObj.fromColumn.group = joinObj.jfrom;
+                        colObj.fromColumn.tblAlies = conditionObj.from_alias;
+                        colObj.fromColumn.fixed = false;
+                        colObj.fromColumn.colAlies = ""; // Need to discuss and fill details
+                        colObj.toColumn.name = conditionObj.to_column;
+                        colObj.toColumn.group = joinObj.jto;
+                        colObj.toColumn.tblAlies = conditionObj.to_alias;
+                        colObj.toColumn.fixed = false;
+                        colObj.toColumn.colAlies = ""; // Need to discuss and fill details
+                        colObj.operator = getjoinOperator(conditionObj.operator); //conditionObj.operator;
+                        colArray.push(cloneDeep(colObj));
+                    });
+                    tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
+                    tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
+                    // tableObj.relationship.colArray = colArray;
+                    let tempObj = { 'relationship': tableObj.relationship, 'colArray': colArray };
+                    tableObj.relationshipArray.push(cloneDeep(tempObj));
+                });
+            }
 
+        }
         //For archival step
         stpObj.list_of_relations && stpObj.list_of_relations[0].joins && stpObj.list_of_relations[0].joins.map(async(joinObj, rlnIndex) => {
                 let fromTableObj = {},
