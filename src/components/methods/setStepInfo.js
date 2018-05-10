@@ -5,15 +5,18 @@ import stepObject from '../data/table-selection';
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
 export async function setStepInfo(_this, processData) {
+    //debugger;
     let step = {};
     let userInfo = sessionStorage.getItem("userInfo");
     _this.$store.state.process_definition_name = processData.process_definition_name;
     _this.$store.state.process_definition_id = processData.process_definition_id;
-    debugger;
+    // debugger;
     _this.$store.state.datasource_id = processData.steps[0].datasource_id;
     // let selectedTable = {};
     processData.steps.map(async(stpObj, index) => {
+
         let tableObj = cloneDeep(stepObject);
+        tableObj.is_drv_table = stpObj.select_table.is_drv_table;
         tableObj.left = stpObj.left;
         tableObj.top = stpObj.top;
         tableObj.title = stpObj.name;
@@ -146,9 +149,10 @@ export async function setStepInfo(_this, processData) {
         }); // End of relation Array
         if (stpObj.drv_table && stpObj.drv_table.length) {
             debugger;
-            tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name
+            tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name;
             tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? "Previous Steps" : "Database Table";
-            tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias
+            tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias;
+            tableObj.is_drv_table = stpObj.drv_table[0].select_table.is_drv_table;
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
