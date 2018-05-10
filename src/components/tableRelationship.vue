@@ -12,6 +12,7 @@
         <v-btn color="info" @click.native="addTable">Add</v-btn>
       </v-flex>
       <v-flex xs6>
+        <!-- {{tableObj.relationship}} -->
         <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
           <div class="panel-heading">Selected Table</div>
           <div class="panel-body">
@@ -37,7 +38,7 @@
       </v-flex>
     </v-layout>
     <v-expansion-panel expand>
-      <v-expansion-panel-content v-for="(item,i) in tableObj.relationshipArray" :key="i">
+      <v-expansion-panel-content v-if="item.joins" v-for="(item,i) in tableObj.relationshipArray" :key="i">
         <div slot="header">
           <v-layout row wrap>
             <v-flex>{{item.relationship.fromTable.tableName}}</v-flex>
