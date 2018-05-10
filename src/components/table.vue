@@ -90,6 +90,7 @@ export default {
   },
   watch: {
     dialog(newValue) {
+      // debugger;
       if (newValue) {
         this.tableObj = this.$store.state.archivalStep[this.$store.state.currentStep];
       }
@@ -218,7 +219,7 @@ export default {
         toSubConnector:''
       }
       for (var i = 0; i < objectLength; i++) {
-        debugger;
+        // debugger;
           link.source = flowchartData.links[i].fromOperator;
           link.target = flowchartData.links[i].toOperator;
           link.sourceName = flowchartData.links[i].fromTable;
@@ -234,6 +235,7 @@ export default {
       dbStepInput.client_id=_this.userData.client_id[0],
       dbStepInput.user_id=_this.userData.user_id[0],
       dbStepInput.id = _this.tableObj.stepId
+      // dbStepInput.datasource_id = _this.userData.datasource_id[0];
       dbStepInput.process_definition_name = _this.$store.state.process_definition_name;
       return dbStepInput;
     },

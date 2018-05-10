@@ -12,6 +12,7 @@
         <v-btn color="info" @click.native="addTable">Add</v-btn>
       </v-flex>
       <v-flex xs6>
+        <!-- {{tableObj.relationship}} -->
         <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
           <div class="panel-heading">Selected Table</div>
           <div class="panel-body">
@@ -24,6 +25,7 @@
         </div>
       </v-flex>
     </v-layout>
+    <!-- table data : {{tableObj}} -->
     <v-layout row wrap v-show="tableObj.relationshipArray.length">
       <v-flex>
         <b>From Table</b>
@@ -36,7 +38,7 @@
       </v-flex>
     </v-layout>
     <v-expansion-panel expand>
-      <v-expansion-panel-content v-for="(item,i) in tableObj.relationshipArray" :key="i">
+      <v-expansion-panel-content v-if="item.joins" v-for="(item,i) in tableObj.relationshipArray" :key="i">
         <div slot="header">
           <v-layout row wrap>
             <v-flex>{{item.relationship.fromTable.tableName}}</v-flex>
@@ -89,7 +91,7 @@ export default {
     props: ['tableObj'],
     computed: {
        selectTable() {
-         let _this = this;
+        let _this = this;
         return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
       },
       conn_str(){
@@ -101,7 +103,12 @@ export default {
     },
     watch: {
       search(val) {
-         this.querySelections(val)
+         //this.querySelections(val)
+      },
+      tableObj(newVal){
+        // debugger;
+        console.log("newVal"+JSON.stringify(newVal));
+        console.log(this.tableObj);
       }
     },
     methods: {

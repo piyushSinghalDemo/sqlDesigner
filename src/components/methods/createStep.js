@@ -3,7 +3,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import { debug } from 'util';
 // import stepData from '../data/stepData.json';
 export function createStepData(_this, processData) {
-    debugger;
     let flowChartData = {};
     let operators = {};
     let links = {};

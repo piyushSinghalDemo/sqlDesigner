@@ -11,7 +11,8 @@
           <div class="row clearfix">
             <div class="col-sm-6">
               <label style="font-size:20px;cursor:pointer">
-                <input type="checkbox" v-model="tableObj.selectAllColumn" style="vertical-align: baseline;margin-right: 11px;">Select All</label>
+                <input type="checkbox" v-model="tableObj.selectAllColumn" style="vertical-align: baseline;margin-right: 11px;">
+                Select All</label>
             </div>
             <div class="col-sm-6">
               <label style="font-size:20px;cursor:pointer">

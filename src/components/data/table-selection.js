@@ -13,7 +13,7 @@ export default {
     parenthasisobject: {
         openbrsis: '',
         function: '',
-        column: '',
+        column: {},
         relOperator: '',
         valueType: '',
         value: '',
@@ -55,5 +55,6 @@ export default {
     allPrevStepTables: [],
     top: '',
     left: '',
-    data_source_id: ''
+    data_source_id: '',
+    joins: true
 }

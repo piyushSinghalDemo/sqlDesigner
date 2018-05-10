@@ -5,10 +5,11 @@
             <li @click.stop="switchScreen(2)" :class="{chevron:true,chevron_active:true}">Criteria</li>
             <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li>
         </ul>
+        <!-- {{tableObj.criteriaArray}} -->
     <v-layout row wrap style="font-weight: bold;font-size:19px">
       <v-flex xs2>Parenthesis</v-flex>
-      <v-flex xs1>Function</v-flex>
-      <v-flex xs1>Columns</v-flex>
+      <!-- <v-flex xs1>Function</v-flex> -->
+      <v-flex xs2>Columns</v-flex>
       <v-flex xs1>Operator</v-flex>
       <v-flex xs2>Value Type</v-flex>
       <v-flex xs2>Value</v-flex>
@@ -19,11 +20,12 @@
       <v-flex xs2>
         <v-select :items="openbrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.openbrsis"></v-select>
       </v-flex>
-      <v-flex xs1>
+      <!-- <v-flex xs1>
         <v-select :items="functionArray" clearable single-line label="Select Function" v-model="obj.function"></v-select>
-      </v-flex>
-      <v-flex xs1>
-        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
+      </v-flex> -->
+      <v-flex xs2>
+        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" 
+          single-line item-value="name" return-object ></v-select>
       </v-flex>
       <v-flex xs1>
         <v-select :items="filterArray" clearable single-line label="Select Operator" v-model="obj.relOperator">
