@@ -277,7 +277,7 @@ export default {
       let inputParam =  getStepData(this, _this.tableObj);     //this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
-      inputParam.data_source_id = _this.userData.datasource_id[0];
+      inputParam.datasource_id = _this.userData.datasource_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
       console.log("inputParam in archive step " +JSON.stringify(inputParam));

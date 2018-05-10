@@ -68,7 +68,8 @@ export function getProcessData(_this, flowchartData) {
         'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id,
         'client_id': userData.client_id[0],
         'user_id': userData.user_id[0],
-        'process_definition_name': _this.$store.state.process_definition_name
+        'process_definition_name': _this.$store.state.process_definition_name,
+        'datasource_id': _this.$store.state.datasource_id
     };
     return ideInputData;
 };

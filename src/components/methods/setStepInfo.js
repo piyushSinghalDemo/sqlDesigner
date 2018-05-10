@@ -9,6 +9,8 @@ export async function setStepInfo(_this, processData) {
     let userInfo = sessionStorage.getItem("userInfo");
     _this.$store.state.process_definition_name = processData.process_definition_name;
     _this.$store.state.process_definition_id = processData.process_definition_id;
+    debugger;
+    _this.$store.state.datasource_id = processData.steps[0].datasource_id;
     // let selectedTable = {};
     processData.steps.map(async(stpObj, index) => {
         let tableObj = cloneDeep(stepObject);
@@ -23,12 +25,11 @@ export async function setStepInfo(_this, processData) {
             tableObj.type = "archive";
         }
         tableObj.stepId = stpObj.id;
-        tableObj.data_source_id = stpObj.data_source_id;
+        tableObj.datasource_id = stpObj.datasource_id;
         tableObj.process_definition_id = stpObj.process_definition_id;
         if (stpObj.limit) {
             tableObj.limit = stpObj.limit;
         }
-        debugger;
         // For selection step
         if (stpObj.type == "select") {
             if (!stpObj.joins || !stpObj.joins.length) {
@@ -52,8 +53,9 @@ export async function setStepInfo(_this, processData) {
                 // tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
                 tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
                 // tableObj.relationship.colArray = colArray;
+                tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
                 let tempObj = { 'relationship': tableObj.relationship, 'colArray': [] };
-                tableObj.relationshipArray.push(cloneDeep(tempObj));
+                // tableObj.relationshipArray.push(cloneDeep(tempObj));
             } else {
                 stpObj.joins.map((joinObj, index) => {
                     let fromTableObj = {},
@@ -90,6 +92,7 @@ export async function setStepInfo(_this, processData) {
                     tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
                     tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
                     // tableObj.relationship.colArray = colArray;
+                    tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
                     let tempObj = { 'relationship': tableObj.relationship, 'colArray': colArray };
                     tableObj.relationshipArray.push(cloneDeep(tempObj));
                 });
@@ -134,13 +137,19 @@ export async function setStepInfo(_this, processData) {
                     });
                     tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
                     tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
+                    tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
                     // tableObj.relationship.colArray = colArray;
                     let tempObj = { 'relationship': tableObj.relationship, 'colArray': colArray };
                     tableObj.relationshipArray.push(cloneDeep(tempObj));
                 }) //End of list of relotion Object array
 
         }); // End of relation Array
-
+        if (stpObj.drv_table && stpObj.drv_table.length) {
+            debugger;
+            tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name
+            tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? "Previous Steps" : "Database Table";
+            tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias
+        }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
         stpObj.where && stpObj.where.map((whrObj, whrIndex) => {
@@ -168,9 +177,8 @@ export async function setStepInfo(_this, processData) {
                 wrkObj.colAlies = workTableObj.col_alias;
                 tableObj.selectedColumns.push(cloneDeep(wrkObj));
             }
-
         });
-        uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
+        tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
         tableObj.relationship.selectedTableArray.map(async(tblObj, tblindx) => {
             if (tblObj.stepId == 'Previous Steps') {
 
@@ -231,6 +239,7 @@ export async function setStepInfo(_this, processData) {
                 })
             }
         });
+        debugger;
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
 

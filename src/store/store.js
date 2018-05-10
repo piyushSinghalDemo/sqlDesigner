@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 const state = {
+    datasource_id: "",
     schedulerId: 'hello',
     dialog: false,
     dataSelectionArray: [],

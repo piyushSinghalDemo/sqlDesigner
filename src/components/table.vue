@@ -237,6 +237,8 @@ export default {
       dbStepInput.id = _this.tableObj.stepId
       // dbStepInput.datasource_id = _this.userData.datasource_id[0];
       dbStepInput.process_definition_name = _this.$store.state.process_definition_name;
+      dbStepInput.process_definition_id = _this.$store.state.process_definition_id;
+      dbStepInput.datasource_id =_this.$store.state.datasource_id;
       return dbStepInput;
     },
     getjoinOperator(sign) {
@@ -269,7 +271,7 @@ export default {
       let inputParam = this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
-      inputParam.data_source_id = _this.userData.datasource_id[0];
+      // inputParam.datasource_id = _this.userData.datasource_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       let url = config.SAVE_DATA_URL+'ide_step_data/add';//'http://192.168.1.101:8016/ide_step_data/add';
       _this.$http.post(url, inputParam, {
