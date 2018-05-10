@@ -156,6 +156,7 @@ export default {
             arrayIndex = index;
           }
       });
+      //debugger;
       if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
         _this.tableObj.relationship.jfrom_drv_table = true;
       }else{
