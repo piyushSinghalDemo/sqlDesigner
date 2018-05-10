@@ -55,5 +55,6 @@ export default {
     allPrevStepTables: [],
     top: '',
     left: '',
-    data_source_id: ''
+    data_source_id: '',
+    joins: true
 }

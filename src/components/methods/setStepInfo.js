@@ -43,6 +43,7 @@ export async function setStepInfo(_this, processData) {
             toTableObj.tableName = stpObj.select_table.name;
             toTableObj.aliesTableName = stpObj.select_table.alias;
             toTableObj.stepId = stpObj.select_table.is_drv_table ? "Previous Steps" : "Database Table";
+            tableObj.joins = false;
             tableObj.relationship.fromTable = fromTableObj;
             tableObj.relationship.toTable = toTableObj;
             // tableObj.relationship.selectedFilter = "dummy";
