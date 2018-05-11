@@ -1,3 +1,5 @@
+//We pass this json to jquery.flowchart to draw steps on canvas
+
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
 import { debug } from 'util';

@@ -7,7 +7,7 @@ export default {
         toTable: null,
         selectedColumn: null,
         selectedFilter: null,
-        driverTable: null,
+        driverTable: {},
     },
     relationshipArray: [],
     parenthasisobject: {
@@ -55,6 +55,6 @@ export default {
     allPrevStepTables: [],
     top: '',
     left: '',
-    data_source_id: '',
+    datasource_id: '',
     joins: true
 }

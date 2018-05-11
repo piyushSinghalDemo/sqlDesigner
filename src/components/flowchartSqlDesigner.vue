@@ -922,6 +922,10 @@ export default {
       'table_count':url.searchParams.getAll('table_count'),
       'datasource_id':url.searchParams.getAll('datasource_id'),
       'process_definition_id':url.searchParams.getAll('process_definition_id'),
+    }
+    // debugger;
+    if(_this.userInfo.datasource_id && _this.userInfo.datasource_id.length){
+      _this.$store.state.datasource_id = _this.userInfo.datasource_id[0];
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -977,14 +981,15 @@ export default {
       let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
         getFromServer(this, url).then(response=>{
           if(response && response.steps.length)
-          _this.userInfo.datasource_id[0] = response.steps[0].data_source_id;
+          _this.userInfo.datasource_id[0] = response.steps[0].datasource_id;
           // console.log("Data for step creation "+JSON.stringify(response));
-        let ideInputData = createStepData(_this, response);          
+        let ideInputData = createStepData(_this, response);    
+        debugger;      
         let tableUrl = config.GET_DATA_URL + 'get_tables'; //'http://192.168.1.100:8010/get_tables';
         let inputJson = {
             "table_name": "",
             "table_count": "",
-            "datasource_id": response.steps[0].data_source_id
+            "datasource_id": response.steps[0].datasource_id
         }
         postToServer(this, tableUrl, inputJson).then(tableResponse => {
             if (tableResponse && tableResponse.table_name_list) {

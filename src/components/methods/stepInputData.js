@@ -2,7 +2,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 export function getStepData(_this, tableObj) {
     // let _this = this;
-    // console.log("selectedTableArray" + JSON.stringify(_this.tableObj.relationshipArray));
+    console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
     let $flowchart = $("#droppable");
     var flowchartData = $flowchart.flowchart('getData');
     let objectLength = Object.keys(flowchartData.links).length;
@@ -104,7 +104,7 @@ export function getStepData(_this, tableObj) {
         });
         relationObject.joins.push(cloneDeep(joinObject));
 
-        obj.where.map(function(whereObj, whereIndex) {
+        obj.where && obj.where.map(function(whereObj, whereIndex) {
             if (whereObj.column) {
                 whereObject.post_braces = whereObj.closebrsis;
                 whereObject.alias = whereObj.column.tblAlies; //table alies
