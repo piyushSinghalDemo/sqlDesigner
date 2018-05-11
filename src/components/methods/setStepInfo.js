@@ -16,7 +16,7 @@ export async function setStepInfo(_this, processData) {
     processData.steps.map(async(stpObj, index) => {
 
         let tableObj = cloneDeep(stepObject);
-        tableObj.is_drv_table = stpObj.select_table.is_drv_table;
+        // tableObj.is_drv_table = stpObj.select_table.is_drv_table;
         tableObj.left = stpObj.left;
         tableObj.top = stpObj.top;
         tableObj.title = stpObj.name;
@@ -35,6 +35,7 @@ export async function setStepInfo(_this, processData) {
         }
         // For selection step
         if (stpObj.type == "select") {
+            tableObj.is_drv_table = stpObj.select_table.is_drv_table;
             if (!stpObj.joins || !stpObj.joins.length) {
                 let colObj = {
                         'fromColumn': {},
@@ -92,6 +93,10 @@ export async function setStepInfo(_this, processData) {
                         colObj.operator = getjoinOperator(conditionObj.operator); //conditionObj.operator;
                         colArray.push(cloneDeep(colObj));
                     });
+                    // debugger;
+                    tableObj.relationship.jto_drv_table = joinObj.jto_drv_table;
+                    tableObj.relationship.jfrom_drv_table = joinObj.jfrom_drv_table;
+
                     tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
                     tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
                     // tableObj.relationship.colArray = colArray;
@@ -104,7 +109,7 @@ export async function setStepInfo(_this, processData) {
         }
         //For archival step
         stpObj.list_of_relations && stpObj.list_of_relations.length && stpObj.list_of_relations.map(async(relationObj) => {
-
+            debugger;
             relationObj.joins.map(async(joinObj, rlnIndex) => {
                     debugger
                     let fromTableObj = {},
@@ -138,6 +143,8 @@ export async function setStepInfo(_this, processData) {
                         colObj.operator = getjoinOperator(conditionObj.operator); //conditionObj.operator;
                         colArray.push(cloneDeep(colObj));
                     });
+                    tableObj.relationship.jto_drv_table = joinObj.jto_drv_table;
+                    tableObj.relationship.jfrom_drv_table = joinObj.jfrom_drv_table;
                     tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
                     tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
                     tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
@@ -148,7 +155,7 @@ export async function setStepInfo(_this, processData) {
 
         }); // End of relation Array
         if (stpObj.drv_table && stpObj.drv_table.length) {
-            debugger;
+            // debugger;
             tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name;
             tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? "Previous Steps" : "Database Table";
             tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias;
@@ -243,7 +250,7 @@ export async function setStepInfo(_this, processData) {
                 })
             }
         });
-        debugger;
+        // debugger;
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
 
