@@ -56,5 +56,10 @@ export default {
     top: '',
     left: '',
     datasource_id: '',
-    joins: true
+    joins: true,
+    storedProcedure: {
+        name: '',
+        params: []
+    },
+
 }

@@ -773,6 +773,7 @@
 
           <table-modal></table-modal>
           <archive-panel></archive-panel>
+          <stored-procedure></stored-procedure>
           <simplert useRadius=true useIcon=true ref="simplert">
           </simplert>
         </div>
@@ -782,13 +783,17 @@
         <li class="ctx-header">Delete</li>
     </context-menu>
 
-    <v-dialog v-model="addTitle" persistent max-width="290">
+    <v-dialog v-model="addTitle" persistent max-width="35%">
       <!-- <v-btn color="primary" dark slot="activator">Open Dialog</v-btn> -->
       <v-card>
         <v-form v-model="validateStep" ref="form" lazy-validation>
-        <v-card-title class="headline">Provide Step Details</v-card-title>
+        <v-card-title class="headline">
+          <span>Provide Step Details</span>
+          <v-spacer></v-spacer>
+          <v-icon @click="addTitle = false" style="cursor:pointer;color:red">close</v-icon>
+        </v-card-title>
         <v-card-text>
-          <v-container grid-list-md>
+          <v-container grid-list-sm>
             <v-layout wrap>
               <v-flex xs12>
                 <v-text-field label="Step Name" v-model="stepName" :rules="stepNameRules" required>
@@ -821,6 +826,7 @@ import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
 import archiveMain from './archive/archiveMain.vue'
+import storedProcedure from './storedProcedure/storedProcedure.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
@@ -837,6 +843,7 @@ export default {
     Simplert,
     'table-modal': table,
     'archive-panel':archiveMain,
+    'stored-procedure':storedProcedure,
      draggable,
      contextMenu,
      'process-name':processName 
@@ -984,7 +991,7 @@ export default {
           _this.userInfo.datasource_id[0] = response.steps[0].datasource_id;
           // console.log("Data for step creation "+JSON.stringify(response));
         let ideInputData = createStepData(_this, response);    
-        debugger;      
+        // debugger;      
         let tableUrl = config.GET_DATA_URL + 'get_tables'; //'http://192.168.1.100:8010/get_tables';
         let inputJson = {
             "table_name": "",
@@ -996,7 +1003,7 @@ export default {
                 _this.$store.state.schema = tableResponse.schema;
                 _this.$store.state.conn_str = tableResponse.conn_str;
                 setStepInfo(_this, response);
-                debugger;
+                // debugger;
                 console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));   
             }
         }, tableResponse => {}).catch(e => {
@@ -1056,6 +1063,8 @@ export default {
            stepType = 'select'
          }else if(_this.type == "archive"){
            stepType = 'archival'
+         }else if(_this.type == "spstep"){
+           stepType = 'stored_procedure'
          }else{
            return ;
          }
@@ -1416,6 +1425,8 @@ export default {
            }
            else if(operator.className == 'archive'){
              _this.$store.state.openArchivePanel = true;
+           }else if(operator.className == 'spstep'){
+             _this.$store.state.openStoredProcedure = true;
            } 
           return true;
         },

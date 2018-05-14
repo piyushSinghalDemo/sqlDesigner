@@ -48,6 +48,9 @@
 
       <table-joins @save-data="saveData" :tableObj="tableObj" v-on:close="dialog2=false"></table-joins>
     </v-dialog>
+      <v-dialog v-model="processDoc" max-width="60%" max-height="50%">
+        <process-name @save-name="saveName" v-on:close="processDoc=false"></process-name>
+      </v-dialog>
   </div>
 </template>
 
@@ -60,14 +63,17 @@ import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
 import workTableOutput from './workTableOutput.vue';
 import tableRelationship from './tableRelationship.vue';
-import config from '../config.json'
+import config from '../config.json';
+import processName from './processName.vue';
+
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
     'table-joins': tableJoins,
     'add-criteria': criteria,
     'work-table-output': workTableOutput,
-    'table-relationship': tableRelationship
+    'table-relationship': tableRelationship,
+    'process-name':processName 
   },
   data() {
     return {
@@ -80,7 +86,8 @@ export default {
       e1: "",
       progressbar: 1,
       tableObj: cloneDeep(tableData),
-      userData:''
+      userData:'',
+      processDoc:false,
     }
   },
   computed: {
@@ -100,6 +107,12 @@ export default {
     source: String
   },
   methods: {
+    saveName(name){
+      let _this = this;
+      _this.$store.state.process_definition_name = name;
+      _this.$toaster.success('Name Change successfully')
+      _this.processDoc = false;
+    },
     updateJoin() {
       let _this = this;
       _this.dialog2 = true;
@@ -325,14 +338,15 @@ export default {
                 'stepId': 'Previous Steps'
               }
         addData.map(linkObj=>{
-          _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
+        _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
         })
         console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
         _this.$toaster.success('Data save successfully')
         this.$store.state.dialog = false;
       }, response => {
             // debugger;
-            if (response.body.message) {
+            if (response.body.message == "Process definition name already exists") {
+              _this.processDoc = true;
                 _this.$toaster.error(response.body.message);
             }
         }).catch(e => {

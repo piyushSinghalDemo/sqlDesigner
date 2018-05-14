@@ -288,7 +288,7 @@ export default {
       //     'Authorization':_this.userData.accessToken[0]
       //   }
       // }).then(response => {
-        postToServer(this, url, inputParam).then(response=>{
+      postToServer(this, url, inputParam).then(response=>{
           debugger;
           if(response.message){
             _this.$toaster.error(response.message);
