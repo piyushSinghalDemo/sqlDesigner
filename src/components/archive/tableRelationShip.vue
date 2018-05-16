@@ -206,13 +206,14 @@ export default {
           "table_name": value,
           "table_count":userData.table_count
         }
-        this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
+        // this.$http.post(url, inputJson, {
+        //   headers: {
+        //     'Content-Type': 'application/json'
+        //   }
+        // }).then(response => {
+        postToServer(this, url, inputJson).then(response=>{  
           // _this.tableObj.allDbTables= [];
-          let tableList = response.body.table_name_list;
+          let tableList = response.table_name_list;
           let dummyTableList=[];
           if(tableList.length){
               tableList.map(function(obj, index){
@@ -269,13 +270,14 @@ export default {
           "table_name": value,
           "table_count":userData.table_count
         }
-        this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
+        // this.$http.post(url, inputJson, {
+        //   headers: {
+        //     'Content-Type': 'application/json'
+        //   }
+        // }).then(response => {
+        postToServer(this, url, inputJson).then(response=>{
           // _this.tableObj.allArchiveTables= [];
-          let tableList = response.body.table_name_list;
+          let tableList = response.table_name_list;
           let dummyTableList=[];
           if(tableList.length){
               tableList.map(function(obj, index){
