@@ -9,7 +9,7 @@
       <v-flex xs6  offset-xs3>
         <v-select :items="selectTable" v-model="tableObj.storedProcedure.name" :loading="loading"
           :search-input.sync="search" @change="getParameter"
-           label="Select Table"  cache-items item-text="name" autocomplete></v-select>
+           label="Select Procedure"  cache-items item-text="name" autocomplete></v-select>
       </v-flex>
     </v-layout> 
         <!-- table data : {{tableObj}} -->

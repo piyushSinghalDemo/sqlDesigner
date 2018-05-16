@@ -65,6 +65,7 @@ import workTableOutput from './workTableOutput.vue';
 import tableRelationship from './tableRelationship.vue';
 import config from '../config.json';
 import processName from './processName.vue';
+import {post as postToServer} from './methods/serverCall.js'
 
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
@@ -287,15 +288,16 @@ export default {
       // inputParam.datasource_id = _this.userData.datasource_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       let url = config.SAVE_DATA_URL+'ide_step_data/add';//'http://192.168.1.101:8016/ide_step_data/add';
-      _this.$http.post(url, inputParam, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization':_this.userData.accessToken
-        }
-      }).then(response => {
-        _this.tableObj.stepId = response.body.id;        
-        _this.$store.state.process_definition_id = response.body.process_definition_id;
-        _this.tableObj.process_definition_id = response.body.process_definition_id;
+      // _this.$http.post(url, inputParam, {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization':_this.userData.accessToken
+      //   }
+      // }).then(response => {
+      postToServer(this, url, inputParam).then(response=>{  
+        _this.tableObj.stepId = response.id;        
+        _this.$store.state.process_definition_id = response.process_definition_id;
+        _this.tableObj.process_definition_id = response.process_definition_id;
         _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
         _this.$store.state.processArray.push(cloneDeep(inputParam));
         
@@ -345,10 +347,11 @@ export default {
         this.$store.state.dialog = false;
       }, response => {
             // debugger;
-            if (response.body.message == "Process definition name already exists") {
-              _this.processDoc = true;
-                _this.$toaster.error(response.body.message);
-            }
+            if (response.message == "Process definition name already exists") {
+              _this.$toaster.error(response.message);
+                _this.processDoc = true;
+            }else
+            _this.$toaster.error("Due to some internal error data got rejected");
         }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'

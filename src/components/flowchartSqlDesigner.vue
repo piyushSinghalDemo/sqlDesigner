@@ -783,12 +783,12 @@
         <li class="ctx-header">Delete</li>
     </context-menu>
 
-    <v-dialog v-model="addTitle" persistent max-width="35%">
+    <v-dialog v-model="addTitle" persistent max-width="25%">
       <!-- <v-btn color="primary" dark slot="activator">Open Dialog</v-btn> -->
       <v-card>
         <v-form v-model="validateStep" ref="form" lazy-validation>
         <v-card-title class="headline">
-          <span>Provide Step Details</span>
+          <span>Step Details</span>
           <v-spacer></v-spacer>
           <v-icon @click="addTitle = false" style="cursor:pointer;color:red">close</v-icon>
         </v-card-title>
@@ -1079,10 +1079,6 @@ export default {
          }
          postToServer(this, url, inputJson).then(response=>{
            console.log("Response from step save:"+JSON.stringify(response));
-           if(response == "Data not valid"){
-              _this.$toaster.error('Due to some internal error , Step not created');
-              return; 
-           }else{
              _this.$store.state.process_definition_id = response.process_definition_id;
              tableData.title = cloneDeep(_this.stepName); 
              tableData.description = cloneDeep(_this.stepDetail);
@@ -1090,9 +1086,9 @@ export default {
              tableData.stepId = response.id+"";
              _this.$store.state.archivalStep[response.id]=cloneDeep(tableData);
              _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type, response.id)
-           }
-          //  if(response.process_definition_id)
-           
+          //  if(response.process_definition_id)           
+         },response=>{
+            _this.$toaster.error('Due to some internal error , Step not created');
          });
        }
     },
@@ -1138,6 +1134,11 @@ export default {
               _this.$store.state.schema = listResponse.schema;
               _this.$store.state.archivalStep[_this.$store.state.currentStep].storedProcedure.procedureList = listResponse.result;
               _this.$store.state.conn_str = listResponse.connstr;
+          },listResponse => {
+            if(listResponse && listResponse.message)
+                _this.$toaster.error(listResponse.message);
+            else    
+             _this.$toaster.error('Due to some internal error , Procedure List not found');
           });
       },
       gettables(){

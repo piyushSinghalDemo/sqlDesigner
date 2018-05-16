@@ -37,6 +37,9 @@
         </v-card>
       </v-dialog>
     </v-layout>
+    <v-dialog v-model="processDoc" max-width="60%" max-height="50%">
+        <process-name @save-name="saveName" v-on:close="processDoc=false"></process-name>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -49,11 +52,13 @@ import config from '../../config.json'
 import procedureList from "./procedureList.vue";
 import parameter from './parameter.vue';
 import getStepData from '../methods/storedProcedureInput'
+import processName from '../processName.vue'
 import { post as postToServer  } from '../methods/serverCall'
 export default {
   components: {
     'procedure-list':procedureList,
-    'parameter-list':parameter
+    'parameter-list':parameter,
+    'process-name':processName
   },
   data() {
     return {
@@ -61,7 +66,8 @@ export default {
       dataStr: _def.dataStr,
       progressbar: 1,
       tableObj: cloneDeep(tableData),
-      userData:''
+      userData:'',
+      processDoc:false
     }
   },
   computed: {
@@ -80,6 +86,12 @@ export default {
     source: String
   },
   methods: {
+    saveName(name){
+      let _this = this;
+      _this.$store.state.process_definition_name = name;
+      _this.$toaster.success('Name Change successfully')
+      _this.processDoc = false;
+    },
     saveDialog(objData) {
         let _this = this;
         _this.tableObj = objData;
@@ -133,7 +145,14 @@ export default {
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully');
         this.$store.state.openStoredProcedure = false;
-         });       
+         },response=>{
+           if(response && response.message){
+             _this.$toaster.error(response.message);
+                _this.processDoc = true;  
+            }    
+            else    
+             _this.$toaster.error('Data got rejected');
+          });      
     },  
     updateTableObj(arr) {
         let _this = this;

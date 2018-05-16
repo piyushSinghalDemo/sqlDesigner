@@ -13,7 +13,7 @@ export function get(that, endPoint) {
         that.$http.get(endPoint, { headers: headerData }).then(response => {
             return resolve(response.body)
         }, response => {
-            return resolve(response.body)
+            return reject(response.body)
                 // if (response.message) {
                 //     _this.$toaster.error(response.message);
                 // }
@@ -33,7 +33,7 @@ export function post(that, endPoint, InputJson) {
         that.$http.post(endPoint, InputJson, { headers: headerData }, ).then(response => {
             return resolve(response.body)
         }, response => {
-            return resolve(response.body)
+            return reject(response.body)
                 // if (response.body.message) {
                 //     _this.$toaster.error(response.body.message);
                 // }
