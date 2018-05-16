@@ -48,6 +48,9 @@
 
       <table-joins @save-data="saveData" :tableObj="tableObj" v-on:close="dialog2=false"></table-joins>
     </v-dialog>
+      <v-dialog v-model="processDoc" max-width="60%" max-height="50%">
+        <process-name @save-name="saveName" v-on:close="processDoc=false"></process-name>
+      </v-dialog>
   </div>
 </template>
 
@@ -60,14 +63,18 @@ import tableJoins from './tableJoins.vue'
 import criteria from './criteria.vue'
 import workTableOutput from './workTableOutput.vue';
 import tableRelationship from './tableRelationship.vue';
-import config from '../config.json'
+import config from '../config.json';
+import processName from './processName.vue';
+import {post as postToServer} from './methods/serverCall.js'
+
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
     'table-joins': tableJoins,
     'add-criteria': criteria,
     'work-table-output': workTableOutput,
-    'table-relationship': tableRelationship
+    'table-relationship': tableRelationship,
+    'process-name':processName 
   },
   data() {
     return {
@@ -80,7 +87,8 @@ export default {
       e1: "",
       progressbar: 1,
       tableObj: cloneDeep(tableData),
-      userData:''
+      userData:'',
+      processDoc:false,
     }
   },
   computed: {
@@ -100,6 +108,12 @@ export default {
     source: String
   },
   methods: {
+    saveName(name){
+      let _this = this;
+      _this.$store.state.process_definition_name = name;
+      _this.$toaster.success('Name Change successfully')
+      _this.processDoc = false;
+    },
     updateJoin() {
       let _this = this;
       _this.dialog2 = true;
@@ -232,8 +246,8 @@ export default {
       dbStepInput.name = _this.tableObj.title;
       dbStepInput.output_table = _this.tableObj.title;
       dbStepInput.desc = _this.tableObj.description;
-      dbStepInput.client_id=_this.userData.client_id[0],
-      dbStepInput.user_id=_this.userData.user_id[0],
+      dbStepInput.client_id=_this.userData.client_id,
+      dbStepInput.user_id=_this.userData.user_id,
       dbStepInput.id = _this.tableObj.stepId
       // dbStepInput.datasource_id = _this.userData.datasource_id[0];
       dbStepInput.process_definition_name = _this.$store.state.process_definition_name;
@@ -274,15 +288,16 @@ export default {
       // inputParam.datasource_id = _this.userData.datasource_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       let url = config.SAVE_DATA_URL+'ide_step_data/add';//'http://192.168.1.101:8016/ide_step_data/add';
-      _this.$http.post(url, inputParam, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization':_this.userData.accessToken[0]
-        }
-      }).then(response => {
-        _this.tableObj.stepId = response.body.id;        
-        _this.$store.state.process_definition_id = response.body.process_definition_id;
-        _this.tableObj.process_definition_id = response.body.process_definition_id;
+      // _this.$http.post(url, inputParam, {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization':_this.userData.accessToken
+      //   }
+      // }).then(response => {
+      postToServer(this, url, inputParam).then(response=>{  
+        _this.tableObj.stepId = response.id;        
+        _this.$store.state.process_definition_id = response.process_definition_id;
+        _this.tableObj.process_definition_id = response.process_definition_id;
         _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
         _this.$store.state.processArray.push(cloneDeep(inputParam));
         
@@ -325,16 +340,18 @@ export default {
                 'stepId': 'Previous Steps'
               }
         addData.map(linkObj=>{
-          _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
+        _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
         })
         console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
         _this.$toaster.success('Data save successfully')
         this.$store.state.dialog = false;
       }, response => {
             // debugger;
-            if (response.body.message) {
-                _this.$toaster.error(response.body.message);
-            }
+            if (response.message == "Process definition name already exists") {
+              _this.$toaster.error(response.message);
+                _this.processDoc = true;
+            }else
+            _this.$toaster.error("Due to some internal error data got rejected");
         }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'

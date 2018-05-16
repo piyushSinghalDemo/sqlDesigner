@@ -45,8 +45,27 @@ const state = {
         "list_of_relations": [],
         links: []
     },
+    storedProcedureStep: {
+        top: "",
+        left: "",
+        datasource_id: "",
+        process_definition_id: "",
+        "process_definition_name": '',
+        client_id: "",
+        user_id: "",
+        "id": '',
+        "type": "stored_procedure",
+        "name": "temp name procedure",
+        "desc": "temp desc procedure",
+        procedure_name: "",
+        links: [],
+        params: [],
+    },
+    'openStoredProcedure': false,
     schema: '',
-    conn_str: ''
+    conn_str: '',
+    database_type: '',
+    database_name: ''
 }
 const getters = {
     currentStep: state => {

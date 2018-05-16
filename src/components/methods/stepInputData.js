@@ -137,8 +137,8 @@ export function getStepData(_this, tableObj) {
             archiveStepInput.links.push(cloneDeep(link));
         }
         archiveStepInput.list_of_relations.push(relationObject);
-        archiveStepInput.client_id = userData.client_id[0],
-            archiveStepInput.user_id = userData.user_id[0],
+        archiveStepInput.client_id = userData.client_id,
+            archiveStepInput.user_id = userData.user_id,
             archiveStepInput.id = tableObj.stepId
     });
     return archiveStepInput;

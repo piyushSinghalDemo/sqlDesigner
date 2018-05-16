@@ -50,6 +50,9 @@
       <table-joins @save-data="saveData" :tableObj="tableObj" v-on:close="dialog2=false"></table-joins>
 
     </v-dialog>
+    <v-dialog v-model="processDoc" max-width="60%" max-height="50%">
+        <process-name @save-name="saveName" v-on:close="processDoc=false"></process-name>
+    </v-dialog>
   </div>
 </template>
 
@@ -59,6 +62,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import uniq from 'lodash/uniq'
 import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
+import processName from '../processName.vue'
 // import criteria from './criteria.vue'
 import tableRelationship from './tableRelationShip.vue';
 import config from '../../config.json'
@@ -68,9 +72,8 @@ const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0',
 export default {
   components: {
     'table-joins': tableJoins,
-    // 'add-criteria': criteria,
-    // 'work-table-output': workTableOutput,
-    'table-relationship': tableRelationship
+    'table-relationship': tableRelationship,
+    'process-name':processName
   },
   data() {
     return {
@@ -83,7 +86,8 @@ export default {
       e1: "",
       progressbar: 1,
       tableObj: cloneDeep(tableData),
-      userData:''
+      userData:'',
+      processDoc:false
     }
   },
   computed: {
@@ -102,6 +106,12 @@ export default {
     source: String
   },
   methods: {
+    saveName(name){
+      let _this = this;
+      _this.$store.state.process_definition_name = name;
+      _this.$toaster.success('Name Change successfully')
+      _this.processDoc = false;
+    },
     updateJoin() {
       let _this = this;
       _this.dialog2 = true;
@@ -122,10 +132,6 @@ export default {
     nextScreen(number) {
       this.progressbar = number;
     },
-    // deleteRowIndex(object){
-    //   this.$store.state.dataSelectionIndex=object.index;
-    //   this.dialog3 = true;
-    // },
     closeDialog() {
       this.$store.state.openArchivePanel = false
     },
@@ -244,8 +250,8 @@ export default {
           }
         });
         archiveStepInput.list_of_relations.push(relationObject);   
-        archiveStepInput.client_id=_this.userData.client_id[0],
-        archiveStepInput.user_id=_this.userData.user_id[0],
+        archiveStepInput.client_id=_this.userData.client_id,
+        archiveStepInput.user_id=_this.userData.user_id,
         archiveStepInput.id = _this.tableObj.stepId             
       });
       return archiveStepInput;
@@ -277,23 +283,12 @@ export default {
       let inputParam =  getStepData(this, _this.tableObj);     //this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
-      inputParam.datasource_id = _this.userData.datasource_id[0];
+      inputParam.datasource_id = _this.userData.datasource_id;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
       console.log("inputParam in archive step " +JSON.stringify(inputParam));
       let url = config.SAVE_DATA_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
-      // _this.$http.post(url, inputParam, {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization':_this.userData.accessToken[0]
-      //   }
-      // }).then(response => {
-        postToServer(this, url, inputParam).then(response=>{
-          debugger;
-          if(response.message){
-            _this.$toaster.error(response.message);
-            return;
-          }
+      postToServer(this, url, inputParam).then(response=>{
         _this.tableObj.stepId = response.id;
         _this.$store.state.process_definition_id = response.process_definition_id;
         _this.tableObj.process_definition_id = response.process_definition_id;
@@ -302,17 +297,6 @@ export default {
         let $flowchart = $("#droppable");
         var flowchartData = $flowchart.flowchart('getData');
         let objectLength = Object.keys(flowchartData.links).length;
-        // for (var i = 0; i < objectLength; i++) {
-        //   if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
-        //     let obj = {
-        //       'name': _this.tableObj.title,
-        //       'columns': _this.tableObj.selectedColumns,
-        //       'stepId': 'Previous Steps'
-        //     }
-        //     _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
-        //   }
-        // }
-        // this.resetForm(); // clear all field value
         let findLink=[],
         addData = [];
         let currentStep = _this.$store.state.currentStep;
@@ -346,14 +330,16 @@ export default {
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully');
         this.$store.state.openArchivePanel = false;
-      }, response => {
-        if(response.message){
-            _this.$toaster.error(response.message);
-        }
+      },response=>{
+           if(response && response.message){
+             _this.$toaster.error(response.message);
+             _this.processDoc = true;  
+           }
+            else    
+             _this.$toaster.error('Due to some internal error, Data got rejected');
       }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'
-        // _this.$toaster.error('There is some internal error please try again later.')
       })
 
     },

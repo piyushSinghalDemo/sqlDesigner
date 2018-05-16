@@ -1,7 +1,7 @@
 <template>
   <v-card>
-    <v-card-title>
-      <!-- Process Name -->
+    <v-card-title style="color:blue;font-size:16px;">
+            Provide New  Process Name
     </v-card-title>
     <v-card-text>
       <v-form v-model="valid" ref="form" lazy-validation>

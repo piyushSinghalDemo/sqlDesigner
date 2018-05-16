@@ -5,9 +5,8 @@ import stepObject from '../data/table-selection';
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
 export async function setStepInfo(_this, processData) {
-    //debugger;
     let step = {};
-    let userInfo = sessionStorage.getItem("userInfo");
+    let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
     _this.$store.state.process_definition_name = processData.process_definition_name;
     _this.$store.state.process_definition_id = processData.process_definition_id;
     // debugger;
@@ -22,11 +21,7 @@ export async function setStepInfo(_this, processData) {
         tableObj.title = stpObj.name;
         tableObj.description = stpObj.desc;
         tableObj.distinct = stpObj.distinct;
-        if (stpObj.type == "select") {
-            tableObj.type = "db";
-        } else if (stpObj.type == "archival") {
-            tableObj.type = "archive";
-        }
+        tableObj.type = getStepType(stpObj.type); //"db";
         tableObj.stepId = stpObj.id;
         tableObj.datasource_id = stpObj.datasource_id;
         tableObj.process_definition_id = stpObj.process_definition_id;
@@ -109,9 +104,9 @@ export async function setStepInfo(_this, processData) {
         }
         //For archival step
         stpObj.list_of_relations && stpObj.list_of_relations.length && stpObj.list_of_relations.map(async(relationObj) => {
-            debugger;
+            // debugger;
             relationObj.joins.map(async(joinObj, rlnIndex) => {
-                    debugger
+                    // debugger
                     let fromTableObj = {},
                         toTableObj = {},
                         colObj = {
@@ -193,8 +188,6 @@ export async function setStepInfo(_this, processData) {
         tableObj.relationship.selectedTableArray.map(async(tblObj, tblindx) => {
             if (tblObj.stepId == 'Previous Steps') {
 
-                // tblObj.columns = tableObj.columns;
-                // getPrevStepCol(cloneDeep(tblObj));
                 if (tableObj.optionColumn.length) {
                     tableObj.optionColumn.push({ divider: true });
                 }
@@ -250,6 +243,19 @@ export async function setStepInfo(_this, processData) {
                 })
             }
         });
+        if (stpObj.type == "stored_procedure") {
+            tableObj.storedProcedure.name = stpObj.procedure_name;
+            stpObj.params.map((paramObj, paramIndex) => {
+                let paramater = { Parameter_name: "", Type: "", Is_output: "", value: "" };
+                paramater.Parameter_name = paramObj.name;
+                paramater.Type = paramObj.dataType;
+                paramater.Is_output = paramObj.type == "OUT" ? true : false;
+                paramater.value = paramObj.value;
+                tableObj.storedProcedure.params.push(paramater);
+            });
+
+            // tableObj.storedProcedure.params = stpObj.params;
+        }
         // debugger;
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
@@ -258,72 +264,14 @@ export async function setStepInfo(_this, processData) {
 
 };
 
-function getPrevStepCol(_this, tblObj, tableObj) {
-    // let _this = this;
-    // if (tableObj.optionColumn.length) {
-    //     tableObj.optionColumn.push({ divider: true });
-    // }
-    // let headerObj = { header: object.tableName };
-    // tableObj.optionColumn.push(cloneDeep(headerObj));
-    // let allColumn = object.columns;
-    // allColumn.map(function(obj, index) {
-    //     let columnObj = {
-    //         name: obj.colAlies,
-    //         group: object.tableName,
-    //         fixed: false,
-    //         tblAlies: object.aliesTableName,
-    //         colAlies: obj.colAlies + _this.$store.state.aliesCounter++
-    //     };
-    //     // obj.group = object.tableName;
-    //     tableObj.is_drv_table = true;
-    //     //  obj.tblAlies = object.aliesTableName;
-    //     tableObj.optionColumn.push(cloneDeep(columnObj));
-    // });
-};
-
-// function getColumn(_this, tblObj, tableObj) {
-//     // let _this = this;
-//     let url = config.GET_DATA_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
-//     let inputJson = {
-//         "conn_str": _this.$store.state.conn_str,
-//         "schema": _this.$store.state.schema,
-//         "dest_queue": "test",
-//         "table_name": tblObj.tableName
-//     }
-//     postToServer(_this, url, inputJson).then(response => {
-//         if (tableObj.optionColumn.length) {
-//             tableObj.optionColumn.push({ divider: true });
-//         }
-//         let headerObj = { header: tblObj.tableName };
-//         tableObj.optionColumn.push(cloneDeep(headerObj));
-//         let allColumn = response;
-//         allColumn.map(function(obj, index) {
-//             let columnObj = {
-//                 name: obj,
-//                 group: tblObj.tableName,
-//                 fixed: false,
-//                 tblAlies: tblObj.aliesTableName,
-//                 colAlies: obj + _this.$store.state.aliesCounter++
-//             };
-//             tableObj.optionColumn.push(cloneDeep(columnObj));
-//         });
-//         console.log("Response from all tables" + JSON.stringify(response));
-//     }, response => {}).catch(e => {
-//         console.log(e)
-//             // this.ErrorMessage = 'Something went wrong.'
-//     })
-// }
-
-// function getcolumn(_this, table) {
-//     postToServer(_this, url, ideInputData).then(response => {
-//         _this.$toaster.success('Data save successfully')
-//     }, response => {
-//         _this.$toaster.error('There is some internal error please try again later.')
-//     }).catch(e => {
-//         console.log(e)
-//         _this.$toaster.error('Something went wrong...')
-//     })
-// }
+function getStepType(value) {
+    let typeArray = {
+        "select": "db",
+        "archival": "archive",
+        "stored_procedure": "spstep"
+    }
+    return typeArray[value];
+}
 
 function setOperand(param) {
     let operandArray = {

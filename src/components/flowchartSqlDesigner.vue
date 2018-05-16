@@ -691,7 +691,7 @@
                 <h3 contenteditable="true" class="docs-title-input" @blur="setProcessName">{{processDocName}}</h3>
               </div>
               <div class="accordion collapse in" style="position:relative">
-                <h3 contenteditable="true">Steps</h3>
+                <h3 >Steps</h3>
                 <div style="padding-bottom:25px;position:relative;">
                   <div class="draggable" @contextmenu.prevent="$refs.ctx.open($event)" id="db" style="display:inline-block;">
                     <h5>Step</h5>
@@ -773,6 +773,7 @@
 
           <table-modal></table-modal>
           <archive-panel></archive-panel>
+          <stored-procedure></stored-procedure>
           <simplert useRadius=true useIcon=true ref="simplert">
           </simplert>
         </div>
@@ -782,13 +783,17 @@
         <li class="ctx-header">Delete</li>
     </context-menu>
 
-    <v-dialog v-model="addTitle" persistent max-width="290">
+    <v-dialog v-model="addTitle" persistent max-width="25%">
       <!-- <v-btn color="primary" dark slot="activator">Open Dialog</v-btn> -->
       <v-card>
         <v-form v-model="validateStep" ref="form" lazy-validation>
-        <v-card-title class="headline">Provide Step Details</v-card-title>
+        <v-card-title class="headline">
+          <span>Step Details</span>
+          <v-spacer></v-spacer>
+          <v-icon @click="addTitle = false" style="cursor:pointer;color:red">close</v-icon>
+        </v-card-title>
         <v-card-text>
-          <v-container grid-list-md>
+          <v-container grid-list-sm>
             <v-layout wrap>
               <v-flex xs12>
                 <v-text-field label="Step Name" v-model="stepName" :rules="stepNameRules" required>
@@ -821,6 +826,7 @@ import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
 import archiveMain from './archive/archiveMain.vue'
+import storedProcedure from './storedProcedure/storedProcedure.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
@@ -829,7 +835,6 @@ import config from './../config.json'
 import { post as postToServer, get as getFromServer  } from './methods/serverCall'
 import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
-import debounce from 'lodash/debounce'
 import {createStepData} from './methods/createStep'
 import {setStepInfo} from './methods/setStepInfo'
 export default {
@@ -837,6 +842,7 @@ export default {
     Simplert,
     'table-modal': table,
     'archive-panel':archiveMain,
+    'stored-procedure':storedProcedure,
      draggable,
      contextMenu,
      'process-name':processName 
@@ -915,17 +921,18 @@ export default {
     var _this = this
     var url_string = window.location.href;
     var url = new URL(url_string);
+    // console.log("Testing DATA ************************"+JSON.stringify(url.searchParams.get('client_id')));
     _this.userInfo ={
-      'client_id':url.searchParams.getAll('client_id'),
-      'accessToken':url.searchParams.getAll('accessToken'),
-      'user_id': url.searchParams.getAll('user_id'),
-      'table_count':url.searchParams.getAll('table_count'),
-      'datasource_id':url.searchParams.getAll('datasource_id'),
-      'process_definition_id':url.searchParams.getAll('process_definition_id'),
+      'client_id':url.searchParams.get('client_id'),
+      'accessToken':url.searchParams.get('accessToken'),
+      'user_id': url.searchParams.get('user_id'),
+      'table_count':url.searchParams.get('table_count'),
+      'datasource_id':url.searchParams.get('datasource_id'),
+      'process_definition_id':url.searchParams.get('process_definition_id'),
     }
     // debugger;
-    if(_this.userInfo.datasource_id && _this.userInfo.datasource_id.length){
-      _this.$store.state.datasource_id = _this.userInfo.datasource_id[0];
+    if(_this.userInfo.datasource_id){
+      _this.$store.state.datasource_id = _this.userInfo.datasource_id;
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -965,7 +972,7 @@ export default {
     setTimeout(function () {
       var data = {}
       let _this = this;
-        if(_this.userInfo.process_definition_id[0]){
+        if(_this.userInfo.process_definition_id){
           this.createProcessData();
         }else{
           this.loadData(data)
@@ -977,14 +984,14 @@ export default {
   methods: {
     async createProcessData(){       
       let _this = this;
-      let inputJson = _this.userInfo.process_definition_id[0];
+      let inputJson = _this.userInfo.process_definition_id;
       let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
         getFromServer(this, url).then(response=>{
           if(response && response.steps.length)
-          _this.userInfo.datasource_id[0] = response.steps[0].datasource_id;
+          _this.userInfo.datasource_id = response.steps[0].datasource_id;
           // console.log("Data for step creation "+JSON.stringify(response));
         let ideInputData = createStepData(_this, response);    
-        debugger;      
+        // debugger;      
         let tableUrl = config.GET_DATA_URL + 'get_tables'; //'http://192.168.1.100:8010/get_tables';
         let inputJson = {
             "table_name": "",
@@ -996,7 +1003,7 @@ export default {
                 _this.$store.state.schema = tableResponse.schema;
                 _this.$store.state.conn_str = tableResponse.conn_str;
                 setStepInfo(_this, response);
-                debugger;
+                // debugger;
                 console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));   
             }
         }, tableResponse => {}).catch(e => {
@@ -1056,6 +1063,8 @@ export default {
            stepType = 'select'
          }else if(_this.type == "archive"){
            stepType = 'archival'
+         }else if(_this.type == "spstep"){
+           stepType = 'stored_procedure'
          }else{
            return ;
          }
@@ -1070,10 +1079,6 @@ export default {
          }
          postToServer(this, url, inputJson).then(response=>{
            console.log("Response from step save:"+JSON.stringify(response));
-           if(response == "Data not valid"){
-              _this.$toaster.error('Due to some internal error , Step not created');
-              return; 
-           }else{
              _this.$store.state.process_definition_id = response.process_definition_id;
              tableData.title = cloneDeep(_this.stepName); 
              tableData.description = cloneDeep(_this.stepDetail);
@@ -1081,9 +1086,9 @@ export default {
              tableData.stepId = response.id+"";
              _this.$store.state.archivalStep[response.id]=cloneDeep(tableData);
              _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type, response.id)
-           }
-          //  if(response.process_definition_id)
-           
+          //  if(response.process_definition_id)           
+         },response=>{
+            _this.$toaster.error('Due to some internal error , Step not created');
          });
        }
     },
@@ -1109,15 +1114,41 @@ export default {
       sayColor(color) {
         window.alert('left click on ' + color)
       },
-
-    gettables(){
-      let _this = this;
-      let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
-      let inputJson = {
-               "table_name": "",
-               "table_count":_this.userInfo.table_count[0],
-               "datasource_id":_this.userInfo.datasource_id[0]
-      }
+      getProcedureList(){
+          let _this = this;
+          let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
+          let inputJson = {
+              "procedure_name": "",
+              "procedure_count": _this.userInfo.table_count,
+              "datasource_id": _this.userInfo.datasource_id?_this.userInfo.datasource_id:_this.$store.state.datasource_id,
+              "database_name":_this.$store.state.database_name,
+              "database_type":_this.$store.state.database_type,
+              "schema":_this.$store.state.schema,
+              "connstr":_this.$store.state.conn_str
+          };
+          postToServer(this, url, inputJson).then(listResponse => {
+                console.log("listResponse"+JSON.stringify(listResponse));
+                this.loading = false;
+              _this.$store.state.database_name = listResponse.database_name;
+              _this.$store.state.database_type = listResponse.database_type;
+              _this.$store.state.schema = listResponse.schema;
+              _this.$store.state.archivalStep[_this.$store.state.currentStep].storedProcedure.procedureList = listResponse.result;
+              _this.$store.state.conn_str = listResponse.connstr;
+          },listResponse => {
+            if(listResponse && listResponse.message)
+                _this.$toaster.error(listResponse.message);
+            else    
+             _this.$toaster.error('Due to some internal error , Procedure List not found');
+          });
+      },
+      gettables(){
+        let _this = this;
+        let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
+        let inputJson = {
+                "table_name": "",
+                "table_count":_this.userInfo.table_count,
+                "datasource_id":_this.userInfo.datasource_id
+        }
         postToServer(this, url, inputJson).then(response=>{
           if(response && response.table_name_list){
               let allDbTables = response;//JSON.parse(response.bodyText);
@@ -1410,12 +1441,16 @@ export default {
           // }
           // if (operator.className != 'db')
           //   return
-           _this.gettables();
            if(operator.className == 'db'){
+              _this.gettables();
              _this.$store.state.dialog = true;
            }
            else if(operator.className == 'archive'){
+             _this.gettables();
              _this.$store.state.openArchivePanel = true;
+           }else if(operator.className == 'spstep'){
+             _this.getProcedureList();
+             _this.$store.state.openStoredProcedure = true;
            } 
           return true;
         },

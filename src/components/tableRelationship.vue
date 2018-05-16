@@ -156,7 +156,7 @@ export default {
           "conn_str": conn_str,
           "schema":schema,
           "table_name": value,
-          "table_count":userData.table_count[0]
+          "table_count":userData.table_count
         }
         this.$http.post(url, inputJson, {
           headers: {
