@@ -7,7 +7,8 @@
     </ul>
     <v-layout row wrap>
       <v-flex xs6  offset-xs3>
-        <v-select :items="selectTable" v-model="tableObj.storedProcedure.name" :loading="loading" :search-input.sync="search"
+        <v-select :items="selectTable" v-model="tableObj.storedProcedure.name" :loading="loading"
+          :search-input.sync="search" @change="getParameter"
            label="Select Table"  cache-items item-text="name" autocomplete></v-select>
       </v-flex>
     </v-layout> 
@@ -30,7 +31,7 @@ export default {
         allTables:[],
         createCopy : false,
         allDbTablesCopy : [],
-        selectTable:[],
+        // selectTable:[],
         CopyList:[],
         userInfo:"",
         database_type:"",
@@ -44,15 +45,16 @@ export default {
        var _this = this;
            _this.userInfo =JSON.parse(sessionStorage.getItem("userInfo"));
         //    debugger;
-           _this.getProcedureList(); 
+          //  _this.getProcedureList(); 
     },
     computed: {
-    //    selectTable() {
-    //     let _this = this;
-    //     return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
-    //   }
+       selectTable() {
+        let _this = this;
+        return _this.tableObj.storedProcedure.procedureList;//_this.tableObj.allDbTables;
+      }
     },
     watch: {
+      
       search(val) {
          val && this.querySelections(val)
       },
@@ -60,9 +62,27 @@ export default {
         // debugger;
         console.log("newVal"+JSON.stringify(newVal));
         console.log(this.tableObj);
+        // debugger;
+        if(newVal.storedProcedure.name)
+            this.getProcedureList();
       }
     },
     methods: {
+      getParameter(newValue){
+        let _this = this;
+        let inputJson = {
+                "procedure_name": newValue,
+                "datasource_id": _this.userInfo.datasource_id[0],
+                "database_name":_this.$store.state.database_name,
+                "database_type":_this.$store.state.database_type,
+                "schema":_this.$store.state.schema,
+                "connstr":_this.$store.state.conn_str
+        };
+        let url = config.PROCEDURE_LIST+"get_stored_procedure_param";
+        postToServer(this, url, inputJson).then(paramResponse => {
+          _this.tableObj.storedProcedure.params = paramResponse.result;
+        });
+      },
         getProcedureList(val){
             let _this = this;
             let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
@@ -81,7 +101,7 @@ export default {
                 _this.$store.state.database_name = listResponse.database_name;
                 _this.$store.state.database_type = listResponse.database_type;
                 _this.$store.state.schema = listResponse.schema;
-                _this.selectTable = listResponse.result;
+                _this.tableObj.storedProcedure.procedureList = listResponse.result;
                 _this.$store.state.conn_str = listResponse.connstr;
             });
         },
@@ -98,82 +118,82 @@ export default {
         this.loading = true;
         await _this.getProcedureList(value);        
       },
-    addTable(){
-      let validFlag=true;
-      let _this = this;
-      console.log("Demo "+JSON.stringify(_this.demo));
-      _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
-        if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
-          validFlag = false;
-          _this.$toaster.error('Table Already Exist')
-        }
-      });
-      if(validFlag){
-        let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
-        let tableName = tempName.join("");
-        let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
-                   'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
-                   'stepId':_this.tableObj.relationship.selectedTable.stepId}
-        _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-        if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){           
-           obj.columns = _this.tableObj.relationship.selectedTable.columns;
-          _this.getPrevStepCol(cloneDeep(obj));
-        }else{
-          // obj.is_drv_table = false;
-          _this.getColumn(obj);
-        }
-         _this.$toaster.success('Table Added Successfully'); 
-      }
-    },
-    getPrevStepCol(object){
-      let _this = this;
-      if(_this.tableObj.optionColumn.length){
-        _this.tableObj.optionColumn.push({ divider: true });
-      }
-          let headerObj = { header: object.tableName};
-          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-          let allColumn = object.columns;
-          allColumn.map(function(obj, index){
-           let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++}; 
-            // obj.group = object.tableName;
-            _this.tableObj.is_drv_table = true;
-            //  obj.tblAlies = object.aliesTableName;
-            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-          });
-    },
-    getColumn(tableObject){
-      let _this = this;
-      let url = config.GET_DATA_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
-      let inputJson = {
-               "conn_str": _this.conn_str,
-               "schema": _this.schema,
-               "dest_queue": "test",
-               "table_name": tableObject.tableName
-      }
-      _this.$http.post(url, inputJson, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-        }).then(response => {
-          if(_this.tableObj.optionColumn.length){
-            _this.tableObj.optionColumn.push({ divider: true });
-          }
-          let headerObj = { header: tableObject.tableName};
-          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-          let allColumn = JSON.parse(response.bodyText);
-          allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
-            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-          });
-          console.log("Response from all tables"+JSON.stringify(response));
-        },response => {}).catch(e => {
-              console.log(e)
-            this.ErrorMessage = 'Something went wrong.'
-      })
+    // addTable(){
+    //   let validFlag=true;
+    //   let _this = this;
+    //   console.log("Demo "+JSON.stringify(_this.demo));
+    //   _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
+    //     if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
+    //       validFlag = false;
+    //       _this.$toaster.error('Table Already Exist')
+    //     }
+    //   });
+    //   if(validFlag){
+    //     let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
+    //     let tableName = tempName.join("");
+    //     let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
+    //                'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
+    //                'stepId':_this.tableObj.relationship.selectedTable.stepId}
+    //     _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
+    //     if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){           
+    //        obj.columns = _this.tableObj.relationship.selectedTable.columns;
+    //       _this.getPrevStepCol(cloneDeep(obj));
+    //     }else{
+    //       // obj.is_drv_table = false;
+    //       _this.getColumn(obj);
+    //     }
+    //      _this.$toaster.success('Table Added Successfully'); 
+    //   }
+    // },
+    // getPrevStepCol(object){
+    //   let _this = this;
+    //   if(_this.tableObj.optionColumn.length){
+    //     _this.tableObj.optionColumn.push({ divider: true });
+    //   }
+    //       let headerObj = { header: object.tableName};
+    //       _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+    //       let allColumn = object.columns;
+    //       allColumn.map(function(obj, index){
+    //        let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
+    //                            tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++}; 
+    //         // obj.group = object.tableName;
+    //         _this.tableObj.is_drv_table = true;
+    //         //  obj.tblAlies = object.aliesTableName;
+    //         _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+    //       });
+    // },
+    // getColumn(tableObject){
+    //   let _this = this;
+    //   let url = config.GET_DATA_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+    //   let inputJson = {
+    //            "conn_str": _this.conn_str,
+    //            "schema": _this.schema,
+    //            "dest_queue": "test",
+    //            "table_name": tableObject.tableName
+    //   }
+    //   _this.$http.post(url, inputJson, {
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    //     }).then(response => {
+    //       if(_this.tableObj.optionColumn.length){
+    //         _this.tableObj.optionColumn.push({ divider: true });
+    //       }
+    //       let headerObj = { header: tableObject.tableName};
+    //       _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+    //       let allColumn = JSON.parse(response.bodyText);
+    //       allColumn.map(function(obj, index){
+    //          let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
+    //                            tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
+    //         _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+    //       });
+    //       console.log("Response from all tables"+JSON.stringify(response));
+    //     },response => {}).catch(e => {
+    //           console.log(e)
+    //         this.ErrorMessage = 'Something went wrong.'
+    //   })
     
-    },
+    // },
     }
   }
 

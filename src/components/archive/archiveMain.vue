@@ -289,7 +289,6 @@ export default {
       //   }
       // }).then(response => {
       postToServer(this, url, inputParam).then(response=>{
-          debugger;
           if(response.message){
             _this.$toaster.error(response.message);
             return;

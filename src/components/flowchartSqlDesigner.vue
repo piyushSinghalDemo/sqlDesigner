@@ -691,7 +691,7 @@
                 <h3 contenteditable="true" class="docs-title-input" @blur="setProcessName">{{processDocName}}</h3>
               </div>
               <div class="accordion collapse in" style="position:relative">
-                <h3 contenteditable="true">Steps</h3>
+                <h3 >Steps</h3>
                 <div style="padding-bottom:25px;position:relative;">
                   <div class="draggable" @contextmenu.prevent="$refs.ctx.open($event)" id="db" style="display:inline-block;">
                     <h5>Step</h5>
@@ -1118,15 +1118,36 @@ export default {
       sayColor(color) {
         window.alert('left click on ' + color)
       },
-
-    gettables(){
-      let _this = this;
-      let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
-      let inputJson = {
-               "table_name": "",
-               "table_count":_this.userInfo.table_count[0],
-               "datasource_id":_this.userInfo.datasource_id[0]
-      }
+      getProcedureList(){
+          let _this = this;
+          let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
+          let inputJson = {
+              "procedure_name": "",
+              "procedure_count": _this.userInfo.table_count[0],
+              "datasource_id": _this.userInfo.datasource_id[0]?_this.userInfo.datasource_id[0]:_this.$store.state.datasource_id,
+              "database_name":_this.$store.state.database_name,
+              "database_type":_this.$store.state.database_type,
+              "schema":_this.$store.state.schema,
+              "connstr":_this.$store.state.conn_str
+          };
+          postToServer(this, url, inputJson).then(listResponse => {
+                console.log("listResponse"+JSON.stringify(listResponse));
+                this.loading = false;
+              _this.$store.state.database_name = listResponse.database_name;
+              _this.$store.state.database_type = listResponse.database_type;
+              _this.$store.state.schema = listResponse.schema;
+              _this.$store.state.archivalStep[_this.$store.state.currentStep].storedProcedure.procedureList = listResponse.result;
+              _this.$store.state.conn_str = listResponse.connstr;
+          });
+      },
+      gettables(){
+        let _this = this;
+        let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
+        let inputJson = {
+                "table_name": "",
+                "table_count":_this.userInfo.table_count[0],
+                "datasource_id":_this.userInfo.datasource_id[0]
+        }
         postToServer(this, url, inputJson).then(response=>{
           if(response && response.table_name_list){
               let allDbTables = response;//JSON.parse(response.bodyText);
@@ -1419,13 +1440,15 @@ export default {
           // }
           // if (operator.className != 'db')
           //   return
-           _this.gettables();
            if(operator.className == 'db'){
+              _this.gettables();
              _this.$store.state.dialog = true;
            }
            else if(operator.className == 'archive'){
+             _this.gettables();
              _this.$store.state.openArchivePanel = true;
            }else if(operator.className == 'spstep'){
+             _this.getProcedureList();
              _this.$store.state.openStoredProcedure = true;
            } 
           return true;

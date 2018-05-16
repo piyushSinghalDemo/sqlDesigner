@@ -44,14 +44,14 @@
 import _def from '../various/defnitions'
 import cloneDeep from 'lodash/cloneDeep';
 import tableData from '../data/table-selection';
-// import criteria from './criteria.vue'
+import uniq from 'lodash/uniq'
 import config from '../../config.json'
 import procedureList from "./procedureList.vue";
 import parameter from './parameter.vue';
+import getStepData from '../methods/storedProcedureInput'
 import { post as postToServer  } from '../methods/serverCall'
 export default {
   components: {
-    // 'table-joins': tableJoins,
     'procedure-list':procedureList,
     'parameter-list':parameter
   },
@@ -84,11 +84,56 @@ export default {
         let _this = this;
         _this.tableObj = objData;
         _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
-        let flowchart$ = $("#droppable");
-        var operatorData = flowchart$.flowchart('getOperatorData', _this.$store.state.currentStep);
+        let inputJson = getStepData(_this, _this.tableObj);
+        // console.log("inputJson in stored procedure"+JSON.stringify(inputJson));
+        let url = config.SAVE_DATA_URL+'ide_step_data/add';
+         postToServer(this, url, inputJson).then(response=>{
+           if(response.message){
+            _this.$toaster.error(response.message);
+            return;
+          }
+        _this.tableObj.stepId = response.id;
+        _this.$store.state.process_definition_id = response.process_definition_id;
+        _this.tableObj.process_definition_id = response.process_definition_id;
+        _this.$store.state.archivalStep[_this.$store.state.currentStep] = cloneDeep(_this.tableObj);
+        _this.$store.state.processArray.push(cloneDeep(inputJson));
         let $flowchart = $("#droppable");
         var flowchartData = $flowchart.flowchart('getData');
+        let objectLength = Object.keys(flowchartData.links).length;
+        let findLink=[],
+        addData = [];
+        let currentStep = _this.$store.state.currentStep;
+        findLink.push(cloneDeep(currentStep));
+
+        /**@augments For previous Step data Tree traversal BFS Algo Implemented
+         */
+        do{
+          for (var i = 0; i < objectLength; i++) {
+            if (flowchartData.links[i].fromOperator == currentStep) {
+              findLink.push(cloneDeep(flowchartData.links[i].toOperator));
+              addData.push(cloneDeep(flowchartData.links[i].toOperator));
+            }
+         }
+        findLink.splice(0,1);
+        if(findLink.length){
+          currentStep = findLink[0];
+        } 
+        }while(findLink.length)
+        
+        addData = uniq(addData);
+         let obj = {
+                'name': _this.tableObj.title,
+                'columns': _this.tableObj.selectedColumns,
+                'stepId': 'Previous Steps'
+              }
+        addData.map(linkObj=>{
+          _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
+        })
+        console.log("flowchartData in save step" + JSON.stringify(flowchartData));
+        console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
+        _this.$toaster.success('Data save successfully');
         this.$store.state.openStoredProcedure = false;
+         });       
     },  
     updateTableObj(arr) {
         let _this = this;

@@ -59,7 +59,8 @@ export default {
     joins: true,
     storedProcedure: {
         name: '',
-        params: []
+        params: [],
+        procedureList: []
     },
 
 }

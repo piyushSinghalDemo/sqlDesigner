@@ -19,6 +19,8 @@ export function createStepData(_this, processData) {
             operatorData.className = 'db';
         else if (object.type == "archival")
             operatorData.className = 'archive';
+        else if (object.type == "stored_procedure")
+            operatorData.className = 'spstep';
         operators[object.id] = cloneDeep(operatorData);
     });
     // processData.links.map((object, index) => {
