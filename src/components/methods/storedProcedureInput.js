@@ -11,11 +11,11 @@ export default function getStepData(_this, tableObj) {
 
     procedureStepInput.top = operatorData.top + "";
     procedureStepInput.left = operatorData.left + "";
-    procedureStepInput.datasource_id = userInfo.datasource_id[0];
+    procedureStepInput.datasource_id = userInfo.datasource_id;
     procedureStepInput.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
     procedureStepInput.process_definition_name = _this.$store.state.process_definition_name;
-    procedureStepInput.client_id = userInfo.client_id[0];
-    procedureStepInput.user_id = userInfo.user_id[0];
+    procedureStepInput.client_id = userInfo.client_id;
+    procedureStepInput.user_id = userInfo.user_id;
     procedureStepInput.id = tableObj.stepId ? tableObj.stepId : "";
     procedureStepInput.name = tableObj.title;
     procedureStepInput.desc = tableObj.description;

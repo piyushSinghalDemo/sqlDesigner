@@ -835,7 +835,6 @@ import config from './../config.json'
 import { post as postToServer, get as getFromServer  } from './methods/serverCall'
 import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
-import debounce from 'lodash/debounce'
 import {createStepData} from './methods/createStep'
 import {setStepInfo} from './methods/setStepInfo'
 export default {
@@ -922,17 +921,18 @@ export default {
     var _this = this
     var url_string = window.location.href;
     var url = new URL(url_string);
+    // console.log("Testing DATA ************************"+JSON.stringify(url.searchParams.get('client_id')));
     _this.userInfo ={
-      'client_id':url.searchParams.getAll('client_id'),
-      'accessToken':url.searchParams.getAll('accessToken'),
-      'user_id': url.searchParams.getAll('user_id'),
-      'table_count':url.searchParams.getAll('table_count'),
-      'datasource_id':url.searchParams.getAll('datasource_id'),
-      'process_definition_id':url.searchParams.getAll('process_definition_id'),
+      'client_id':url.searchParams.get('client_id'),
+      'accessToken':url.searchParams.get('accessToken'),
+      'user_id': url.searchParams.get('user_id'),
+      'table_count':url.searchParams.get('table_count'),
+      'datasource_id':url.searchParams.get('datasource_id'),
+      'process_definition_id':url.searchParams.get('process_definition_id'),
     }
     // debugger;
-    if(_this.userInfo.datasource_id && _this.userInfo.datasource_id.length){
-      _this.$store.state.datasource_id = _this.userInfo.datasource_id[0];
+    if(_this.userInfo.datasource_id){
+      _this.$store.state.datasource_id = _this.userInfo.datasource_id;
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -972,7 +972,7 @@ export default {
     setTimeout(function () {
       var data = {}
       let _this = this;
-        if(_this.userInfo.process_definition_id[0]){
+        if(_this.userInfo.process_definition_id){
           this.createProcessData();
         }else{
           this.loadData(data)
@@ -984,11 +984,11 @@ export default {
   methods: {
     async createProcessData(){       
       let _this = this;
-      let inputJson = _this.userInfo.process_definition_id[0];
+      let inputJson = _this.userInfo.process_definition_id;
       let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
         getFromServer(this, url).then(response=>{
           if(response && response.steps.length)
-          _this.userInfo.datasource_id[0] = response.steps[0].datasource_id;
+          _this.userInfo.datasource_id = response.steps[0].datasource_id;
           // console.log("Data for step creation "+JSON.stringify(response));
         let ideInputData = createStepData(_this, response);    
         // debugger;      
@@ -1123,8 +1123,8 @@ export default {
           let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
           let inputJson = {
               "procedure_name": "",
-              "procedure_count": _this.userInfo.table_count[0],
-              "datasource_id": _this.userInfo.datasource_id[0]?_this.userInfo.datasource_id[0]:_this.$store.state.datasource_id,
+              "procedure_count": _this.userInfo.table_count,
+              "datasource_id": _this.userInfo.datasource_id?_this.userInfo.datasource_id:_this.$store.state.datasource_id,
               "database_name":_this.$store.state.database_name,
               "database_type":_this.$store.state.database_type,
               "schema":_this.$store.state.schema,
@@ -1145,8 +1145,8 @@ export default {
         let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
         let inputJson = {
                 "table_name": "",
-                "table_count":_this.userInfo.table_count[0],
-                "datasource_id":_this.userInfo.datasource_id[0]
+                "table_count":_this.userInfo.table_count,
+                "datasource_id":_this.userInfo.datasource_id
         }
         postToServer(this, url, inputJson).then(response=>{
           if(response && response.table_name_list){

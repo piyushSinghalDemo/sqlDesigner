@@ -4,7 +4,7 @@ import { debug } from 'util';
 
 export function get(that, endPoint) {
     let userData = JSON.parse(sessionStorage.getItem("userInfo"));
-    let authorization = userData.accessToken[0];
+    let authorization = userData.accessToken;
     let headerData = {
         'Authorization': authorization,
         'Content-Type': 'application/json'
@@ -23,7 +23,7 @@ export function get(that, endPoint) {
 
 export function post(that, endPoint, InputJson) {
     let userData = JSON.parse(sessionStorage.getItem("userInfo"));
-    let authorization = userData.accessToken[0];
+    let authorization = userData.accessToken;
 
     let headerData = {
         'Authorization': authorization,

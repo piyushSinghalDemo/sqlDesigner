@@ -244,8 +244,8 @@ export default {
           }
         });
         archiveStepInput.list_of_relations.push(relationObject);   
-        archiveStepInput.client_id=_this.userData.client_id[0],
-        archiveStepInput.user_id=_this.userData.user_id[0],
+        archiveStepInput.client_id=_this.userData.client_id,
+        archiveStepInput.user_id=_this.userData.user_id,
         archiveStepInput.id = _this.tableObj.stepId             
       });
       return archiveStepInput;
@@ -277,7 +277,7 @@ export default {
       let inputParam =  getStepData(this, _this.tableObj);     //this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
-      inputParam.datasource_id = _this.userData.datasource_id[0];
+      inputParam.datasource_id = _this.userData.datasource_id;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
       console.log("inputParam in archive step " +JSON.stringify(inputParam));

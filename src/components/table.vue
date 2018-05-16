@@ -245,8 +245,8 @@ export default {
       dbStepInput.name = _this.tableObj.title;
       dbStepInput.output_table = _this.tableObj.title;
       dbStepInput.desc = _this.tableObj.description;
-      dbStepInput.client_id=_this.userData.client_id[0],
-      dbStepInput.user_id=_this.userData.user_id[0],
+      dbStepInput.client_id=_this.userData.client_id,
+      dbStepInput.user_id=_this.userData.user_id,
       dbStepInput.id = _this.tableObj.stepId
       // dbStepInput.datasource_id = _this.userData.datasource_id[0];
       dbStepInput.process_definition_name = _this.$store.state.process_definition_name;
@@ -290,7 +290,7 @@ export default {
       _this.$http.post(url, inputParam, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':_this.userData.accessToken[0]
+          'Authorization':_this.userData.accessToken
         }
       }).then(response => {
         _this.tableObj.stepId = response.body.id;        

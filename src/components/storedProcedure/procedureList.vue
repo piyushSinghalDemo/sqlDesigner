@@ -72,7 +72,7 @@ export default {
         let _this = this;
         let inputJson = {
                 "procedure_name": newValue,
-                "datasource_id": _this.userInfo.datasource_id[0],
+                "datasource_id": _this.userInfo.datasource_id,
                 "database_name":_this.$store.state.database_name,
                 "database_type":_this.$store.state.database_type,
                 "schema":_this.$store.state.schema,
@@ -88,8 +88,8 @@ export default {
             let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
             let inputJson = {
                 "procedure_name": val,
-                "procedure_count": _this.userInfo.table_count[0],
-                "datasource_id": _this.userInfo.datasource_id[0],
+                "procedure_count": _this.userInfo.table_count,
+                "datasource_id": _this.userInfo.datasource_id,
                 "database_name":_this.$store.state.database_name,
                 "database_type":_this.$store.state.database_type,
                 "schema":_this.$store.state.schema,
