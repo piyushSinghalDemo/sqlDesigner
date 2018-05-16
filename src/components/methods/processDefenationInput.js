@@ -65,7 +65,7 @@ export function getProcessData(_this, flowchartData) {
         'steps': stepArray,
         'links': linkArray,
         'step_data': _this.$store.state.processArray,
-        'process_definition_id': _this.$store.state.archivalStep[archivalStepKeys[0]].process_definition_id,
+        'process_definition_id': _this.$store.state.process_definition_id,
         'client_id': userData.client_id[0],
         'user_id': userData.user_id[0],
         'process_definition_name': _this.$store.state.process_definition_name,

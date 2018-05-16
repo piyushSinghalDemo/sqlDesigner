@@ -21,13 +21,7 @@ export async function setStepInfo(_this, processData) {
         tableObj.title = stpObj.name;
         tableObj.description = stpObj.desc;
         tableObj.distinct = stpObj.distinct;
-        if (stpObj.type == "select") {
-            tableObj.type = "db";
-        } else if (stpObj.type == "archival") {
-            tableObj.type = "archive";
-        } else if (stpObj.type == "stored_procedure") {
-            tableObj.type = "spstep";
-        }
+        tableObj.type = getStepType(stpObj.type); //"db";
         tableObj.stepId = stpObj.id;
         tableObj.datasource_id = stpObj.datasource_id;
         tableObj.process_definition_id = stpObj.process_definition_id;
@@ -194,8 +188,6 @@ export async function setStepInfo(_this, processData) {
         tableObj.relationship.selectedTableArray.map(async(tblObj, tblindx) => {
             if (tblObj.stepId == 'Previous Steps') {
 
-                // tblObj.columns = tableObj.columns;
-                // getPrevStepCol(cloneDeep(tblObj));
                 if (tableObj.optionColumn.length) {
                     tableObj.optionColumn.push({ divider: true });
                 }
@@ -271,6 +263,15 @@ export async function setStepInfo(_this, processData) {
     });
 
 };
+
+function getStepType(value) {
+    let typeArray = {
+        "select": "db",
+        "archival": "archive",
+        "stored_procedure": "spstep"
+    }
+    return typeArray[value];
+}
 
 function setOperand(param) {
     let operandArray = {
