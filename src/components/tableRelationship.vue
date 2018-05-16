@@ -78,6 +78,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import config from '../config.json'
 import union from 'lodash/union';
+import {post as postToServer} from './methods/serverCall.js'
 export default {
   data() {
       return {
@@ -158,13 +159,14 @@ export default {
           "table_name": value,
           "table_count":userData.table_count
         }
-        this.$http.post(url, inputJson, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => {
+        // this.$http.post(url, inputJson, {
+        //   headers: {
+        //     'Content-Type': 'application/json'
+        //   }
+        // }).then(response => {
+        postToServer(this, url, inputJson).then(response=>{  
           // _this.tableObj.allDbTables= [];
-          let tableList = response.body.table_name_list;
+          let tableList = response.table_name_list;
           let dummyTableList=[];
           if(tableList.length){
               tableList.map(function(obj, index){
@@ -236,17 +238,18 @@ export default {
                "dest_queue": "test",
                "table_name": tableObject.tableName
       }
-      _this.$http.post(url, inputJson, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-        }).then(response => {
+      // _this.$http.post(url, inputJson, {
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // }
+      //   }).then(response => {
+        postToServer(this, url, inputJson).then(response=>{
           if(_this.tableObj.optionColumn.length){
             _this.tableObj.optionColumn.push({ divider: true });
           }
           let headerObj = { header: tableObject.tableName};
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-          let allColumn = JSON.parse(response.bodyText);
+          let allColumn = response;
           allColumn.map(function(obj, index){
              let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
                                tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
