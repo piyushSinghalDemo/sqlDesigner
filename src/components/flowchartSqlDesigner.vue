@@ -1057,6 +1057,7 @@ export default {
               console.log(e)
             _this.$toaster.error('Something went wrong...')
       })    
+      console.log("ideInputData " +JSON.stringify(ideInputData));
     },
     getStepDetails(){ // take step name and description from user
       let _this = this;
@@ -1133,7 +1134,8 @@ export default {
               "database_name":_this.$store.state.database_name,
               "database_type":_this.$store.state.database_type,
               "schema":_this.$store.state.schema,
-              "connstr":_this.$store.state.conn_str
+              "connstr":_this.$store.state.conn_str,
+              "client_id":_this.userInfo.client_id
           };
           postToServer(this, url, inputJson).then(listResponse => {
                 console.log("listResponse"+JSON.stringify(listResponse));
@@ -1156,7 +1158,8 @@ export default {
         let inputJson = {
                 "table_name": "",
                 "table_count":_this.userInfo.table_count,
-                "env_id":_this.userInfo.env_id
+                "env_id":_this.userInfo.env_id,
+                "client_id":_this.userInfo.client_id
         }
         postToServer(this, url, inputJson).then(response=>{
           if(response && response.table_name_list){

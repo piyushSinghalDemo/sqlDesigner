@@ -94,7 +94,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
-import { post as postToServer  } from '../methods/serverCall'
+import { post as postToServer } from '../methods/serverCall'
 export default {
   data() {
       return {
@@ -204,7 +204,8 @@ export default {
           "conn_str": conn_str,
           "schema":schema,
           "table_name": value,
-          "table_count":userData.table_count
+          "table_count":userData.table_count,
+          "client_id":userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
@@ -268,7 +269,8 @@ export default {
           "conn_str": conn_str,
           "schema":schema,
           "table_name": value,
-          "table_count":userData.table_count
+          "table_count":userData.table_count,
+          "client_id":userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
@@ -347,7 +349,8 @@ export default {
                "conn_str": _this.conn_str,
                "schema": _this.schema,
                "dest_queue": "test",
-               "table_name": tableObject.tableName
+               "table_name": tableObject.tableName,
+               "client_id":userData.client_id
       }
       // _this.$http.post(url, inputJson, {
       // headers: {

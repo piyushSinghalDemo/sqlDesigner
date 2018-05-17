@@ -76,7 +76,8 @@ export default {
                 "database_name":_this.$store.state.database_name,
                 "database_type":_this.$store.state.database_type,
                 "schema":_this.$store.state.schema,
-                "connstr":_this.$store.state.conn_str
+                "connstr":_this.$store.state.conn_str,
+                "client_id":_this.userInfo.client_id
         };
         let url = config.PROCEDURE_LIST+"get_stored_procedure_param";
         postToServer(this, url, inputJson).then(paramResponse => {
@@ -93,7 +94,8 @@ export default {
                 "database_name":_this.$store.state.database_name,
                 "database_type":_this.$store.state.database_type,
                 "schema":_this.$store.state.schema,
-                "connstr":_this.$store.state.conn_str
+                "connstr":_this.$store.state.conn_str,
+                "client_id":_this.userInfo.client_id
             };
             postToServer(this, url, inputJson).then(listResponse => {
                  console.log("listResponse"+JSON.stringify(listResponse));

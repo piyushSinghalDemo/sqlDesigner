@@ -157,7 +157,8 @@ export default {
           "conn_str": conn_str,
           "schema":schema,
           "table_name": value,
-          "table_count":userData.table_count
+          "table_count":userData.table_count,
+          "client_id":userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
@@ -231,12 +232,14 @@ export default {
     },
     getColumn(tableObject){
       let _this = this;
+      let userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let url = config.GET_DATA_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
                "conn_str": _this.conn_str,
                "schema": _this.schema,
                "dest_queue": "test",
-               "table_name": tableObject.tableName
+               "table_name": tableObject.tableName,
+               "client_id":userData.client_id
       }
       // _this.$http.post(url, inputJson, {
       // headers: {
