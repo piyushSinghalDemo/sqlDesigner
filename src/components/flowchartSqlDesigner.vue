@@ -735,6 +735,7 @@
                   </div>
 
                   <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
+                  <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button>
                 </div>
             
                 <!-- <h3>Header 3</h3>
@@ -927,12 +928,12 @@ export default {
       'accessToken':url.searchParams.get('accessToken'),
       'user_id': url.searchParams.get('user_id'),
       'table_count':url.searchParams.get('table_count'),
-      'datasource_id':url.searchParams.get('datasource_id'),
+      'env_id':url.searchParams.get('env_id'),
       'process_definition_id':url.searchParams.get('process_definition_id'),
     }
     // debugger;
-    if(_this.userInfo.datasource_id){
-      _this.$store.state.datasource_id = _this.userInfo.datasource_id;
+    if(_this.userInfo.env_id){
+      _this.$store.state.env_id = _this.userInfo.env_id;
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -988,7 +989,7 @@ export default {
       let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
         getFromServer(this, url).then(response=>{
           if(response && response.steps.length)
-          _this.userInfo.datasource_id = response.steps[0].datasource_id;
+          _this.userInfo.env_id = response.steps[0].env_id;
           // console.log("Data for step creation "+JSON.stringify(response));
         let ideInputData = createStepData(_this, response);    
         // debugger;      
@@ -996,7 +997,8 @@ export default {
         let inputJson = {
             "table_name": "",
             "table_count": "",
-            "datasource_id": response.steps[0].datasource_id
+            "env_id": response.steps[0].env_id,
+            "client_id": _this.userInfo.client_id
         }
         postToServer(this, tableUrl, inputJson).then(tableResponse => {
             if (tableResponse && tableResponse.table_name_list) {
@@ -1027,15 +1029,12 @@ export default {
     executeProcess(){
       this.saveProcessData();
     },
-    saveProcessData(){
+    validateProcess(){
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-      console.log("archivalStep"+JSON.stringify(this.$store.state.archivalStep));
-      // console.log("flowchartData"+JSON.stringify(flowchartData));
-        let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
+        let url = config.VALIDATE+'validate_process_defination' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
-        // console.log("ideInputData "+JSON.stringify(ideInputData));
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
         },response => {
@@ -1044,9 +1043,21 @@ export default {
               console.log(e)
             _this.$toaster.error('Something went wrong...')
       })    
-      // console.log("linkArray "+ JSON.stringify(linkArray));
-      // console.log("stepArray "+JSON.stringify(stepArray));
-      // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
+    },
+    saveProcessData(){
+      let _this = this;
+      let $flowchart = $("#droppable");
+      var flowchartData = $flowchart.flowchart('getData');
+        let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
+        let ideInputData = getProcessData(_this, flowchartData);
+        postToServer(this, url, ideInputData).then(response=>{  
+          _this.$toaster.success('Data save successfully') 
+        },response => {
+           _this.$toaster.error('There is some internal error please try again later.')
+        }).catch(e => {
+              console.log(e)
+            _this.$toaster.error('Something went wrong...')
+      })    
       console.log("ideInputData " +JSON.stringify(ideInputData));
     },
     getStepDetails(){ // take step name and description from user
@@ -1116,17 +1127,21 @@ export default {
       },
       getProcedureList(){
           let _this = this;
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=true;
           let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
           let inputJson = {
               "procedure_name": "",
               "procedure_count": _this.userInfo.table_count,
-              "datasource_id": _this.userInfo.datasource_id?_this.userInfo.datasource_id:_this.$store.state.datasource_id,
+              "env_id": _this.userInfo.env_id?_this.userInfo.env_id:_this.$store.state.env_id,
               "database_name":_this.$store.state.database_name,
               "database_type":_this.$store.state.database_type,
               "schema":_this.$store.state.schema,
-              "connstr":_this.$store.state.conn_str
+              "connstr":_this.$store.state.conn_str,
+              "client_id":_this.userInfo.client_id
           };
           postToServer(this, url, inputJson).then(listResponse => {
+            if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
+            _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=false;
                 console.log("listResponse"+JSON.stringify(listResponse));
                 this.loading = false;
               _this.$store.state.database_name = listResponse.database_name;
@@ -1135,6 +1150,7 @@ export default {
               _this.$store.state.archivalStep[_this.$store.state.currentStep].storedProcedure.procedureList = listResponse.result;
               _this.$store.state.conn_str = listResponse.connstr;
           },listResponse => {
+            _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=false;
             if(listResponse && listResponse.message)
                 _this.$toaster.error(listResponse.message);
             else    
@@ -1144,12 +1160,16 @@ export default {
       gettables(){
         let _this = this;
         let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
+        if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
+        _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=true;
         let inputJson = {
                 "table_name": "",
                 "table_count":_this.userInfo.table_count,
-                "datasource_id":_this.userInfo.datasource_id
+                "env_id":_this.userInfo.env_id,
+                "client_id":_this.userInfo.client_id
         }
         postToServer(this, url, inputJson).then(response=>{
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=false;
           if(response && response.table_name_list){
               let allDbTables = response;//JSON.parse(response.bodyText);
               _this.$store.state.schema = allDbTables.schema;
@@ -1163,7 +1183,9 @@ export default {
               });
           }
           // console.log("Response from all tables"+JSON.stringify(response));
-        },response => {}).catch(e => {
+        },response => {
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=false;
+        }).catch(e => {
           console.log(e)
             this.ErrorMessage = 'Something went wrong.'
           })

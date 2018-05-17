@@ -14,9 +14,7 @@ export function get(that, endPoint) {
             return resolve(response.body)
         }, response => {
             return reject(response.body)
-                // if (response.message) {
-                //     _this.$toaster.error(response.message);
-                // }
+
         })
     })
 }
@@ -33,9 +31,7 @@ export function post(that, endPoint, InputJson) {
             return resolve(response.body)
         }, response => {
             return reject(response.body)
-                // if (response.body.message) {
-                //     _this.$toaster.error(response.body.message);
-                // }
+
         })
     })
 }

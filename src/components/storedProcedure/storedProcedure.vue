@@ -1,5 +1,10 @@
 <template lang="html">
   <v-container>
+    <div v-show="tableObj.loadProcedureList">
+        <v-progress-circular indeterminate color="red"></v-progress-circular>
+        <span style="color: red;font-size: 16px;">Parameter List Loading...</span>
+    </div>
+    <div v-show="!tableObj.loadProcedureList">
     <v-layout row justify-center>
       <v-dialog :value="dialog" fullscreen transition="dialog-bottom-transition" :overlay="false" scrollable>
         <v-card tile style="height:650px">
@@ -40,6 +45,7 @@
     <v-dialog v-model="processDoc" max-width="60%" max-height="50%">
         <process-name @save-name="saveName" v-on:close="processDoc=false"></process-name>
     </v-dialog>
+    </div>
   </v-container>
 </template>
 
@@ -158,6 +164,30 @@ export default {
         let _this = this;
         _this.tableObj = arr[0];
         this.progressbar = arr[1];
+        if(arr[1] == '2'){
+          _this.loadParamaterList();
+        }
+    },
+    loadParamaterList(){
+       let _this = this;
+       let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+         _this.tableObj.loadParamater = true;
+        let inputJson = {
+                "procedure_name": _this.tableObj.storedProcedure.name,
+                "env_id": userInfo.env_id,
+                "database_name":_this.$store.state.database_name,
+                "database_type":_this.$store.state.database_type,
+                "schema":_this.$store.state.schema,
+                "connstr":_this.$store.state.conn_str,
+                "client_id":userInfo.client_id
+        };
+        let url = config.PROCEDURE_LIST+"get_stored_procedure_param";
+        postToServer(this, url, inputJson).then(paramResponse => {
+          _this.tableObj.loadParamater = false;
+          _this.tableObj.storedProcedure.params = paramResponse.result;
+        },paramResponse => {
+          _this.tableObj.loadParamater = false;
+        });
     },  
     previousScreen(number) {
       this.progressbar = number;

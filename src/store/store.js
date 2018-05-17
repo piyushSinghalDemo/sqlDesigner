@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 const state = {
-    datasource_id: "",
+    env_id: "",
     schedulerId: 'hello',
     dialog: false,
     dataSelectionArray: [],
@@ -48,7 +48,7 @@ const state = {
     storedProcedureStep: {
         top: "",
         left: "",
-        datasource_id: "",
+        env_id: "",
         process_definition_id: "",
         "process_definition_name": '',
         client_id: "",

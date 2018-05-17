@@ -11,7 +11,7 @@ export default function getStepData(_this, tableObj) {
 
     procedureStepInput.top = operatorData.top + "";
     procedureStepInput.left = operatorData.left + "";
-    procedureStepInput.datasource_id = userInfo.datasource_id;
+    procedureStepInput.env_id = userInfo.env_id;
     procedureStepInput.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
     procedureStepInput.process_definition_name = _this.$store.state.process_definition_name;
     procedureStepInput.client_id = userInfo.client_id;
