@@ -55,7 +55,7 @@ export default {
     allPrevStepTables: [],
     top: '',
     left: '',
-    datasource_id: '',
+    env_id: '',
     joins: true,
     storedProcedure: {
         name: '',

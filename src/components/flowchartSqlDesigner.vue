@@ -927,12 +927,12 @@ export default {
       'accessToken':url.searchParams.get('accessToken'),
       'user_id': url.searchParams.get('user_id'),
       'table_count':url.searchParams.get('table_count'),
-      'datasource_id':url.searchParams.get('datasource_id'),
+      'env_id':url.searchParams.get('env_id'),
       'process_definition_id':url.searchParams.get('process_definition_id'),
     }
     // debugger;
-    if(_this.userInfo.datasource_id){
-      _this.$store.state.datasource_id = _this.userInfo.datasource_id;
+    if(_this.userInfo.env_id){
+      _this.$store.state.env_id = _this.userInfo.env_id;
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -988,7 +988,7 @@ export default {
       let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
         getFromServer(this, url).then(response=>{
           if(response && response.steps.length)
-          _this.userInfo.datasource_id = response.steps[0].datasource_id;
+          _this.userInfo.env_id = response.steps[0].env_id;
           // console.log("Data for step creation "+JSON.stringify(response));
         let ideInputData = createStepData(_this, response);    
         // debugger;      
@@ -996,7 +996,7 @@ export default {
         let inputJson = {
             "table_name": "",
             "table_count": "",
-            "datasource_id": response.steps[0].datasource_id
+            "env_id": response.steps[0].env_id
         }
         postToServer(this, tableUrl, inputJson).then(tableResponse => {
             if (tableResponse && tableResponse.table_name_list) {
@@ -1120,7 +1120,7 @@ export default {
           let inputJson = {
               "procedure_name": "",
               "procedure_count": _this.userInfo.table_count,
-              "datasource_id": _this.userInfo.datasource_id?_this.userInfo.datasource_id:_this.$store.state.datasource_id,
+              "env_id": _this.userInfo.env_id?_this.userInfo.env_id:_this.$store.state.env_id,
               "database_name":_this.$store.state.database_name,
               "database_type":_this.$store.state.database_type,
               "schema":_this.$store.state.schema,
@@ -1147,7 +1147,7 @@ export default {
         let inputJson = {
                 "table_name": "",
                 "table_count":_this.userInfo.table_count,
-                "datasource_id":_this.userInfo.datasource_id
+                "env_id":_this.userInfo.env_id
         }
         postToServer(this, url, inputJson).then(response=>{
           if(response && response.table_name_list){

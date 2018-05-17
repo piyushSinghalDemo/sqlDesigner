@@ -69,7 +69,7 @@ export function getProcessData(_this, flowchartData) {
         'client_id': userData.client_id,
         'user_id': userData.user_id,
         'process_definition_name': _this.$store.state.process_definition_name,
-        'datasource_id': _this.$store.state.datasource_id
+        'env_id': _this.$store.state.env_id
     };
     return ideInputData;
 };
