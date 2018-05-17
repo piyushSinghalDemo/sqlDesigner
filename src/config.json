@@ -1,5 +1,6 @@
 {
     "GET_DATA_URL": "http://192.168.1.7:8017/",
     "SAVE_DATA_URL": "http://192.168.1.9:8016/",
-    "PROCEDURE_LIST": "http://192.168.1.7:8017/"
+    "PROCEDURE_LIST": "http://192.168.1.100:8017/",
+    "VALIDATE": "http://192.168.1.101:8018/"
 }

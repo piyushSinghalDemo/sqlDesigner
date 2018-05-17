@@ -735,6 +735,7 @@
                   </div>
 
                   <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
+                  <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button>
                 </div>
             
                 <!-- <h3>Header 3</h3>
@@ -1027,15 +1028,12 @@ export default {
     executeProcess(){
       this.saveProcessData();
     },
-    saveProcessData(){
+    validateProcess(){
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-      console.log("archivalStep"+JSON.stringify(this.$store.state.archivalStep));
-      // console.log("flowchartData"+JSON.stringify(flowchartData));
-        let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
+        let url = config.VALIDATE+'validate_process_defination' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
-        // console.log("ideInputData "+JSON.stringify(ideInputData));
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
         },response => {
@@ -1044,10 +1042,21 @@ export default {
               console.log(e)
             _this.$toaster.error('Something went wrong...')
       })    
-      // console.log("linkArray "+ JSON.stringify(linkArray));
-      // console.log("stepArray "+JSON.stringify(stepArray));
-      // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
-      console.log("ideInputData " +JSON.stringify(ideInputData));
+    },
+    saveProcessData(){
+      let _this = this;
+      let $flowchart = $("#droppable");
+      var flowchartData = $flowchart.flowchart('getData');
+        let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
+        let ideInputData = getProcessData(_this, flowchartData);
+        postToServer(this, url, ideInputData).then(response=>{  
+          _this.$toaster.success('Data save successfully') 
+        },response => {
+           _this.$toaster.error('There is some internal error please try again later.')
+        }).catch(e => {
+              console.log(e)
+            _this.$toaster.error('Something went wrong...')
+      })    
     },
     getStepDetails(){ // take step name and description from user
       let _this = this;
