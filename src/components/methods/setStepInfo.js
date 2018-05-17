@@ -10,7 +10,7 @@ export async function setStepInfo(_this, processData) {
     _this.$store.state.process_definition_name = processData.process_definition_name;
     _this.$store.state.process_definition_id = processData.process_definition_id;
     // debugger;
-    _this.$store.state.datasource_id = processData.steps[0].datasource_id;
+    _this.$store.state.env_id = processData.steps[0].env_id;
     // let selectedTable = {};
     processData.steps.map(async(stpObj, index) => {
 
@@ -23,7 +23,7 @@ export async function setStepInfo(_this, processData) {
         tableObj.distinct = stpObj.distinct;
         tableObj.type = getStepType(stpObj.type); //"db";
         tableObj.stepId = stpObj.id;
-        tableObj.datasource_id = stpObj.datasource_id;
+        tableObj.env_id = stpObj.env_id;
         tableObj.process_definition_id = stpObj.process_definition_id;
         if (stpObj.limit) {
             tableObj.limit = stpObj.limit;
@@ -215,7 +215,8 @@ export async function setStepInfo(_this, processData) {
                     "conn_str": _this.$store.state.conn_str,
                     "schema": _this.$store.state.schema,
                     "dest_queue": "test",
-                    "table_name": tblObj.tableName
+                    "table_name": tblObj.tableName,
+                    "client_id": userInfo.client_id
                 }
                 await postToServer(_this, url, inputJson).then(response => {
                     if (tableObj.optionColumn.length) {

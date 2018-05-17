@@ -1,5 +1,10 @@
 <template>
   <v-container grid-list-md>
+    <div v-show="tableObj.loadTable">
+        <v-progress-circular indeterminate color="red"></v-progress-circular>
+        <span style="color: red;font-size: 16px;">Table Loading...</span>
+    </div>
+    <div v-show="!tableObj.loadTable">
     <v-layout row wrap>
       <v-flex xs6>
         <v-layout row wrap>
@@ -18,16 +23,6 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <!-- <v-flex xs3> :disabled=isDriverTable
-        <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-          cache-items label="Select Driver Table" :disabled=isDriverTable item-text="name" item-value="name + group" autocomplete></v-select>
-          <a class="addTable" @click.stop="addDriverTable">Add</a>
-      </v-flex> -->
-      <!-- <v-flex xs6>
-        <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
-          cache-items label="Select Table" item-text="name" item-value="name + group" autocomplete></v-select>
-        <a class="addTable" @click.stop="addTable">Add Table</a>
-      </v-flex> -->
       <v-flex xs6>
         <!-- {{tableObj.relationship}} -->
         <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
@@ -87,6 +82,7 @@
     <v-layout justify-end>
       <v-btn class="next" :loading="saveData" @click.stop="updateStep" color="info">Save</v-btn>
     </v-layout>
+    </div>
   </v-container>
 </template>
 
@@ -94,7 +90,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
-import { post as postToServer  } from '../methods/serverCall'
+import { post as postToServer } from '../methods/serverCall'
 export default {
   data() {
       return {
@@ -142,7 +138,7 @@ export default {
           let _this = this;
           _this.saveData = true;
           _this.$emit('update-step', _this.tableObj);
-          setTimeout(function(){ _this.saveData = false }, 2000);
+          setTimeout(function(){ _this.saveData = false }, 4000);
         },
         addDriverTable(){
           let _this = this;
@@ -199,12 +195,13 @@ export default {
         let url = config.GET_DATA_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
-        let userData = JSON.parse(sessionStorage.getItem("userInfo"));
+        let userData= JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
           "conn_str": conn_str,
           "schema":schema,
           "table_name": value,
-          "table_count":userData.table_count
+          "table_count":userData.table_count,
+          "client_id":userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
@@ -268,7 +265,8 @@ export default {
           "conn_str": conn_str,
           "schema":schema,
           "table_name": value,
-          "table_count":userData.table_count
+          "table_count":userData.table_count,
+          "client_id":userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
@@ -343,12 +341,14 @@ export default {
     getColumn(tableObject){
       let _this = this;
       let url = config.GET_DATA_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
-      let inputJson = {
+       let userData= JSON.parse(sessionStorage.getItem("userInfo"));
+        let inputJson = {
                "conn_str": _this.conn_str,
                "schema": _this.schema,
                "dest_queue": "test",
-               "table_name": tableObject.tableName
-      }
+               "table_name": tableObject.tableName,
+               "client_id":userData.client_id
+            }
       // _this.$http.post(url, inputJson, {
       // headers: {
       //   'Content-Type': 'application/json'

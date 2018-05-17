@@ -1,5 +1,10 @@
 <template>
   <v-container grid-list-md>
+    <div v-show="tableObj.loadTable">
+        <v-progress-circular indeterminate color="red"></v-progress-circular>
+        <span style="color: red;font-size: 16px;">Table Loading...</span>
+    </div>
+    <div v-show="!tableObj.loadTable">
     <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Table Relationship</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
@@ -71,6 +76,7 @@
     <v-layout justify-end>
       <v-btn class="next" @click.stop="switchScreen(2)" color="info">Next</v-btn>
     </v-layout>
+    </div>
   </v-container>
 </template>
 
@@ -157,7 +163,8 @@ export default {
           "conn_str": conn_str,
           "schema":schema,
           "table_name": value,
-          "table_count":userData.table_count
+          "table_count":userData.table_count,
+          "client_id":userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
@@ -231,12 +238,14 @@ export default {
     },
     getColumn(tableObject){
       let _this = this;
+      let userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let url = config.GET_DATA_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
                "conn_str": _this.conn_str,
                "schema": _this.schema,
                "dest_queue": "test",
-               "table_name": tableObject.tableName
+               "table_name": tableObject.tableName,
+               "client_id":userData.client_id
       }
       // _this.$http.post(url, inputJson, {
       // headers: {
@@ -283,8 +292,14 @@ export default {
       -webkit-clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
       clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
     }
-
     .chevron_active {
       background:#666;
     }
+    /* div{
+      text-align: center
+
+    }
+  .progress-circular{
+      margin: 1rem
+  } */
 </style>
