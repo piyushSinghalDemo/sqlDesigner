@@ -138,7 +138,7 @@ export default {
           let _this = this;
           _this.saveData = true;
           _this.$emit('update-step', _this.tableObj);
-          setTimeout(function(){ _this.saveData = false }, 4000);
+          setTimeout(function(){ _this.saveData = false }, 8000);
         },
         addDriverTable(){
           let _this = this;
