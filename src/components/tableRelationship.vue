@@ -1,5 +1,10 @@
 <template>
   <v-container grid-list-md>
+    <div v-show="tableObj.loadTable">
+        <v-progress-circular indeterminate color="red"></v-progress-circular>
+        <span style="color: red;font-size: 16px;">Table Loading...</span>
+    </div>
+    <div v-show="!tableObj.loadTable">
     <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Table Relationship</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
@@ -71,6 +76,7 @@
     <v-layout justify-end>
       <v-btn class="next" @click.stop="switchScreen(2)" color="info">Next</v-btn>
     </v-layout>
+    </div>
   </v-container>
 </template>
 
@@ -286,8 +292,14 @@ export default {
       -webkit-clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
       clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
     }
-
     .chevron_active {
       background:#666;
     }
+    /* div{
+      text-align: center
+
+    }
+  .progress-circular{
+      margin: 1rem
+  } */
 </style>

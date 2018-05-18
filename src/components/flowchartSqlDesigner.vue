@@ -997,7 +997,8 @@ export default {
         let inputJson = {
             "table_name": "",
             "table_count": "",
-            "env_id": response.steps[0].env_id
+            "env_id": response.steps[0].env_id,
+            "client_id": _this.userInfo.client_id
         }
         postToServer(this, tableUrl, inputJson).then(tableResponse => {
             if (tableResponse && tableResponse.table_name_list) {
@@ -1126,6 +1127,7 @@ export default {
       },
       getProcedureList(){
           let _this = this;
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=true;
           let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
           let inputJson = {
               "procedure_name": "",
@@ -1138,6 +1140,8 @@ export default {
               "client_id":_this.userInfo.client_id
           };
           postToServer(this, url, inputJson).then(listResponse => {
+            if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
+            _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=false;
                 console.log("listResponse"+JSON.stringify(listResponse));
                 this.loading = false;
               _this.$store.state.database_name = listResponse.database_name;
@@ -1146,6 +1150,7 @@ export default {
               _this.$store.state.archivalStep[_this.$store.state.currentStep].storedProcedure.procedureList = listResponse.result;
               _this.$store.state.conn_str = listResponse.connstr;
           },listResponse => {
+            _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=false;
             if(listResponse && listResponse.message)
                 _this.$toaster.error(listResponse.message);
             else    
@@ -1155,6 +1160,8 @@ export default {
       gettables(){
         let _this = this;
         let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
+        if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
+        _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=true;
         let inputJson = {
                 "table_name": "",
                 "table_count":_this.userInfo.table_count,
@@ -1162,6 +1169,7 @@ export default {
                 "client_id":_this.userInfo.client_id
         }
         postToServer(this, url, inputJson).then(response=>{
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=false;
           if(response && response.table_name_list){
               let allDbTables = response;//JSON.parse(response.bodyText);
               _this.$store.state.schema = allDbTables.schema;
@@ -1175,7 +1183,9 @@ export default {
               });
           }
           // console.log("Response from all tables"+JSON.stringify(response));
-        },response => {}).catch(e => {
+        },response => {
+          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=false;
+        }).catch(e => {
           console.log(e)
             this.ErrorMessage = 'Something went wrong.'
           })

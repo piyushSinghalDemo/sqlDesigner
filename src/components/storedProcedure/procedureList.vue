@@ -1,5 +1,10 @@
 <template>
   <v-container grid-list-md>
+    <div v-show="tableObj.loadProcedureList">
+        <v-progress-circular indeterminate color="red"></v-progress-circular>
+        <span style="color: red;font-size: 16px;">Procedure List Loading...</span>
+    </div>
+    <div v-show="!tableObj.loadProcedureList">
     <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Procedure List</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true}">Parameter</li>
@@ -7,15 +12,17 @@
     </ul>
     <v-layout row wrap>
       <v-flex xs6  offset-xs3>
-        <v-select :items="selectTable" v-model="tableObj.storedProcedure.name" :loading="loading"
-          :search-input.sync="search" @change="getParameter"
-           label="Select Procedure"  cache-items item-text="name" autocomplete></v-select>
+        <!-- <v-select :items="selectTable" v-model="tableObj.storedProcedure.name" :loading="loading"
+          :search-input.sync="search" label="Select Procedure"  cache-items item-text="name" autocomplete></v-select> -->
+         <v-select :loading="loading" :items="selectTable" :search-input.sync="search"
+          v-model="tableObj.storedProcedure.name" label="Select Procedure" autocomplete cache-items></v-select>  
       </v-flex>
     </v-layout> 
         <!-- table data : {{tableObj}} -->
     <v-layout justify-end>
       <v-btn class="next" @click.stop="switchScreen(2)" color="info">Next</v-btn>
     </v-layout>
+    </div>  
   </v-container>
 </template>
 
@@ -68,22 +75,6 @@ export default {
       }
     },
     methods: {
-      getParameter(newValue){
-        let _this = this;
-        let inputJson = {
-                "procedure_name": newValue,
-                "env_id": _this.userInfo.env_id,
-                "database_name":_this.$store.state.database_name,
-                "database_type":_this.$store.state.database_type,
-                "schema":_this.$store.state.schema,
-                "connstr":_this.$store.state.conn_str,
-                "client_id":_this.userInfo.client_id
-        };
-        let url = config.PROCEDURE_LIST+"get_stored_procedure_param";
-        postToServer(this, url, inputJson).then(paramResponse => {
-          _this.tableObj.storedProcedure.params = paramResponse.result;
-        });
-      },
         getProcedureList(val){
             let _this = this;
             let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
@@ -118,7 +109,28 @@ export default {
       async querySelections(value) {
         let _this = this;
         this.loading = true;
-        await _this.getProcedureList(value);        
+        // let _this = this;
+        let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
+        let inputJson = {
+            "procedure_name": value,
+            "procedure_count": _this.userInfo.table_count,
+            "env_id": _this.userInfo.env_id,
+            "database_name":_this.$store.state.database_name,
+            "database_type":_this.$store.state.database_type,
+            "schema":_this.$store.state.schema,
+            "connstr":_this.$store.state.conn_str,
+            "client_id":_this.userInfo.client_id
+        };
+        postToServer(this, url, inputJson).then(listResponse => {
+              console.log("listResponse"+JSON.stringify(listResponse));
+              this.loading = false;
+            _this.$store.state.database_name = listResponse.database_name;
+            _this.$store.state.database_type = listResponse.database_type;
+            _this.$store.state.schema = listResponse.schema;
+            _this.tableObj.storedProcedure.procedureList = listResponse.result;
+            _this.$store.state.conn_str = listResponse.connstr;
+        });
+        // await _this.getProcedureList(value);        
       },
     // addTable(){
     //   let validFlag=true;

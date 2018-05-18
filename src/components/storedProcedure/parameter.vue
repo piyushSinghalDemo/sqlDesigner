@@ -1,5 +1,10 @@
 <template>
   <v-container grid-list-md>
+    <div v-show="tableObj.loadParamater">
+        <v-progress-circular indeterminate color="red"></v-progress-circular>
+        <span style="color: red;font-size: 16px;">Parameter List Loading...</span>
+    </div>
+    <div v-show="!tableObj.loadParamater">
     <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true}">Procedure List</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true,chevron_active:true}">Parameter</li>
@@ -7,6 +12,7 @@
     </ul>
     <v-layout row wrap>
       <v-flex>
+        <!-- {{tableObj}} -->
          <v-data-table
             :headers="headers"
             :items="tableObj.storedProcedure.params"
@@ -28,8 +34,9 @@
     </v-layout> 
         <!-- table data : {{tableObj}} -->
     <v-layout justify-end>
-      <v-btn class="next" @click.stop="updateStep" color="info">Save</v-btn>
+      <v-btn class="next" @click.stop="updateStep" :loading="saveData" color="info">Save</v-btn>
     </v-layout>
+    </div>
   </v-container>
 </template>
 
@@ -50,7 +57,8 @@ export default {
           { text: 'Data Type', value: 'Type' },
           { text: 'Parameter Type', value: 'Is_output' },
           { text: 'Value', value: 'value' }
-        ]
+        ],
+        saveData:false,
       }
     },
     props: ['tableObj'],
@@ -75,8 +83,9 @@ export default {
     methods: {
         updateStep(){
             let _this = this;
+            _this.saveData = true;
             _this.$emit('update-step', _this.tableObj);
-            // setTimeout(function(){ _this.saveData = false }, 2000);
+            setTimeout(function(){ _this.saveData = false }, 4000);
         },
         switchScreen(num) {
         let _this = this;

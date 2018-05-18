@@ -215,7 +215,8 @@ export async function setStepInfo(_this, processData) {
                     "conn_str": _this.$store.state.conn_str,
                     "schema": _this.$store.state.schema,
                     "dest_queue": "test",
-                    "table_name": tblObj.tableName
+                    "table_name": tblObj.tableName,
+                    "client_id": userInfo.client_id
                 }
                 await postToServer(_this, url, inputJson).then(response => {
                     if (tableObj.optionColumn.length) {

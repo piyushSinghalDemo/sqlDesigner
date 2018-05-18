@@ -57,6 +57,10 @@ export default {
     left: '',
     env_id: '',
     joins: true,
+    loadTable: false,
+    loadColumn: false,
+    loadProcedureList: false,
+    loadParamater: false,
     storedProcedure: {
         name: '',
         params: [],
