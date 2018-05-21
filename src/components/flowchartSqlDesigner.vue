@@ -735,7 +735,7 @@
                   </div>
 
                   <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
-                  <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button>
+                  <!-- <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button> -->
                 </div>
             
                 <!-- <h3>Header 3</h3>
@@ -775,6 +775,7 @@
           <table-modal></table-modal>
           <archive-panel></archive-panel>
           <stored-procedure></stored-procedure>
+          <merge-step></merge-step>
           <simplert useRadius=true useIcon=true ref="simplert">
           </simplert>
         </div>
@@ -827,6 +828,7 @@ import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
 import archiveMain from './archive/archiveMain.vue'
+import mergeStep from './merge/mergeStep.vue'
 import storedProcedure from './storedProcedure/storedProcedure.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
@@ -844,6 +846,7 @@ export default {
     'table-modal': table,
     'archive-panel':archiveMain,
     'stored-procedure':storedProcedure,
+    'merge-step':mergeStep,
      draggable,
      contextMenu,
      'process-name':processName 
@@ -1074,6 +1077,8 @@ export default {
            stepType = 'select'
          }else if(_this.type == "archive"){
            stepType = 'archival'
+         }else if(_this.type == "merge"){
+           stepType = 'merge'
          }else if(_this.type == "spstep"){
            stepType = 'stored_procedure'
          }else{
@@ -1470,6 +1475,9 @@ export default {
            else if(operator.className == 'archive'){
              _this.gettables();
              _this.$store.state.openArchivePanel = true;
+           }else if(operator.className == 'merge'){
+             _this.gettables();
+             _this.$store.state.openMergePanel = true;
            }else if(operator.className == 'spstep'){
              _this.getProcedureList();
              _this.$store.state.openStoredProcedure = true;

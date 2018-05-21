@@ -1,6 +1,6 @@
 {
-    "GET_DATA_URL": "http://192.168.1.7:8017/",
-    "SAVE_DATA_URL": "http://192.168.1.144:8016/",
-    "PROCEDURE_LIST": "http://192.168.1.7:8017/",
+    "GET_DATA_URL": "http://192.168.1.7:8011/",
+    "SAVE_DATA_URL": "http://192.168.1.144:8010/",
+    "PROCEDURE_LIST": "http://192.168.1.7:8011/",
     "VALIDATE": "http://192.168.1.101:8018/"
 }
