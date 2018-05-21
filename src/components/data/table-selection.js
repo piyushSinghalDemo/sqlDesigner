@@ -66,5 +66,9 @@ export default {
         params: [],
         procedureList: []
     },
-
+    merge: {
+        selectedTable: {},
+        optionColumn: [],
+        selectedColumns: []
+    }
 }
