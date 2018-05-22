@@ -155,8 +155,10 @@ export default {
       return operatorArray[sign];
     },
     saveDialog(objData) {
+      // alert("In merge step");
       let _this = this;
       _this.tableObj = objData;
+      debugger;
       _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let flowchart$ = $("#droppable");
       var operatorData = flowchart$.flowchart('getOperatorData', _this.$store.state.currentStep);
@@ -166,7 +168,7 @@ export default {
       inputParam.env_id = _this.userData.env_id;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
-      console.log("inputParam in archive step " +JSON.stringify(inputParam));
+      console.log("inputParam in merge step " +JSON.stringify(inputParam));
       let url = config.IDE_API_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
       postToServer(this, url, inputParam).then(response=>{
         _this.tableObj.stepId = response.id;
@@ -181,7 +183,7 @@ export default {
         addData = [];
         let currentStep = _this.$store.state.currentStep;
         findLink.push(cloneDeep(currentStep));
-
+        debugger;
         /**@augments For previous Step data Tree traversal BFS Algo Implemented
          */
         do{
