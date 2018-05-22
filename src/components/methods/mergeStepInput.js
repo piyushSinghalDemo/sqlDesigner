@@ -129,6 +129,7 @@ export default function getMergeStepData(_this, tableObj) {
                 relationObject.where.push(whereObject);
             }
         });
+        relationObject.where.length ? relationObject.where[relationObject.where.length - 1].operand = '' : '';
 
         let link = {
             source: '',

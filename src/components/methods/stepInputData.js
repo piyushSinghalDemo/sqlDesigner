@@ -119,6 +119,7 @@ export function getStepData(_this, tableObj) {
                 relationObject.where.push(whereObject);
             }
         });
+        relationObject.where.length ? relationObject.where[relationObject.where.length - 1].operand = '' : '';
         let link = {
             source: '',
             target: '',
