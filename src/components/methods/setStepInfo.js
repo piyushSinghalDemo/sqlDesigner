@@ -215,7 +215,7 @@ export async function setStepInfo(_this, processData) {
 
             } else {
                 // getColumn(_this, tblObj, tableObj);
-                let url = config.GET_DATA_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+                let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
                 let inputJson = {
                     "conn_str": _this.$store.state.conn_str,
                     "schema": _this.$store.state.schema,

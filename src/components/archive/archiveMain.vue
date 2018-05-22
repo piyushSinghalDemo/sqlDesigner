@@ -287,7 +287,7 @@ export default {
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
       console.log("inputParam in archive step " +JSON.stringify(inputParam));
-      let url = config.SAVE_DATA_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
+      let url = config.IDE_API_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
       postToServer(this, url, inputParam).then(response=>{
         _this.tableObj.stepId = response.id;
         _this.$store.state.process_definition_id = response.process_definition_id;

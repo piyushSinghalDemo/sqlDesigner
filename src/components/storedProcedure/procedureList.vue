@@ -77,7 +77,7 @@ export default {
     methods: {
         getProcedureList(val){
             let _this = this;
-            let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
+            let url = config.AGENT_API_URL+"get_stored_procedure_list";
             let inputJson = {
                 "procedure_name": val,
                 "procedure_count": _this.userInfo.table_count,
@@ -110,7 +110,7 @@ export default {
         let _this = this;
         this.loading = true;
         // let _this = this;
-        let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
+        let url = config.AGENT_API_URL+"get_stored_procedure_list";
         let inputJson = {
             "procedure_name": value,
             "procedure_count": _this.userInfo.table_count,
@@ -178,7 +178,7 @@ export default {
     // },
     // getColumn(tableObject){
     //   let _this = this;
-    //   let url = config.GET_DATA_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+    //   let url = config.AGENT_API_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
     //   let inputJson = {
     //            "conn_str": _this.conn_str,
     //            "schema": _this.schema,
