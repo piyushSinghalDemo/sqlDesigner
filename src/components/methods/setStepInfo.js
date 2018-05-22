@@ -2,6 +2,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
 import stepObject from '../data/table-selection';
+import mergeAPIData from './setMergeStep'
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
 export async function setStepInfo(_this, processData) {
@@ -149,6 +150,10 @@ export async function setStepInfo(_this, processData) {
                 }) //End of list of relotion Object array
 
         }); // End of relation Array
+        stpObj.list_of_merge && stpObj.list_of_merge.length && stpObj.list_of_merge.map(async(mergeObj) => {
+            let tempObj = mergeAPIData(_this, mergeObj, tableObj);
+            tableObj.relationshipArray.push(cloneDeep(tempObj));
+        });
         if (stpObj.drv_table && stpObj.drv_table.length) {
             // debugger;
             tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name;
@@ -260,7 +265,7 @@ export async function setStepInfo(_this, processData) {
         // debugger;
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
-
+        console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
     });
 
 };
@@ -269,7 +274,8 @@ function getStepType(value) {
     let typeArray = {
         "select": "db",
         "archival": "archive",
-        "stored_procedure": "spstep"
+        "stored_procedure": "spstep",
+        "merge": "merge"
     }
     return typeArray[value];
 }

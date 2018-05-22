@@ -3,7 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 export default function getMergeStepData(_this, tableObj) {
     // let _this = this;
     // debugger;
-    console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
+    // console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
     let $flowchart = $("#droppable");
     var flowchartData = $flowchart.flowchart('getData');
     let objectLength = Object.keys(flowchartData.links).length;
@@ -55,7 +55,7 @@ export default function getMergeStepData(_this, tableObj) {
         "joins": [],
         "where": []
     }
-
+    console.log("relationshipArray in merge step" + JSON.stringify(tableObj.relationshipArray));
     tableObj.relationshipArray.map(function(obj, index) {
         let relationObject = {
                 "select_table": {

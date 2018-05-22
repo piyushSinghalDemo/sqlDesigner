@@ -15,26 +15,16 @@ export function createStepData(_this, processData) {
         operatorData.top = object.top;
         operatorData.left = object.left;
         operatorData.properties.title = object.name;
-        if (object.type == "select")
-            operatorData.className = 'db';
-        else if (object.type == "archival")
-            operatorData.className = 'archive';
-        else if (object.type == "stored_procedure")
-            operatorData.className = 'spstep';
+        debugger;
+        // if (object.type == "select")
+        //     operatorData.className = 'db';
+        // else if (object.type == "archival")
+        //     operatorData.className = 'archive';
+        // else if (object.type == "stored_procedure")
+        //     operatorData.className = 'spstep';
+        operatorData.className = cloneDeep(getStepType(object.type));
         operators[object.id] = cloneDeep(operatorData);
     });
-    // processData.links.map((object, index) => {
-    //     let linkData = stepData.operators.links['0'];
-    //     linkData.fromOperator = object.source;
-    //     linkData.toOperator = object.target;
-    //     processData.steps.map((stepObject, stepIndex) => {
-    //         if (stepObject.id == linkData.fromOperator)
-    //             linkData.fromTable = stepObject.name
-    //         if (stepObject.id == linkData.toOperator)
-    //             linkData.toTable = stepObject.name
-    //     });
-    //     links[index] = linkData;
-    // });
     processData.links.map((object, index) => {
         let linkData = cloneDeep(stepData.links['0']);
         linkData.fromOperator = object.source;
@@ -49,6 +39,16 @@ export function createStepData(_this, processData) {
     flowChartData.links = links;
 
     return flowChartData;
+}
+
+function getStepType(value) {
+    let typeArray = {
+        "select": "db",
+        "archival": "archive",
+        "stored_procedure": "spstep",
+        "merge": "merge"
+    }
+    return typeArray[value];
 }
 
 function getStepData() {
