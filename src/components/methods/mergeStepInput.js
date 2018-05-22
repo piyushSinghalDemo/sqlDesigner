@@ -11,6 +11,7 @@ export default function getMergeStepData(_this, tableObj) {
     let mergeStepInput = cloneDeep(_this.$store.state.mergeStep);
     mergeStepInput.name = tableObj.title;
     mergeStepInput.desc = tableObj.description;
+    mergeStepInput.type = tableObj.type;
     // mergeStepInput.limit = tableObj.limit;
     let colsObject = {
         "col_name": "",
@@ -46,16 +47,16 @@ export default function getMergeStepData(_this, tableObj) {
         "is_col_compare": "",
     }
     let relationObject = {
-        "output_table": "", //From table
-        "select_table": {
-            "alias": "", //From Table alies
-            "name": "", //From Table
-            "cols": []
-        },
-        "joins": [],
-        "where": []
-    }
-    console.log("relationshipArray in merge step" + JSON.stringify(tableObj.relationshipArray));
+            "output_table": "", //From table
+            "select_table": {
+                "alias": "", //From Table alies
+                "name": "", //From Table
+                "cols": []
+            },
+            "joins": [],
+            "where": []
+        }
+        // console.log("relationshipArray in merge step" + JSON.stringify(tableObj.relationshipArray));
     tableObj.relationshipArray.map(function(obj, index) {
         let relationObject = {
                 "select_table": {

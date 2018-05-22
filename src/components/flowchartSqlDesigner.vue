@@ -1079,6 +1079,8 @@ export default {
            stepType = 'archival'
          }else if(_this.type == "merge"){
            stepType = 'merge'
+         }else if(_this.type == "minus"){
+           stepType = 'minus'
          }else if(_this.type == "spstep"){
            stepType = 'stored_procedure'
          }else{
@@ -1475,7 +1477,7 @@ export default {
            else if(operator.className == 'archive'){
              _this.gettables();
              _this.$store.state.openArchivePanel = true;
-           }else if(operator.className == 'merge'){
+           }else if(operator.className == 'merge' || operator.className == 'minus'){
              _this.gettables();
              _this.$store.state.openMergePanel = true;
            }else if(operator.className == 'spstep'){
