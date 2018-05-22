@@ -989,14 +989,14 @@ export default {
     async createProcessData(){       
       let _this = this;
       let inputJson = _this.userInfo.process_definition_id;
-      let url = config.SAVE_DATA_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
+      let url = config.IDE_API_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
         getFromServer(this, url).then(response=>{
           if(response && response.steps.length)
           _this.userInfo.env_id = response.steps[0].env_id;
           // console.log("Data for step creation "+JSON.stringify(response));
         let ideInputData = createStepData(_this, response);    
         // debugger;      
-        let tableUrl = config.GET_DATA_URL + 'get_tables'; //'http://192.168.1.100:8010/get_tables';
+        let tableUrl = config.AGENT_API_URL + 'get_tables'; //'http://192.168.1.100:8010/get_tables';
         let inputJson = {
             "table_name": "",
             "table_count": "",
@@ -1051,7 +1051,7 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-        let url = config.SAVE_DATA_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
+        let url = config.IDE_API_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
@@ -1071,7 +1071,7 @@ export default {
       let _this = this;
        if (this.$refs.form.validate()) {
          _this.addTitle = false;
-         let url = config.SAVE_DATA_URL+'ide_step_data/add';
+         let url = config.IDE_API_URL+'ide_step_data/add';
          let stepType = "";
          if(_this.type == "db"){
            stepType = 'select'
@@ -1133,7 +1133,7 @@ export default {
       getProcedureList(){
           let _this = this;
           _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=true;
-          let url = config.PROCEDURE_LIST+"get_stored_procedure_list";
+          let url = config.AGENT_API_URL+"get_stored_procedure_list";
           let inputJson = {
               "procedure_name": "",
               "procedure_count": _this.userInfo.table_count,
@@ -1164,7 +1164,7 @@ export default {
       },
       gettables(){
         let _this = this;
-        let url = config.GET_DATA_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
         if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
         _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=true;
         let inputJson = {

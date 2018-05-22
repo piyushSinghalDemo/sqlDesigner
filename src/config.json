@@ -1,6 +1,8 @@
 {
-    "GET_DATA_URL": "http://192.168.1.7:8011/",
-    "SAVE_DATA_URL": "http://192.168.1.16:8010/",
+    "AGENT_API_URL": "http://192.168.1.7:8011/",
+    "IDE_API_URL": "http://192.168.1.16:8010/",
+    "VALIDATE": "http://192.168.1.101:8018/",
     "PROCEDURE_LIST": "http://192.168.1.7:8011/",
-    "VALIDATE": "http://192.168.1.101:8018/"
+    "SAVE_DATA_URL": "IDE_API_URL",
+    "GET_DATA_URL": "AGENT_API_URL"
 }

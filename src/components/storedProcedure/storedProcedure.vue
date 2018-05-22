@@ -104,7 +104,7 @@ export default {
         _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = getStepData(_this, _this.tableObj);
         // console.log("inputJson in stored procedure"+JSON.stringify(inputJson));
-        let url = config.SAVE_DATA_URL+'ide_step_data/add';
+        let url = config.IDE_API_URL+'ide_step_data/add';
          postToServer(this, url, inputJson).then(response=>{
            if(response.message){
             _this.$toaster.error(response.message);
@@ -181,7 +181,7 @@ export default {
                 "connstr":_this.$store.state.conn_str,
                 "client_id":userInfo.client_id
         };
-        let url = config.PROCEDURE_LIST+"get_stored_procedure_param";
+        let url = config.AGENT_API_URL+"get_stored_procedure_param";
         postToServer(this, url, inputJson).then(paramResponse => {
           _this.tableObj.loadParamater = false;
           _this.tableObj.storedProcedure.params = paramResponse.result;

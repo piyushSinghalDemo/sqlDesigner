@@ -193,7 +193,7 @@ export default {
           _this.createCopy = true;
           }
         this.loading = true;
-        let url = config.GET_DATA_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
         let userData= JSON.parse(sessionStorage.getItem("userInfo"));
@@ -258,7 +258,7 @@ export default {
           _this.createTableCopy = true;
           }
         this.loading = true;
-        let url = config.GET_DATA_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
         let userData = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -341,7 +341,7 @@ export default {
     },
     getColumn(tableObject){
       let _this = this;
-      let url = config.GET_DATA_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
+      let url = config.AGENT_API_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
        let userData= JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
                "conn_str": _this.conn_str,
