@@ -126,7 +126,7 @@ export default function getMergeStepData(_this, tableObj) {
                 whereObject.is_col_compare = whereObj.valueType == 'field' ? true : false;
                 whereObject.with_alias = whereObj.field.colAlies;
                 whereObject.with_col = whereObj.field.name;
-                relationObject.where.push(whereObject);
+                relationObject.where.push(cloneDeep(whereObject));
             }
         });
         relationObject.where.length ? relationObject.where[relationObject.where.length - 1].operand = '' : '';

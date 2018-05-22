@@ -242,6 +242,7 @@ export default {
       let url = config.AGENT_API_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
                "conn_str": _this.conn_str,
+               "env_id":userData.env_id,
                "schema": _this.schema,
                "dest_queue": "test",
                "table_name": tableObject.tableName,
