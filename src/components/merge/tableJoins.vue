@@ -288,6 +288,9 @@ export default {
         _this.tableObj.relationship.jto_drv_table = false;  
       }
         // debugger;
+        if(!_this.tableObj.selectedColumns.length && _this.tableObj.merge.selectedColumns.length)
+          _this.tableObj.selectedColumns = _this.tableObj.merge.selectedColumns
+          
       let object = {'relationship':_this.tableObj.relationship,
                     'is_drv_table':_this.tableObj.merge.selectedTable.stepId=="Database Table"?false:true,
                     'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 
