@@ -9,6 +9,7 @@ export default function getMergeStepData(_this, tableObj) {
     let objectLength = Object.keys(flowchartData.links).length;
     let userData = JSON.parse(sessionStorage.getItem("userInfo"));
     let mergeStepInput = cloneDeep(_this.$store.state.mergeStep);
+    mergeStepInput.output_table = tableObj.title;
     mergeStepInput.name = tableObj.title;
     mergeStepInput.desc = tableObj.description;
     mergeStepInput.type = tableObj.type;
