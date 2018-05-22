@@ -148,6 +148,17 @@
                       </v-select>
                     </v-flex>
                   </v-layout> -->
+                  <div class="row clearfix">
+                    <div class="col-sm-6">
+                      <label style="font-size:20px;cursor:pointer">
+                        <input type="checkbox" v-model="tableObj.merge.selectAll" style="vertical-align: baseline;margin-right: 11px;">
+                        Select All</label>
+                    </div>
+                    <div class="col-sm-6">
+                      <label style="font-size:20px;cursor:pointer">
+                        <input type="checkbox" v-model="tableObj.merge.distinct" style="vertical-align: baseline;margin-right: 11px;">Distinct</label>
+                    </div>
+                  </div>
                   <!-- *************** Add Column *****************   -->
                   <v-layout row wrap>
                     <v-flex xs6>
@@ -276,9 +287,13 @@ export default {
       }else{
         _this.tableObj.relationship.jto_drv_table = false;  
       }
-        debugger;
-      let object = {'relationship':_this.tableObj.relationship,'is_drv_table':_this.tableObj.merge.selectedTable.stepId=="Database Table"?false:true,
-                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 'workTableOutput':_this.tableObj.merge.selectedColumns};
+        // debugger;
+      let object = {'relationship':_this.tableObj.relationship,
+                    'is_drv_table':_this.tableObj.merge.selectedTable.stepId=="Database Table"?false:true,
+                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 
+                    'workTableOutput':_this.tableObj.merge.selectedColumns,'distinct':_this.tableObj.merge.distinct,
+                    'selectAll':_this.tableObj.merge.selectAll
+                    };
       if(arrayIndex){
         _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
         _this.$toaster.info('Relationship Updated successfully');

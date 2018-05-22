@@ -69,6 +69,8 @@ export default {
     merge: {
         selectedTable: {},
         optionColumn: [],
-        selectedColumns: []
+        selectedColumns: [],
+        distinct: false,
+        selectAll: false,
     }
 }

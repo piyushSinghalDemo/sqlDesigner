@@ -68,35 +68,49 @@ export default function getMergeStepData(_this, tableObj) {
                 "where": []
             }
             // debugger;
+        relationObject.distinct = obj.distinct;
         relationObject.select_table.is_drv_table = obj.is_drv_table;
-        obj.workTableOutput.map(function(selColumn, selIndex) {
-            relationObject.select_table.alias = selColumn.tblAlies;
-            relationObject.select_table.name = selColumn.group;
-            colsObject.col_name = selColumn.name;
-            colsObject.col_alias = selColumn.colAlies;
-            colsObject.table_alias = selColumn.tblAlies;
-            relationObject.select_table.cols.push(cloneDeep(colsObject));
-            // console.log("selColumn" + JSON.stringify(selColumn));
-        });
-        joinObject.jto = obj.relationship.toTable ? obj.relationship.toTable.tableName : "";
-        joinObject.jfrom = obj.relationship.fromTable ? obj.relationship.fromTable.tableName : "";
-        joinObject.jfromalias = obj.relationship.fromTable ? obj.relationship.fromTable.aliesTableName : "";
-        joinObject.jtoalias = obj.relationship.toTable ? obj.relationship.toTable.aliesTableName : "";
-        joinObject.type = obj.relationship.selectedFilter;
-        joinObject.jto_drv_table = obj.relationship.jto_drv_table;
-        joinObject.jfrom_drv_table = obj.relationship.jfrom_drv_table;
-        joinObject.condition = [];
-        obj.colArray.map(function(colObj, colIndex) {
-            if (colObj.fromColumn.name) {
-                conditionObject.from_column = colObj.fromColumn.name;
-                conditionObject.to_column = colObj.toColumn.name;
-                conditionObject.from_alias = colObj.fromColumn.tblAlies;
-                conditionObject.to_alias = colObj.toColumn.tblAlies;
-                conditionObject.operator = getjoinOperator(colObj.operator);
-                joinObject.condition.push(cloneDeep(conditionObject));
-            }
-        });
-        relationObject.joins.push(cloneDeep(joinObject));
+        if (obj.selectAll) {
+            relationObject.select_table.cols.push({
+                'table_alias': 'cu',
+                'col_alias': '',
+                'col_name': '_*_',
+                'func': '' //for now by default it will be blank
+            });
+        } else {
+            obj.workTableOutput.map(function(selColumn, selIndex) {
+                relationObject.select_table.alias = selColumn.tblAlies;
+                relationObject.select_table.name = selColumn.group;
+                colsObject.col_name = selColumn.name;
+                colsObject.col_alias = selColumn.colAlies;
+                colsObject.table_alias = selColumn.tblAlies;
+                relationObject.select_table.cols.push(cloneDeep(colsObject));
+                // console.log("selColumn" + JSON.stringify(selColumn));
+            });
+        }
+
+        if (obj.relationship.selectedFilter) {
+            joinObject.jto = obj.relationship.toTable ? obj.relationship.toTable.tableName : "";
+            joinObject.jfrom = obj.relationship.fromTable ? obj.relationship.fromTable.tableName : "";
+            joinObject.jfromalias = obj.relationship.fromTable ? obj.relationship.fromTable.aliesTableName : "";
+            joinObject.jtoalias = obj.relationship.toTable ? obj.relationship.toTable.aliesTableName : "";
+            joinObject.type = obj.relationship.selectedFilter;
+            joinObject.jto_drv_table = obj.relationship.jto_drv_table;
+            joinObject.jfrom_drv_table = obj.relationship.jfrom_drv_table;
+            joinObject.condition = [];
+            obj.colArray.map(function(colObj, colIndex) {
+                if (colObj.fromColumn.name) {
+                    conditionObject.from_column = colObj.fromColumn.name;
+                    conditionObject.to_column = colObj.toColumn.name;
+                    conditionObject.from_alias = colObj.fromColumn.tblAlies;
+                    conditionObject.to_alias = colObj.toColumn.tblAlies;
+                    conditionObject.operator = getjoinOperator(colObj.operator);
+                    joinObject.condition.push(cloneDeep(conditionObject));
+                }
+            });
+            relationObject.joins.push(cloneDeep(joinObject));
+        }
+
 
         obj.where && obj.where.map(function(whereObj, whereIndex) {
             if (whereObj.column) {
@@ -113,6 +127,7 @@ export default function getMergeStepData(_this, tableObj) {
                 relationObject.where.push(whereObject);
             }
         });
+
         let link = {
             source: '',
             target: '',
