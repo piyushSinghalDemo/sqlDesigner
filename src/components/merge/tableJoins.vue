@@ -266,12 +266,12 @@ export default {
           }
       });
       //debugger;
-      if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
+      if(_this.tableObj.relationship.fromTable && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
         _this.tableObj.relationship.jfrom_drv_table = true;
       }else{
         _this.tableObj.relationship.jfrom_drv_table = false;
       }
-      if(_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
+      if(_this.tableObj.relationship.toTable && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
         _this.tableObj.relationship.jto_drv_table = true;  
       }else{
         _this.tableObj.relationship.jto_drv_table = false;  

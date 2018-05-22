@@ -78,10 +78,10 @@ export default function getMergeStepData(_this, tableObj) {
             relationObject.select_table.cols.push(cloneDeep(colsObject));
             // console.log("selColumn" + JSON.stringify(selColumn));
         });
-        joinObject.jto = obj.relationship.toTable.tableName;
-        joinObject.jfrom = obj.relationship.fromTable.tableName;
-        joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
-        joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
+        joinObject.jto = obj.relationship.toTable ? obj.relationship.toTable.tableName : "";
+        joinObject.jfrom = obj.relationship.fromTable ? obj.relationship.fromTable.tableName : "";
+        joinObject.jfromalias = obj.relationship.fromTable ? obj.relationship.fromTable.aliesTableName : "";
+        joinObject.jtoalias = obj.relationship.toTable ? obj.relationship.toTable.aliesTableName : "";
         joinObject.type = obj.relationship.selectedFilter;
         joinObject.jto_drv_table = obj.relationship.jto_drv_table;
         joinObject.jfrom_drv_table = obj.relationship.jfrom_drv_table;
