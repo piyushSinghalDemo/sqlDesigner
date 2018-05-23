@@ -49,6 +49,7 @@
 <script>
 import _def from '../various/defnitions'
 import cloneDeep from 'lodash/cloneDeep';
+import differenceBy from 'lodash/differenceBy'
 import uniq from 'lodash/uniq'
 import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
@@ -112,9 +113,20 @@ export default {
     
     async getMergeColumn(object){
       let _this = this;
+      //  debugger;
        this.tableObj.merge.optionColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == object.tableName});
-       this.tableObj.merge.selectedColumns = [];
-      // debugger;
+        this.tableObj.merge.selectedColumns = [];
+        for(var relationIndex =0; relationIndex < this.tableObj.relationshipArray.length; relationIndex++)
+          if(this.tableObj.relationshipArray[relationIndex].workTableOutput.length && 
+                this.tableObj.relationshipArray[relationIndex].workTableOutput[0].group == this.tableObj.merge.optionColumn[0].group){
+                    this.tableObj.merge.selectedColumns = this.tableObj.relationshipArray[relationIndex].workTableOutput;
+                    this.tableObj.merge.optionColumn = differenceBy(this.tableObj.merge.optionColumn, this.tableObj.merge.selectedColumns, 'name');
+                    break;
+          }
+      //  if(this.tableObj.merge.optionColumn.length && this.tableObj.merge.selectedColumns.length)
+      //     {
+      //       if(this.tableObj.merge.optionColumn[0].group !== this.tableObj.merge.selectedColumns[0].group)
+      //     }
       console.log("Option Column"+JSON.stringify(this.tableObj.merge.optionColumn));
     },
     updateTableObj(arr) {
@@ -158,14 +170,15 @@ export default {
       // alert("In merge step");
       let _this = this;
       _this.tableObj = objData;
-      debugger;
+      // debugger;
       _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let flowchart$ = $("#droppable");
       var operatorData = flowchart$.flowchart('getOperatorData', _this.$store.state.currentStep);
       let inputParam =  mergeStepData(this, _this.tableObj);     //this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
-      inputParam.env_id = _this.userData.env_id;
+      debugger;
+      inputParam.env_id = _this.$store.state.env_id;          //_this.userData.env_id;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
       console.log("inputParam in merge step " +JSON.stringify(inputParam));
@@ -183,7 +196,7 @@ export default {
         addData = [];
         let currentStep = _this.$store.state.currentStep;
         findLink.push(cloneDeep(currentStep));
-        debugger;
+        // debugger;
         /**@augments For previous Step data Tree traversal BFS Algo Implemented
          */
         do{

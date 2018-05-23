@@ -75,6 +75,14 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
             colAlies: workTableObj.col_alias
         }
         is_drv_table = relationObj.select_table.is_drv_table;
+
+        let tableObject = {};
+        tableObject.tableName = relationObj.select_table.name;
+        tableObject.aliesTableName = workTableObj.table_alias;
+        tableObject.stepId = is_drv_table ? "Previous Steps" : "Database Table";
+        tableObj.relationship.selectedTableArray.push(cloneDeep(tableObject));
+        tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
+
         workTableArray.push(cloneDeep(tempObject));
     });
     reletionData = {
