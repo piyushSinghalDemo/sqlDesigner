@@ -344,6 +344,7 @@ export default {
        let userData= JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
                "conn_str": _this.conn_str,
+               "env_id":userData.env_id,
                "schema": _this.schema,
                "dest_queue": "test",
                "table_name": tableObject.tableName,
