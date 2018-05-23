@@ -265,7 +265,7 @@ export async function setStepInfo(_this, processData) {
         // debugger;
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
-        console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
+        // console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
     });
 
 };

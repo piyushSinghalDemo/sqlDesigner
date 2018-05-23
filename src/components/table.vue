@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="">
     <v-layout row justify-center>
-      <v-dialog :value="dialog" fullscreen transition="dialog-bottom-transition" :overlay="false" scrollable>
+        <v-dialog v-model="dialog" hide-overlay fullscreen transition="dialog-bottom-transition" scrollable>  
         <v-card tile style="height:650px">
           <!-- ******************************Start ************************************* -->
           <v-toolbar card dark color="primary" app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>

@@ -50,7 +50,7 @@
       </v-flex>
     </v-layout>
     <v-expansion-panel expand>
-      <v-expansion-panel-content v-for="(item,i) in tableObj.relationshipArray" :key="i">
+      <v-expansion-panel-content v-if="item.relationship.selectedFilter"  v-for="(item,i) in tableObj.relationshipArray" :key="i">
         <div slot="header">
           <v-layout row wrap>
             <v-flex>{{item.relationship.fromTable.tableName}}</v-flex>

@@ -3,8 +3,8 @@ export default {
     relationship: {
         selectedTableArray: [],
         selectedTable: null,
-        fromTable: null,
-        toTable: null,
+        fromTable: {},
+        toTable: {},
         selectedColumn: null,
         selectedFilter: null,
         driverTable: {},

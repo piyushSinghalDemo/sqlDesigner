@@ -230,7 +230,7 @@ import filter from 'lodash/filter'
 export default {
      data() {
     return {
-          joinType:["join","left join","right join","full join"],
+          joinType:["inner join","left join","right join","full join"],
           filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
                   "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
            openbrsisArray:['(','((','((('],
@@ -270,13 +270,11 @@ export default {
       let arrayIndex = 0;
       let _this = this;
       // _this.tableObj = data.tableObj;
-      debugger;
-      _this.tableObj.relationshipArray.map(function(obj, index){
-          if(obj.relationship.fromTable == _this.tableObj.relationship.fromTable){
-            arrayIndex = index;
-          }
-      });
-      //debugger;
+      // _this.tableObj.relationshipArray.map(function(obj, index){
+      //     if(obj.relationship.fromTable == _this.tableObj.relationship.fromTable){
+      //       arrayIndex = index;
+      //     }
+      // });
       if(_this.tableObj.relationship.fromTable && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
         _this.tableObj.relationship.jfrom_drv_table = true;
       }else{
@@ -297,13 +295,15 @@ export default {
                     'workTableOutput':_this.tableObj.merge.selectedColumns,'distinct':_this.tableObj.merge.distinct,
                     'selectAll':_this.tableObj.merge.selectAll
                     };
-      if(arrayIndex){
-        _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
-        _this.$toaster.info('Relationship Updated successfully');
-      }else{
-        _this.tableObj.relationshipArray.push(cloneDeep(object));
+       _this.tableObj.relationshipArray.push(cloneDeep(object));
         _this.$toaster.success('Relationship added successfully');
-      }
+      // if(arrayIndex){
+      //   _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
+      //   _this.$toaster.info('Relationship Updated successfully');
+      // }else{
+      //   _this.tableObj.relationshipArray.push(cloneDeep(object));
+      //   _this.$toaster.success('Relationship added successfully');
+      // }
       this.resetForm();
       this.$emit('save-data', _this.tableObj)
     },
