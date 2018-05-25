@@ -177,7 +177,7 @@ export default {
       let inputParam =  mergeStepData(this, _this.tableObj);     //this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
-      debugger;
+      // debugger;
       inputParam.env_id = _this.$store.state.env_id;          //_this.userData.env_id;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;

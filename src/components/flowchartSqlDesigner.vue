@@ -1056,6 +1056,9 @@ export default {
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
         },response => {
+          if(response && response.message)
+          _this.$toaster.error(response.message);
+          else
            _this.$toaster.error('There is some internal error please try again later.')
         }).catch(e => {
               console.log(e)

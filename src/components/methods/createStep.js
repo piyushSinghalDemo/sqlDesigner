@@ -2,6 +2,7 @@
 
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
+import flowchartLink from './getOperatorLink'
 import { debug } from 'util';
 // import stepData from '../data/stepData.json';
 export function createStepData(_this, processData) {
@@ -15,7 +16,7 @@ export function createStepData(_this, processData) {
         operatorData.top = object.top;
         operatorData.left = object.left;
         operatorData.properties.title = object.name;
-        debugger;
+        //debugger;
         // if (object.type == "select")
         //     operatorData.className = 'db';
         // else if (object.type == "archival")
@@ -25,18 +26,18 @@ export function createStepData(_this, processData) {
         operatorData.className = cloneDeep(getStepType(object.type));
         operators[object.id] = cloneDeep(operatorData);
     });
-    processData.links.map((object, index) => {
-        let linkData = cloneDeep(stepData.links['0']);
-        linkData.fromOperator = object.source;
-        linkData.toOperator = object.target;
-        linkData.fromTable = object.sourceName;
-        linkData.toTable = object.targetName;
-        linkData.fromSubConnector = object.fromSubConnector;
-        linkData.toSubConnector = object.toSubConnector;
-        links[index] = cloneDeep(linkData);
-    });
+    // processData.links.map((object, index) => {
+    //     let linkData = cloneDeep(stepData.links['0']);
+    //     linkData.fromOperator = object.source;
+    //     linkData.toOperator = object.target;
+    //     linkData.fromTable = object.sourceName;
+    //     linkData.toTable = object.targetName;
+    //     linkData.fromSubConnector = object.fromSubConnector;
+    //     linkData.toSubConnector = object.toSubConnector;
+    //     links[index] = cloneDeep(linkData);
+    // });
     flowChartData.operators = operators;
-    flowChartData.links = links;
+    flowChartData.links = flowchartLink(_this, flowchartData);
 
     return flowChartData;
 }
