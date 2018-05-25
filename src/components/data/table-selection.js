@@ -72,5 +72,6 @@ export default {
         selectedColumns: [],
         distinct: false,
         selectAll: false,
+        distinctAll: true,
     }
 }

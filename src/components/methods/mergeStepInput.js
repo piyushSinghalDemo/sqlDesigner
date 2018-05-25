@@ -151,9 +151,10 @@ export default function getMergeStepData(_this, tableObj) {
             // }
         mergeStepInput.links = flowchartLink(_this, flowchartData);
         mergeStepInput.list_of_merge.push(relationObject);
-        mergeStepInput.client_id = userData.client_id,
-            mergeStepInput.user_id = userData.user_id,
-            mergeStepInput.id = tableObj.stepId
+        mergeStepInput.client_id = userData.client_id;
+        mergeStepInput.user_id = userData.user_id;
+        mergeStepInput.id = tableObj.stepId;
+        mergeStepInput.distinct = tableObj.merge.distinctAll;
     });
     return mergeStepInput;
 };
