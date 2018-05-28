@@ -734,8 +734,8 @@
                     <img src="../../static/flowchart/images/duplicate.png" alt="" height="40" width="40">
                   </div>
 
-                  <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
-                  <!-- <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button> -->
+                  <button type="button" class="btn btn-danger" style="width: 147px;" @click.stop="executeProcess">Save Process</button>
+                  <button type="button" class="btn btn-danger" @click.stop="bottomSheet = true">Validate Process</button>
                 </div>
             
                 <!-- <h3>Header 3</h3>
@@ -787,7 +787,32 @@
 
     <v-dialog v-model="addTitle" persistent max-width="25%">
       <!-- <v-btn color="primary" dark slot="activator">Open Dialog</v-btn> -->
-      <v-card>
+          <v-layout align-center justify-center>
+            <v-flex>
+              <v-card>
+                <v-form v-model="validateStep" ref="form" lazy-validation>
+                <v-toolbar dark color="primary">
+                  <v-toolbar-title>Step Details</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn icon large @click="addTitle = false">
+                    <v-icon large>close</v-icon>
+                  </v-btn>  
+                </v-toolbar>
+                <v-card-text>
+                    <v-text-field label="Step Name" prepend-icon="person" v-model="stepName" :rules="stepNameRules" required>
+                     </v-text-field>
+                     <v-text-field prepend-icon="code" label="Step Description" v-model="stepDetail" :rules="stepDetailRules"
+                       multi-line required></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click.native="submitStep" :disabled='!validateStep' >Submit</v-btn>        
+                </v-card-actions>
+                </v-form>
+              </v-card>
+            </v-flex>
+          </v-layout>
+      <!-- <v-card>
         <v-form v-model="validateStep" ref="form" lazy-validation>
         <v-card-title class="headline">
           <span>Step Details</span>
@@ -814,11 +839,14 @@
           <v-btn @click.native="clearStep">Crear</v-btn>
         </v-card-actions>
         </v-form>
-      </v-card>
+      </v-card> -->
     </v-dialog>
   <v-dialog v-model="dialog2" max-width="60%" max-height="50%">
       <process-name @save-name="saveName" v-on:close="dialog2=false"></process-name>
   </v-dialog>
+  <v-bottom-sheet v-model="bottomSheet">
+      <validation-logs :logs="logs"></validation-logs>  
+  </v-bottom-sheet>
     </div>
   </v-app>
 </template>
@@ -829,6 +857,7 @@ import _def from './various/defnitions'
 import table from './table.vue'
 import archiveMain from './archive/archiveMain.vue'
 import mergeStep from './merge/mergeStep.vue'
+import validationLogs from './validationLog.vue'
 import storedProcedure from './storedProcedure/storedProcedure.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
@@ -849,11 +878,13 @@ export default {
     'merge-step':mergeStep,
      draggable,
      contextMenu,
-     'process-name':processName 
+     'process-name':processName,
+     'validation-logs':validationLogs 
   },
   data() {
     return {
       dataStr: _def.dataStr,
+      bottomSheet:false,
       dom: {},
       minimap: {
         showMap: false,
