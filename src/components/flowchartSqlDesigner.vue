@@ -735,7 +735,7 @@
                   </div>
 
                   <button type="button" class="btn btn-danger" style="width: 147px;" @click.stop="executeProcess">Save Process</button>
-                  <button type="button" class="btn btn-danger" @click.stop="bottomSheet = true">Validate Process</button>
+                  <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button>
                 </div>
             
                 <!-- <h3>Header 3</h3>
@@ -879,7 +879,8 @@ export default {
      draggable,
      contextMenu,
      'process-name':processName,
-     'validation-logs':validationLogs 
+     'validation-logs':validationLogs,
+     'logs':[] 
   },
   data() {
     return {
@@ -1067,11 +1068,17 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-        let url = config.VALIDATE+'validate_process_defination' //'http://192.168.1.101:8016/add_ide_data';
+        let url = config.VALIDATE+'validate_process_definition/true' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
-        postToServer(this, url, ideInputData).then(response=>{  
-          _this.$toaster.success('Data save successfully') 
+        postToServer(this, url, ideInputData).then(response=>{
+          // bottomSheet = true;  
+          _this.$toaster.info('Data validated successfully') 
         },response => {
+          if(response.message){
+          _this.logs = response.message;
+          _this.bottomSheet = true;
+          }
+          else
            _this.$toaster.error('There is some internal error please try again later.')
         }).catch(e => {
               console.log(e)

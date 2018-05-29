@@ -14,8 +14,33 @@
           <v-content>
             <v-container grid-list-lg>
               <v-layout>
-                <!-- ************************************************************************************************************************** -->
-                <v-flex d-flex xs12>
+    
+              <v-stepper v-model="stepper" style="width:100%">
+                <v-stepper-header>
+                    <v-stepper-step :complete="stepper > 1" editable step="1">Table Relationship</v-stepper-step>
+                    <v-divider></v-divider>
+                    <v-stepper-step :complete="stepper > 2" editable step="2">Criteria</v-stepper-step>
+                    <v-divider></v-divider>
+                    <v-stepper-step step="3" editable>Worktable Output</v-stepper-step>
+                </v-stepper-header>
+                <v-stepper-items>
+                <v-stepper-content step="1">
+                  <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj" style="height:430px">
+                  </table-relationship>
+                </v-stepper-content>
+                <v-stepper-content step="2">
+                   <!-- <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
+        <v-btn color="primary" @click.native="stepper = 3">Continue</v-btn>
+        <v-btn flat>Cancel</v-btn> -->
+                  <add-criteria @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px"></add-criteria>   
+                </v-stepper-content>
+                <v-stepper-content step="3">
+                   <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px">
+                   </work-table-output>
+                </v-stepper-content>
+                </v-stepper-items>
+              </v-stepper>    
+                <!-- <v-flex d-flex xs12>
                   <div class="form-views" v-show="progressbar == 1" style="width:100%;margin-left:3%;height:500px">
 
                     <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj"></table-relationship>
@@ -31,8 +56,8 @@
                     <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj"></work-table-output>
 
                   </div>
-                </v-flex>
-                <!-- **************************************************************************** -->
+                </v-flex> -->
+                
               </v-layout>
             </v-container>
           </v-content>
@@ -78,6 +103,7 @@ export default {
   },
   data() {
     return {
+      stepper:0,
       drawer: null,
       dataStr: _def.dataStr,
       dialog2: false,
@@ -121,7 +147,8 @@ export default {
     updateTableObj(arr) {
       let _this = this;
       _this.tableObj = arr[0];
-      this.progressbar = arr[1];
+      _this.stepper = arr[1];
+      // this.progressbar = arr[1];
     },
     saveData(obj) {
       let _this = this;

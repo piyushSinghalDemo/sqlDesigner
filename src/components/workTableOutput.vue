@@ -1,10 +1,10 @@
 <template>
   <v-container grid-list-md>
-    <ul>
+    <!-- <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true}">Table Relationship</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
       <li @click.stop="switchScreen(3)" :class="{chevron:true,chevron_active:true}">Worktable Output</li>
-    </ul>
+    </ul> -->
     <div id="createScroll2" class="createScroll2" style="width:100%">
       <div id="droppable2" class="">
         <v-container grid-list-md>
@@ -72,11 +72,11 @@
     </div>
     <v-layout row wrap>
       <v-flex xs1>
-        <v-btn class="next" @click.stop="switchScreen(2)" color="info">Previous</v-btn>
+        <v-btn class="next" @click.stop="switchScreen(2)" color="primary">Previous</v-btn>
       </v-flex>
       <v-flex xs9></v-flex>
       <v-flex xs2>
-        <v-btn class="next" :loading="saveData" @click.stop="updateStep" color="info">Save</v-btn>
+        <v-btn :loading="saveData" class="next" @click.stop="updateStep" color="primary">Save</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
@@ -145,7 +145,7 @@ export default {
 
   .next{
     position: absolute;
-    top: 537px;
+    bottom: 0px;
 }
 .chevron {
       cursor: pointer;
