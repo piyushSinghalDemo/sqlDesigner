@@ -812,34 +812,6 @@
               </v-card>
             </v-flex>
           </v-layout>
-      <!-- <v-card>
-        <v-form v-model="validateStep" ref="form" lazy-validation>
-        <v-card-title class="headline">
-          <span>Step Details</span>
-          <v-spacer></v-spacer>
-          <v-icon @click="addTitle = false" style="cursor:pointer;color:red">close</v-icon>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-sm>
-            <v-layout wrap>
-              <v-flex xs12>
-                <v-text-field label="Step Name" v-model="stepName" :rules="stepNameRules" required>
-                </v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field label="Step Description" v-model="stepDetail" :rules="stepDetailRules"
-                 multi-line required></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" flat @click.native="submitStep" :disabled='!validateStep' >Submit</v-btn>
-          <v-btn @click.native="clearStep">Crear</v-btn>
-        </v-card-actions>
-        </v-form>
-      </v-card> -->
     </v-dialog>
   <v-dialog v-model="dialog2" max-width="60%" max-height="50%">
       <process-name @save-name="saveName" v-on:close="dialog2=false"></process-name>

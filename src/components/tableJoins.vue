@@ -1,8 +1,15 @@
 <template>
   <v-card>
-          <v-card-title>
+          <v-toolbar dark color="primary">
+            <v-toolbar-title>Define Joins</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn v-on:click="$emit('close')" icon large>
+              <v-icon large>close</v-icon>
+            </v-btn>  
+          </v-toolbar>
+          <!-- <v-card-title>
             Select Data
-          </v-card-title>
+          </v-card-title> -->
           <v-card-text>
              <v-form>
                <v-layout row wrap>
@@ -55,8 +62,9 @@
               </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn @click.stop="savedata"> submit </v-btn>
-            <v-btn v-on:click="$emit('close')"> close</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click.stop="savedata"> submit </v-btn>
+            <!-- <v-btn v-on:click="$emit('close')"> close</v-btn> -->
           </v-card-actions>
         </v-card>
 </template>
