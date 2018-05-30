@@ -2,6 +2,7 @@
 
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
+import flowchartLink from './getOperatorLink'
 import { debug } from 'util';
 // import stepData from '../data/stepData.json';
 export function createStepData(_this, processData) {
@@ -15,7 +16,7 @@ export function createStepData(_this, processData) {
         operatorData.top = object.top;
         operatorData.left = object.left;
         operatorData.properties.title = object.name;
-        debugger;
+        //debugger;
         // if (object.type == "select")
         //     operatorData.className = 'db';
         // else if (object.type == "archival")

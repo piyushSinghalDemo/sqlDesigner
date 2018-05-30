@@ -1,5 +1,6 @@
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
+import flowchartLink from './getOperatorLink'
 import { debug } from 'util';
 export function getProcessData(_this, flowchartData) {
     let userData = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -32,15 +33,16 @@ export function getProcessData(_this, flowchartData) {
     //     } //we got our dest name
     //     linkArray.push(cloneDeep(linkObject));
     // }
-    for (var i = 0; i < objectLength; i++) {
-        link.source = flowchartData.links[i].fromOperator;
-        link.target = flowchartData.links[i].toOperator;
-        link.sourceName = flowchartData.links[i].fromTable;
-        link.targetName = flowchartData.links[i].toTable
-        link.fromSubConnector = flowchartData.links[i].fromSubConnector;
-        link.toSubConnector = flowchartData.links[i].toSubConnector;
-        linkArray.push(cloneDeep(link));
-    }
+    // for (var i = 0; i < objectLength; i++) {
+    //     link.source = flowchartData.links[i].fromOperator;
+    //     link.target = flowchartData.links[i].toOperator;
+    //     link.sourceName = flowchartData.links[i].fromTable;
+    //     link.targetName = flowchartData.links[i].toTable
+    //     link.fromSubConnector = flowchartData.links[i].fromSubConnector;
+    //     link.toSubConnector = flowchartData.links[i].toSubConnector;
+    //     linkArray.push(cloneDeep(link));
+    // }
+    linkArray = flowchartLink(_this, flowchartData);
     for (var archivalStepIndex = 0; archivalStepIndex < archivalStepKeys.length; archivalStepIndex++) {
         stepObject.id = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].stepId;
         stepObject.name = _this.$store.state.archivalStep[archivalStepKeys[archivalStepIndex]].title;

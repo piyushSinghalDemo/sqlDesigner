@@ -1,8 +1,15 @@
 <template>
   <v-card>
-          <v-card-title>
+          <v-toolbar dark color="primary">
+            <v-toolbar-title>Define Joins</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn v-on:click="$emit('close')" icon large>
+              <v-icon large>close</v-icon>
+            </v-btn>  
+          </v-toolbar>
+          <!-- <v-card-title>
             Select Data
-          </v-card-title>
+          </v-card-title> -->
           <v-card-text>
              <v-form>
                <v-layout row wrap>
@@ -55,8 +62,9 @@
               </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn @click.stop="savedata"> submit </v-btn>
-            <v-btn v-on:click="$emit('close')"> close</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click.stop="savedata"> submit </v-btn>
+            <!-- <v-btn v-on:click="$emit('close')"> close</v-btn> -->
           </v-card-actions>
         </v-card>
 </template>
@@ -76,13 +84,15 @@ export default {
       _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
     },
     savedata(){
-      let arrayIndex = 0;
+      let arrayIndex = -1;
       let _this = this;
       // debugger;
       console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
       // _this.tableObj = data.tableObj;
+      debugger;
       _this.tableObj.relationshipArray.map(function(obj, index){
-          if(obj.relationship.fromTable == _this.tableObj.relationship.fromTable){
+          if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
+              obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
             arrayIndex = index;
           }
       });
@@ -97,7 +107,7 @@ export default {
         _this.tableObj.relationship.jto_drv_table = false;  
       }
       let object = {'relationship':_this.tableObj.relationship,'colArray':_this.tableObj.colArray};
-      if(arrayIndex){
+      if(arrayIndex >=0){
         _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
         _this.$toaster.info('Relationship Updated successfully');
       }else{

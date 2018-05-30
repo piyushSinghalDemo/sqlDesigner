@@ -5,11 +5,11 @@
         <span style="color: red;font-size: 16px;">Table Loading...</span>
     </div>
     <div v-show="!tableObj.loadTable">
-    <ul>
+    <!-- <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Table Relationship</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
       <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li>
-    </ul>
+    </ul> -->
     <v-layout row wrap>
       <v-flex xs6>
         <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
@@ -74,7 +74,7 @@
       </v-expansion-panel-content>
     </v-expansion-panel>
     <v-layout justify-end>
-      <v-btn class="next" @click.stop="switchScreen(2)" color="info">Next</v-btn>
+      <v-btn @click.stop="switchScreen(2)" class="next" color="primary">Next</v-btn>
     </v-layout>
     </div>
   </v-container>
@@ -279,7 +279,7 @@ export default {
 <style scoped>
  .next{
     position: absolute;
-    top: 537px;
+    bottom: 0px;
 }
 .chevron {
       cursor: pointer;

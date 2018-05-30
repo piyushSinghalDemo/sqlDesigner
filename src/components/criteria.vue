@@ -1,10 +1,10 @@
 <template>
   <v-container grid-list-md>
-       <ul>
+       <!-- <ul>
             <li @click.stop="switchScreen(1)" :class="{chevron:true}">Table Relationship</li>
             <li @click.stop="switchScreen(2)" :class="{chevron:true,chevron_active:true}">Criteria</li>
             <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li>
-        </ul>
+        </ul> -->
         <!-- {{tableObj.criteriaArray}} -->
     <v-layout row wrap style="font-weight: bold;font-size:19px">
       <v-flex xs2>Parenthesis</v-flex>
@@ -64,11 +64,11 @@
     </v-layout>
      <v-layout row wrap>
         <v-flex xs1>
-        <v-btn class="next" @click.stop="switchScreen(1)" color="info">Previous</v-btn>
+        <v-btn class="next" @click.stop="switchScreen(1)" color="primary">Previous</v-btn>
         </v-flex>
         <v-flex xs9></v-flex>
         <v-flex xs2>
-        <v-btn class="next" @click.stop="switchScreen(3)" color="info">Next</v-btn>
+        <v-btn class="next" @click.stop="switchScreen(3)" color="primary">Next</v-btn>
         </v-flex>
     </v-layout>
   </v-container>
@@ -121,7 +121,7 @@ export default {
     }
     .next{
     position: absolute;
-    top: 537px;
+    bottom: 0px;
 }
 .chevron {
       cursor: pointer;

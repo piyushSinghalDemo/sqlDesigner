@@ -734,8 +734,8 @@
                     <img src="../../static/flowchart/images/duplicate.png" alt="" height="40" width="40">
                   </div>
 
-                  <button type="button" class="btn btn-danger" @click.stop="executeProcess">Save Process</button>
-                  <!-- <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button> -->
+                  <button type="button" class="btn btn-danger" style="width: 147px;" @click.stop="executeProcess">Save Process</button>
+                  <button type="button" class="btn btn-danger" @click.stop="validateProcess">Validate Process</button>
                 </div>
             
                 <!-- <h3>Header 3</h3>
@@ -787,38 +787,38 @@
 
     <v-dialog v-model="addTitle" persistent max-width="25%">
       <!-- <v-btn color="primary" dark slot="activator">Open Dialog</v-btn> -->
-      <v-card>
-        <v-form v-model="validateStep" ref="form" lazy-validation>
-        <v-card-title class="headline">
-          <span>Step Details</span>
-          <v-spacer></v-spacer>
-          <v-icon @click="addTitle = false" style="cursor:pointer;color:red">close</v-icon>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-sm>
-            <v-layout wrap>
-              <v-flex xs12>
-                <v-text-field label="Step Name" v-model="stepName" :rules="stepNameRules" required>
-                </v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field label="Step Description" v-model="stepDetail" :rules="stepDetailRules"
-                 multi-line required></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" flat @click.native="submitStep" :disabled='!validateStep' >Submit</v-btn>
-          <v-btn @click.native="clearStep">Crear</v-btn>
-        </v-card-actions>
-        </v-form>
-      </v-card>
+          <v-layout align-center justify-center>
+            <v-flex>
+              <v-card>
+                <v-form v-model="validateStep" ref="form" lazy-validation>
+                <v-toolbar dark color="primary">
+                  <v-toolbar-title>Step Details</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn icon large @click="addTitle = false">
+                    <v-icon large>close</v-icon>
+                  </v-btn>  
+                </v-toolbar>
+                <v-card-text>
+                    <v-text-field label="Step Name" prepend-icon="person" v-model="stepName" :rules="stepNameRules" required>
+                     </v-text-field>
+                     <v-text-field prepend-icon="code" label="Step Description" v-model="stepDetail" :rules="stepDetailRules"
+                       multi-line required></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" @click.native="submitStep" :disabled='!validateStep' >Submit</v-btn>        
+                </v-card-actions>
+                </v-form>
+              </v-card>
+            </v-flex>
+          </v-layout>
     </v-dialog>
   <v-dialog v-model="dialog2" max-width="60%" max-height="50%">
       <process-name @save-name="saveName" v-on:close="dialog2=false"></process-name>
   </v-dialog>
+  <v-bottom-sheet v-model="bottomSheet">
+      <validation-logs :logs="logs"></validation-logs>  
+  </v-bottom-sheet>
     </div>
   </v-app>
 </template>
@@ -829,9 +829,11 @@ import _def from './various/defnitions'
 import table from './table.vue'
 import archiveMain from './archive/archiveMain.vue'
 import mergeStep from './merge/mergeStep.vue'
+import validationLogs from './validationLog.vue'
 import storedProcedure from './storedProcedure/storedProcedure.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
+import filter from 'lodash/filter';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
 import config from './../config.json'
@@ -849,11 +851,14 @@ export default {
     'merge-step':mergeStep,
      draggable,
      contextMenu,
-     'process-name':processName 
+     'process-name':processName,
+     'validation-logs':validationLogs,
+     'logs':[] 
   },
   data() {
     return {
       dataStr: _def.dataStr,
+      bottomSheet:false,
       dom: {},
       minimap: {
         showMap: false,
@@ -1036,11 +1041,34 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-        let url = config.VALIDATE+'validate_process_defination' //'http://192.168.1.101:8016/add_ide_data';
+        let url = config.VALIDATE+'validate_process_definition/true' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
-        postToServer(this, url, ideInputData).then(response=>{  
-          _this.$toaster.success('Data save successfully') 
+        postToServer(this, url, ideInputData).then(response=>{
+          // bottomSheet = true;
+          _this.$store.state.processArray.map((validObj, validIndex)=>{
+            $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
+          });  
+          _this.$toaster.info('Data validated successfully') 
         },response => {
+          if(response.message){
+            console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
+          _this.logs = response.message;
+          let validatedData = _this.$store.state.processArray;
+          
+          response.message.map((step, stepIndex)=>{
+          $flowchart.flowchart('addClassOperator', step.step_id, 'stepError');
+              validatedData = filter(validatedData, function(obj){
+                if(obj.id != step.step_id){
+                 return obj; 
+                }
+              });
+          });
+          validatedData.map((validObj, validIndex)=>{
+            $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
+          });
+          _this.bottomSheet = true;
+          }
+          else
            _this.$toaster.error('There is some internal error please try again later.')
         }).catch(e => {
               console.log(e)
@@ -1056,6 +1084,9 @@ export default {
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
         },response => {
+          if(response && response.message)
+          _this.$toaster.error(response.message);
+          else
            _this.$toaster.error('There is some internal error please try again later.')
         }).catch(e => {
               console.log(e)
@@ -1106,7 +1137,9 @@ export default {
              _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type, response.id)
           //  if(response.process_definition_id)           
          },response=>{
-            _this.$toaster.error('Due to some internal error , Step not created');
+           debugger;
+           if(response && response.error && response.error.message)
+            _this.$toaster.error(response.error.message);
          });
        }
     },
@@ -1551,6 +1584,9 @@ export default {
 </script>
 
 <style lang="css">
+.stepError{
+border-color: red !important;
+};
 .draggable {
   width: 80px;
   height: 100px;

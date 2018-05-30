@@ -1,5 +1,6 @@
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
+import flowchartLink from './getOperatorLink';
 export function getStepData(_this, tableObj) {
     // let _this = this;
     console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
@@ -121,22 +122,23 @@ export function getStepData(_this, tableObj) {
         });
         relationObject.where.length ? relationObject.where[relationObject.where.length - 1].operand = '' : '';
         let link = {
-            source: '',
-            target: '',
-            sourceName: '',
-            targetName: '',
-            fromSubConnector: '',
-            toSubConnector: ''
-        }
-        for (var i = 0; i < objectLength; i++) {
-            link.source = flowchartData.links[i].fromOperator;
-            link.target = flowchartData.links[i].toOperator;
-            link.sourceName = flowchartData.links[i].fromTable;
-            link.targetName = flowchartData.links[i].toTable;
-            link.fromSubConnector = flowchartData.links[i].fromSubConnector;
-            link.toSubConnector = flowchartData.links[i].toSubConnector;
-            archiveStepInput.links.push(cloneDeep(link));
-        }
+                source: '',
+                target: '',
+                sourceName: '',
+                targetName: '',
+                fromSubConnector: '',
+                toSubConnector: ''
+            }
+            // for (var i = 0; i < objectLength; i++) {
+            //     link.source = flowchartData.links[i].fromOperator;
+            //     link.target = flowchartData.links[i].toOperator;
+            //     link.sourceName = flowchartData.links[i].fromTable;
+            //     link.targetName = flowchartData.links[i].toTable;
+            //     link.fromSubConnector = flowchartData.links[i].fromSubConnector;
+            //     link.toSubConnector = flowchartData.links[i].toSubConnector;
+            //     archiveStepInput.links.push(cloneDeep(link));
+            // }
+        archiveStepInput.links = flowchartLink(_this, flowchartData);
         archiveStepInput.list_of_relations.push(relationObject);
         archiveStepInput.client_id = userData.client_id,
             archiveStepInput.user_id = userData.user_id,

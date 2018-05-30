@@ -25,8 +25,24 @@
               <td class="table-data">{{ props.item.Is_output ? "OUT":"IN"}}</td>
               <!-- <td class="text-xs-right">{{ props.item.value}}</td> -->
               <td class="">
-                 <!-- {{ props.item.value }} -->
-                 <v-text-field name="value" label="Value" single-line v-model="props.item.value"></v-text-field>
+                 <v-text-field name="value" label="Value" v-if="props.item.Type !== 'date'" single-line v-model="props.item.value"></v-text-field>
+                    <!-- **********************************************************************************************   -->
+                      <!-- <v-menu ref="props.item.value" :close-on-content-click="false"
+                          v-model="props.item.value" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition" offset-y full-width min-width="290px" >
+                          <v-text-field slot="activator" v-model="date"  label="Select Date"
+                            prepend-icon="event" readonly></v-text-field>
+                          <v-date-picker v-model="props.item.value" @input="$refs.props.item.value.save(date)"></v-date-picker>
+                      </v-menu> -->
+
+                       <v-menu ref="menu" lazy :close-on-content-click="false" v-if="props.item.Type == 'date'" v-model="obj.menu" transition="scale-transition"
+                          offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="obj.date">
+                          <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly></v-text-field>
+                          <v-date-picker v-model="obj.date" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="$refs.menu.save(obj.date)">OK</v-btn>
+                          </v-date-picker>
+                        </v-menu>
+                         <!-- **********************************************************************************************        -->
               </td>
             </template>
           </v-data-table>
@@ -47,6 +63,10 @@ export default {
   data() {
       return {
         loading: false,
+        obj:{
+          'menu':false,
+          'date':null,
+        },
         headers: [
           {
             text: 'Name',
@@ -58,6 +78,8 @@ export default {
           { text: 'Parameter Type', value: 'Is_output' },
           { text: 'Value', value: 'value' }
         ],
+        date:null,
+        menu2:false,
         saveData:false,
       }
     },
@@ -66,19 +88,13 @@ export default {
        var _this = this;
     },
     computed: {
-    //    selectTable() {
-    //     let _this = this;
-    //     return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
-    //   }
+ 
     },
     watch: {
       search(val) {
          //this.querySelections(val)
       },
-      // tableObj(val){
-      //   if(this.tableObj.storedProcedure.params.length)
-      //    this.tableObj.storedProcedure.params[0].value = 10; 
-      // }
+ 
     },
     methods: {
         updateStep(){
