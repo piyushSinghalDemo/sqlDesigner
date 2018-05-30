@@ -84,13 +84,15 @@ export default {
       _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
     },
     savedata(){
-      let arrayIndex = 0;
+      let arrayIndex = -1;
       let _this = this;
       // debugger;
       console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
       // _this.tableObj = data.tableObj;
+      debugger;
       _this.tableObj.relationshipArray.map(function(obj, index){
-          if(obj.relationship.fromTable == _this.tableObj.relationship.fromTable){
+          if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
+              obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
             arrayIndex = index;
           }
       });
@@ -105,7 +107,7 @@ export default {
         _this.tableObj.relationship.jto_drv_table = false;  
       }
       let object = {'relationship':_this.tableObj.relationship,'colArray':_this.tableObj.colArray};
-      if(arrayIndex){
+      if(arrayIndex >=0){
         _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
         _this.$toaster.info('Relationship Updated successfully');
       }else{

@@ -26,18 +26,18 @@ export function createStepData(_this, processData) {
         operatorData.className = cloneDeep(getStepType(object.type));
         operators[object.id] = cloneDeep(operatorData);
     });
-    // processData.links.map((object, index) => {
-    //     let linkData = cloneDeep(stepData.links['0']);
-    //     linkData.fromOperator = object.source;
-    //     linkData.toOperator = object.target;
-    //     linkData.fromTable = object.sourceName;
-    //     linkData.toTable = object.targetName;
-    //     linkData.fromSubConnector = object.fromSubConnector;
-    //     linkData.toSubConnector = object.toSubConnector;
-    //     links[index] = cloneDeep(linkData);
-    // });
+    processData.links.map((object, index) => {
+        let linkData = cloneDeep(stepData.links['0']);
+        linkData.fromOperator = object.source;
+        linkData.toOperator = object.target;
+        linkData.fromTable = object.sourceName;
+        linkData.toTable = object.targetName;
+        linkData.fromSubConnector = object.fromSubConnector;
+        linkData.toSubConnector = object.toSubConnector;
+        links[index] = cloneDeep(linkData);
+    });
     flowChartData.operators = operators;
-    flowChartData.links = flowchartLink(_this, flowchartData);
+    flowChartData.links = links;
 
     return flowChartData;
 }

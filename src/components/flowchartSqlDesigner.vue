@@ -833,6 +833,7 @@ import validationLogs from './validationLog.vue'
 import storedProcedure from './storedProcedure/storedProcedure.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
+import filter from 'lodash/filter';
 import draggable from 'vuedraggable'
 import contextMenu from 'vue-context-menu'
 import config from './../config.json'
@@ -1043,11 +1044,28 @@ export default {
         let url = config.VALIDATE+'validate_process_definition/true' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         postToServer(this, url, ideInputData).then(response=>{
-          // bottomSheet = true;  
+          // bottomSheet = true;
+          _this.$store.state.processArray.map((validObj, validIndex)=>{
+            $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
+          });  
           _this.$toaster.info('Data validated successfully') 
         },response => {
           if(response.message){
+            console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
           _this.logs = response.message;
+          let validatedData = _this.$store.state.processArray;
+          
+          response.message.map((step, stepIndex)=>{
+          $flowchart.flowchart('addClassOperator', step.step_id, 'stepError');
+              validatedData = filter(validatedData, function(obj){
+                if(obj.id != step.step_id){
+                 return obj; 
+                }
+              });
+          });
+          validatedData.map((validObj, validIndex)=>{
+            $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
+          });
           _this.bottomSheet = true;
           }
           else
@@ -1119,7 +1137,9 @@ export default {
              _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type, response.id)
           //  if(response.process_definition_id)           
          },response=>{
-            _this.$toaster.error('Due to some internal error , Step not created');
+           debugger;
+           if(response && response.error && response.error.message)
+            _this.$toaster.error(response.error.message);
          });
        }
     },
@@ -1564,6 +1584,9 @@ export default {
 </script>
 
 <style lang="css">
+.stepError{
+border-color: red !important;
+};
 .draggable {
   width: 80px;
   height: 100px;
