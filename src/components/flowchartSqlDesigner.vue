@@ -688,7 +688,8 @@
                 <i class="fa fa-search srch-def-icon"></i>
               </div> -->
               <div>
-                <h3 contenteditable="true" class="docs-title-input" @blur="setProcessName">{{processDocName}}</h3>
+                <!-- <h3 contenteditable="true" class="docs-title-input" @blur="setProcessName">{{processDocName}}</h3> -->
+                <editable :content="processDocName" v-on:update="updateHeadline"></editable>
               </div>
               <div class="accordion collapse in" style="position:relative">
                 <h3 >Steps</h3>
@@ -799,9 +800,9 @@
                   </v-btn>  
                 </v-toolbar>
                 <v-card-text>
-                    <v-text-field label="Step Name" prepend-icon="person" v-model="stepName" :rules="stepNameRules" required>
+                    <v-text-field label="Step Name" v-model="stepName" :rules="stepNameRules" required>
                      </v-text-field>
-                     <v-text-field prepend-icon="code" label="Step Description" v-model="stepDetail" :rules="stepDetailRules"
+                     <v-text-field label="Step Description" v-model="stepDetail" :rules="stepDetailRules"
                        multi-line required></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -830,6 +831,7 @@ import table from './table.vue'
 import archiveMain from './archive/archiveMain.vue'
 import mergeStep from './merge/mergeStep.vue'
 import validationLogs from './validationLog.vue'
+import editable from './element/editable.vue'
 import storedProcedure from './storedProcedure/storedProcedure.vue'
 import tableData from './data/table-selection'
 import cloneDeep from 'lodash/cloneDeep';
@@ -845,6 +847,7 @@ import {setStepInfo} from './methods/setStepInfo'
 export default {
   components: {
     Simplert,
+    editable,
     'table-modal': table,
     'archive-panel':archiveMain,
     'stored-procedure':storedProcedure,
@@ -1025,8 +1028,12 @@ export default {
           _this.loadData(ideInputData);
         });  
     },
-    setProcessName(ev){
-      this.$store.state.process_definition_name = ev.target.textContent;
+    // setProcessName(ev){
+    //   this.$store.state.process_definition_name = ev.target.textContent;
+    // },
+    updateHeadline (content) {
+      this.$store.state.process_definition_name = content;
+      // console.log("process-definition-name"+JSON.stringify(this.$store.state.process_definition_name));
     },
     saveName(name){
       let _this = this;
@@ -1742,23 +1749,6 @@ body {
     top: 2%;
     right: 3%;
     cursor: pointer;
-}
-.docs-title-input:hover {
-    border-color: #e5e5e5;
-}
-.docs-title-input:focus {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: 1px solid #4d90fe!important;
-    -webkit-box-shadow: inset 0px 1px 2px rgba(0,0,0,0.1);
-    -moz-box-shadow: inset 0px 1px 2px rgba(0,0,0,0.1);
-    box-shadow: inset 0px 1px 2px rgba(0,0,0,0.1);
-    color: #000;
-    outline: none;
-}
-.docs-title-input{
-    text-align: center;
-    margin: 5px 0px;
 }
 /*
 sql designer
