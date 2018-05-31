@@ -31,12 +31,18 @@
                </v-flex>
                </v-layout>
                <v-layout row wrap>
-               <v-flex style="margin-right:20px;"><b>From Column</b></v-flex>  
-               <v-flex style="margin-right:20px;"><b>Operator</b></v-flex>  
-               <v-flex style="margin-right:20px;">
+               <v-flex style="height:40px;padding-top:20px;margin-right:20px;"><b>From Column</b></v-flex>  
+               <v-flex style="height:40px;padding-top:20px;margin-right:20px;"><b>Operator</b></v-flex>  
+               <v-flex style="height:40px;padding-top:11px;margin-right:20px;">
                  <v-layout row wrap>
-                    <v-flex> <b>To Column</b></v-flex>
-                    <v-flex><i class="fa fa-plus icn-css" @click.stop="addColumn"></i></v-flex>
+                    <v-flex style="height:40px;padding-top:11px;"> <b>To Column</b></v-flex>
+                    <v-flex>
+                      <v-btn @click.stop="addColumn" icon small>
+                        <v-icon medium>fa-plus-circle</v-icon>
+                      </v-btn>
+                      <!-- <i class="fa fa-plus icn-css" @click.stop="addColumn">
+                      </i> -->
+                      </v-flex>
                  </v-layout>
                 </v-flex>  
                </v-layout>

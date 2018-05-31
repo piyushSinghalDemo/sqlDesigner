@@ -13,6 +13,7 @@ export async function setStepInfo(_this, processData) {
     // debugger;
     _this.$store.state.env_id = processData.steps[0].env_id;
     // let selectedTable = {};
+    _this.$store.state.processArray = processData.steps;
     processData.steps.map(async(stpObj, index) => {
 
         let tableObj = cloneDeep(stepObject);
