@@ -37,14 +37,15 @@
       </v-flex>
       <v-flex xs2>
         <v-text-field name="input-1" v-show="obj.valueType == 'value' || obj.valueType == ''" single-line label="Label Text" v-model="obj.value"></v-text-field>
-        <v-menu ref="menu" lazy :close-on-content-click="false" v-show="obj.valueType == 'date'" v-model="obj.menu" transition="scale-transition"
+        <calender v-show="obj.valueType == 'date'" @update="setDate($event,index)"></calender>
+        <!-- <v-menu ref="menu" lazy :close-on-content-click="false" v-show="obj.valueType == 'date'" v-model="obj.menu" transition="scale-transition"
           offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="obj.date">
           <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly></v-text-field>
           <v-date-picker v-model="obj.date" no-title scrollable>
             <v-spacer></v-spacer>
             <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
           </v-date-picker>
-        </v-menu>
+        </v-menu> -->
         <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
           item-text="name" item-value="name + tblAlies"></v-select>
       </v-flex>
@@ -75,7 +76,11 @@
 </template>
 <script>
 import cloneDeep from 'lodash/cloneDeep';
+import calender from './element/calender.vue'
 export default {
+  components: {
+    calender,
+  },
   data() {
     return {
       openbrsisArray:['(','((','((('],
@@ -88,6 +93,12 @@ export default {
     }},
     props: ['tableObj'],
    methods: {
+     setDate(dateParam, index){
+       let _this = this;
+      //  alert("Date "+dateParam);
+       _this.tableObj.criteriaArray[index].date = dateParam;
+       console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
+     },
     deleteCriteria(index){
       let _this = this;
       if(!index){
