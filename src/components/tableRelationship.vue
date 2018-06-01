@@ -110,7 +110,7 @@ export default {
     },
     watch: {
       search(val) {
-         //this.querySelections(val)
+         this.querySelections(val)
       },
       tableObj(newVal){
         // debugger;
@@ -128,7 +128,7 @@ export default {
         _this.$emit('update-object', [_this.tableObj, num]);
       },
       querySelections(value) {
-        console.log("_this.tableObj.allDbTables" +JSON.stringify(this.tableObj.allDbTables));
+        // console.log("_this.tableObj.allDbTables" +JSON.stringify(this.tableObj.allDbTables));
         let _this = this;
        // this search will work only on every third character
         if (value && value.length % 3 !== 0) {
