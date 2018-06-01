@@ -1,8 +1,8 @@
 {
-    "AGENT_API_URL": "http://192.168.1.101:8011/",
-    "IDE_API_URL": "http://192.168.1.101:8010/",
-    "VALIDATE": "http://192.168.1.101:8012/",
-    "PROCEDURE_LIST": "http://192.168.1.101:8011/",
+    "AGENT_API_URL": "http://192.168.1.112:8011/",
+    "IDE_API_URL": "http://192.168.1.112:8010/",
+    "VALIDATE": "http://192.168.1.112:8012/",
+    "PROCEDURE_LIST": "http://192.168.1.112:8011/",
     "SAVE_DATA_URL": "IDE_API_URL",
     "GET_DATA_URL": "AGENT_API_URL"
 }
