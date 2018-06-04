@@ -41,6 +41,7 @@ export default {
     }],
     selectAllColumn: false,
     optionColumn: [],
+    availableColumn: [],
     previousSteps: [],
     selectedColumns: [],
     allDbTables: [],

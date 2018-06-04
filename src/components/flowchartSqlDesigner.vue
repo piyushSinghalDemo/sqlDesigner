@@ -109,21 +109,13 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <div id="page-content">
-      <div class="">
-        <div class="row">
-          <div class="col-md-12">
-
-          </div>
-        </div>
-
+    <div id="">
         <table-modal></table-modal>
         <archive-panel></archive-panel>
         <stored-procedure></stored-procedure>
         <merge-step></merge-step>
         <!-- <simplert useRadius=true useIcon=true ref="simplert">
           </simplert> -->
-      </div>
     </div>
 
     <context-menu id="testingctx" ref="ctx" @ctx-open="onCtxOpen" @ctx-cancel="resetCtxLocals" @ctx-close="onCtxClose">
@@ -488,7 +480,6 @@ export default {
              _this.oneInOneOutOperator(_this.leftPosition, _this.topPosition, _this.type, response.id)
           //  if(response.process_definition_id)           
          },response=>{
-           debugger;
            if(response && response.error && response.error.message)
             _this.$toaster.error(response.error.message);
          });

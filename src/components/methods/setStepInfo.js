@@ -210,6 +210,7 @@ export async function setStepInfo(_this, processData) {
                                 colAlies: colObj.col_alias
                             };
                             tableObj.optionColumn.push(cloneDeep(columnObj));
+                            tableObj.availableColumn.push(cloneDeep(columnObj));
                         });
                     }
                 }
@@ -241,6 +242,7 @@ export async function setStepInfo(_this, processData) {
                             colAlies: obj + _this.$store.state.aliesCounter++
                         };
                         tableObj.optionColumn.push(cloneDeep(columnObj));
+                        tableObj.availableColumn.push(cloneDeep(columnObj));
                     });
                     _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for data selection
                     // console.log("Response from all tables" + JSON.stringify(response));
