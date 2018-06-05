@@ -1,17 +1,16 @@
 <template>
-  <v-container grid-list-md>
+  <v-container grid-list-md >
     <div v-show="tableObj.loadParamater">
         <v-progress-circular indeterminate color="red"></v-progress-circular>
         <span style="color: red;font-size: 16px;">Parameter List Loading...</span>
     </div>
     <div v-show="!tableObj.loadParamater">
-    <ul>
+    <!-- <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true}">Procedure List</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true,chevron_active:true}">Parameter</li>
-      <!-- <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li> -->
-    </ul>
-    <v-layout row wrap>
-      <v-flex>
+    </ul> -->
+    <v-layout row wrap style="height:375px">
+      <v-flex style="overflow:auto">
         <!-- {{tableObj}} -->
          <v-data-table
             :headers="headers"
@@ -25,7 +24,7 @@
               <td class="table-data">{{ props.item.Is_output ? "OUT":"IN"}}</td>
               <!-- <td class="text-xs-right">{{ props.item.value}}</td> -->
               <td class="">
-                 <!-- <v-text-field name="value" label="Value" v-if="props.item.Type !== 'date'" single-line v-model="props.item.value"></v-text-field> -->
+                 <v-text-field name="value" label="Value" v-if="props.item.Type !== 'date'" single-line v-model="props.item.value"></v-text-field>
                     <!-- **********************************************************************************************   -->
                       <!-- <v-menu ref="props.item.value" :close-on-content-click="false"
                           v-model="props.item.value" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition" offset-y full-width min-width="290px" >
@@ -42,7 +41,7 @@
                             <v-btn flat color="primary" @click="$refs.menu.save(obj.date)">OK</v-btn>
                           </v-date-picker>
                         </v-menu> -->
-                         <calender @update="setDate($event,props)"></calender>
+                         <calender v-else @update="setDate($event,props)"></calender>
                          <!-- **********************************************************************************************        -->
               </td>
             </template>
@@ -51,7 +50,14 @@
     </v-layout> 
         <!-- table data : {{tableObj}} -->
     <v-layout justify-end>
-      <v-btn class="next" @click.stop="updateStep" :loading="saveData" color="info">Save</v-btn>
+      <!-- <v-btn class="next" @click.stop="updateStep" :loading="saveData" color="info">Save</v-btn> -->
+         <v-flex xs1>
+        <v-btn class="next" @click.stop="switchScreen(1)" color="primary">Previous</v-btn>
+        </v-flex>
+        <v-flex xs9></v-flex>
+        <v-flex xs2>
+        <v-btn class="next" @click.stop="updateStep" color="primary">Next</v-btn>
+        </v-flex>
     </v-layout>
     </div>
   </v-container>
@@ -124,7 +130,7 @@ export default {
 <style scoped>
  .next{
     position: absolute;
-    top: 537px;
+    bottom: 0px;
 }
 .chevron {
       cursor: pointer;

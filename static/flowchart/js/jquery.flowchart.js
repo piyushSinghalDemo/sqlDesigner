@@ -493,10 +493,11 @@ $(function() {
             // var $operator_title = $('<div class="flowchart-operator-title"></div>');
             // $operator_title.html(infos.title + "hell");
             // $operator_title.appendTo($operator);
-
+            var $draggable_Container = $('<div class="draggable_container" style="cursor: pointer;"></div>');
+            $draggable_Container.appendTo($operator);
             var $operator_inputs_outputs = $('<div class="flowchart-operator-inputs-outputs ' + operatorData.className + ' " style="padding-top:15px;margin-top:0px !important;"></div>');
 
-            $operator_inputs_outputs.appendTo($operator);
+            $operator_inputs_outputs.appendTo($draggable_Container);
             var $operator_inputs = $('<div class="flowchart-operator-inputs"></div>');
             $operator_inputs.appendTo($operator_inputs_outputs);
 
@@ -505,7 +506,7 @@ $(function() {
 
             var $operator_title = $('<div class="flowchart-operator-title" style="text-align:center;"></div>');
             $operator_title.html(infos.title);
-            $operator_title.appendTo($operator);
+            $operator_title.appendTo($draggable_Container);
 
             var self = this;
 
@@ -641,7 +642,7 @@ $(function() {
                 var pointerY;
                 fullElement.operator.draggable({
                     containment: operatorData.internal.properties.uncontained ? false : this.element,
-                    handle: '.flowchart-operator-title',
+                    handle: '.draggable_container',
                     start: function(e, ui) {
                         if (self.lastOutputConnectorClicked != null) {
                             e.preventDefault();

@@ -32,10 +32,10 @@
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
-                  <draggable element="span" v-model="tableObj.optionColumn" :options="dragOptions" :move="onMove" @start="isDragging=true"
+                  <draggable element="span" v-model="tableObj.availableColumn" :options="dragOptions" :move="onMove" @start="isDragging=true"
                     @end="isDragging=false" @change="updateGroup($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.optionColumn, SearchTable)"
+                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.availableColumn, SearchTable)"
                         :key="index">
                         {{element.group}}.{{element.name}}
                       </li>
@@ -96,8 +96,25 @@ export default {
         isDragging: false,
         selectedSearch:"",
         saveData:false,
+        // availableColumn:[],
     }},
     props: ['tableObj'],
+    // created(){
+    //   this.availableColumn = cloneDeep(this.tableObj.optionColumn);
+    // },
+    watch:{
+      // tableObj(newVAl){
+      //   debugger;
+      //   availableColumn = cloneDeep(newVAl.optionColumn);
+      // }
+    //      tableObj: {
+    //     handler: function (value, mutation) {
+    //         if(!this.tableObj.selectedColumns)
+    //           this.availableColumn = cloneDeep(value.optionColumn);
+    //     },
+    //     deep: true
+    // }
+    },
      computed: {
         dragOptions () {
         return  {
@@ -131,7 +148,7 @@ export default {
     },
      orderList () {
        let _this = this;
-      _this.tableObj.optionColumn = sortBy(_this.tableObj.optionColumn, ['group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
+      _this.tableObj.availableColumn = sortBy(_this.tableObj.availableColumn, ['group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
     },
     orderselectedColumns () {
       let _this = this;

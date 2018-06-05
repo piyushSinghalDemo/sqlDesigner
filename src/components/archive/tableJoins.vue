@@ -78,7 +78,8 @@
                               <v-select clearable :items="functionArray"  single-line label="Select Function" v-model="obj.function"></v-select>
                             </v-flex>
                             <v-flex xs3>
-                              <v-select label="Select Column"  :items="tableObj.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
+                              <v-select label="Select Column" :items="tableObj.archive.optionColumn" 
+                                v-model="obj.column" item-text="name" single-line :filter="customFilter" item-value="colAlies" return-object autocomplete></v-select>                        
                             </v-flex>
                             <v-flex xs3>
                               <v-select clearable :items="filterArray"  single-line label="Select Operator" v-model="obj.relOperator">
@@ -98,8 +99,8 @@
                                     <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                                   </v-date-picker>
                                 </v-menu>
-                                <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-                                  item-text="name" item-value="name + tblAlies"></v-select>
+                                <v-select :items="tableObj.archive.optionColumn" single-line label="Select Column"  v-show="obj.valueType == 'field'" v-model="obj.field"
+                                  item-text="name" item-value="colAlies" return-object></v-select>
                             </v-flex>
                             <v-flex xs3>
                               <v-select clearable :items="closebrsisArray"  single-line label="Select Parenthisis" v-model="obj.closebrsis">
@@ -133,6 +134,14 @@ import cloneDeep from 'lodash/cloneDeep';
 export default {
      data() {
     return {
+          customFilter (item, queryText, itemText) {
+          const hasValue = val => val != null ? val : ''
+          const text = hasValue(item.name)
+          const query = hasValue(queryText)
+          return text.toString()
+            .toLowerCase()
+            .indexOf(query.toString().toLowerCase()) > -1
+          },
           joinType:["inner join","left join","right join","full join"],
           filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
                   "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
@@ -152,7 +161,8 @@ export default {
       let _this = this;
       // _this.tableObj = data.tableObj;
       _this.tableObj.relationshipArray.map(function(obj, index){
-          if(obj.relationship.fromTable == _this.tableObj.relationship.fromTable){
+               if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
+              obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
             arrayIndex = index;
           }
       });

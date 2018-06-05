@@ -30,7 +30,7 @@
           <div class="panel-body">
             <v-layout row wrap>
               <v-flex style="margin-right:5px;" v-for="(object, index) in tableObj.relationship.selectedTableArray" :key="index">
-                <span style="cursor:pointer" class="badge" @click.stop="updateJoin">{{object.tableName}}</span>
+                <span style="cursor:pointer" class="badge" @click.stop="updateJoin(object)">{{object.tableName}}</span>
               </v-flex>
             </v-layout>
           </div>
@@ -156,9 +156,9 @@ export default {
               _this.getColumn(obj);
             }            
         },
-        updateJoin(){
+        updateJoin(object){
           let _this = this;
-            _this.$emit('update-join');
+            _this.$emit('update-join', object);
         },
       switchScreen(num) {
         let _this = this;
@@ -335,6 +335,7 @@ export default {
             // obj.group = object.tableName;
             // obj.tblAlies = object.aliesTableName;
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+            _this.tableObj.availableColumn.push(cloneDeep(columnObj));
           });
          _this.tableObj.is_drv_table = true;  
     },
@@ -366,6 +367,7 @@ export default {
              let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
                                tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+            _this.tableObj.availableColumn.push(cloneDeep(columnObj));
           });
           // console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {

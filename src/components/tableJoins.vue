@@ -50,7 +50,7 @@
                <v-flex xs4 style="margin-right:20px;">
                  <!-- *********************************** Group Column ********************************************* -->
                    <v-select  label="From Column" :items="tableObj.optionColumn"  v-model="column.fromColumn" item-text="name" 
-                     single-line item-value="name + colAlies" autocomplete></v-select>     
+                     single-line :filter="customFilter" return-object autocomplete></v-select>     
                  <!-- ********************************************************************************************** -->
                </v-flex>
                <v-flex xs2 style="margin-right:20px;">
@@ -60,7 +60,7 @@
                   <v-layout>
                     <v-flex>
                       <v-select  label="To Column" :items="tableObj.optionColumn"  v-model="column.toColumn" item-text="name" 
-                        single-line item-value="name + colAlies" autocomplete></v-select> 
+                        single-line autocomplete></v-select> 
                     </v-flex>
                   </v-layout>
                </v-flex>
@@ -79,6 +79,14 @@ import cloneDeep from 'lodash/cloneDeep';
 export default {
      data() {
     return {
+          customFilter (item, queryText, itemText) {
+          const hasValue = val => val != null ? val : ''
+          const text = hasValue(item.name)
+          const query = hasValue(queryText)
+          return text.toString()
+            .toLowerCase()
+            .indexOf(query.toString().toLowerCase()) > -1
+        },
           joinType:["inner join","left join","right join","full join"],
           filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
                   "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],    
@@ -95,7 +103,6 @@ export default {
       // debugger;
       console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
       // _this.tableObj = data.tableObj;
-      debugger;
       _this.tableObj.relationshipArray.map(function(obj, index){
           if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
               obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){

@@ -105,8 +105,9 @@ export async function setStepInfo(_this, processData) {
 
         }
         //For archival step
+        console.log("List of relations " + JSON.stringify(stpObj.list_of_relations));
         stpObj.list_of_relations && stpObj.list_of_relations.length && stpObj.list_of_relations.map(async(relationObj) => {
-            // debugger;
+            let tempObj = {};
             relationObj.joins.map(async(joinObj, rlnIndex) => {
                     // debugger
                     let fromTableObj = {},
@@ -146,10 +147,30 @@ export async function setStepInfo(_this, processData) {
                     tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
                     tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
                     // tableObj.relationship.colArray = colArray;
-                    let tempObj = { 'relationship': tableObj.relationship, 'colArray': colArray };
-                    tableObj.relationshipArray.push(cloneDeep(tempObj));
+                    tempObj = { 'relationship': tableObj.relationship, 'colArray': colArray };
+                    // tableObj.relationshipArray.push(cloneDeep(tempObj));
                 }) //End of list of relotion Object array
+            let criteriaArray = [];
+            relationObj.where && relationObj.where.length && relationObj.where.map((whrObject, whrIndex) => {
 
+                let criteriaObject = cloneDeep(stepObject.parenthasisobject);
+                criteriaObject.openbrsis = whrObject.pre_braces;
+                criteriaObject.showLogicalOperator = whrObject.operand ? true : false;
+                criteriaObject.column.name = whrObject.column_name;
+                criteriaObject.column.fixed = false;
+                criteriaObject.column.tblAlies = whrObject.alias;
+                criteriaObject.column.group = whrObject.table_name;
+                criteriaObject.column.colAlies = whrObject.colAlies;
+                criteriaObject.relOperator = getjoinOperator(whrObject.operator)
+                criteriaObject.valueType = whrObject.is_col_compare ? 'field' : 'value';
+                criteriaObject.value = whrObject.value;
+                criteriaObject.closebrsis = whrObject.post_braces;
+                criteriaObject.logOperator = setOperand(whrObject.operand); // ? true : false;
+                criteriaArray.push(cloneDeep(criteriaObject));
+            });
+            // if (criteriaArray.length)
+            tempObj.where = criteriaArray;
+            tableObj.relationshipArray.push(cloneDeep(tempObj));
         }); // End of relation Array
         stpObj.list_of_merge && stpObj.list_of_merge.length && stpObj.list_of_merge.map(async(mergeObj) => {
             let tempObj = mergeAPIData(_this, mergeObj, tableObj);
@@ -210,6 +231,7 @@ export async function setStepInfo(_this, processData) {
                                 colAlies: colObj.col_alias
                             };
                             tableObj.optionColumn.push(cloneDeep(columnObj));
+                            tableObj.availableColumn.push(cloneDeep(columnObj));
                         });
                     }
                 }
@@ -241,6 +263,7 @@ export async function setStepInfo(_this, processData) {
                             colAlies: obj + _this.$store.state.aliesCounter++
                         };
                         tableObj.optionColumn.push(cloneDeep(columnObj));
+                        tableObj.availableColumn.push(cloneDeep(columnObj));
                     });
                     _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for data selection
                     // console.log("Response from all tables" + JSON.stringify(response));

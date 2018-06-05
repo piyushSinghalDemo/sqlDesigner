@@ -2,7 +2,7 @@
 <v-container>
     <v-layout row>
         <v-flex>
-            <h3 contenteditable="true" class="docs-title-input" @blur="emitChange"> {{ content }}</h3>
+            <h3 @keypress.enter.prevent="emitChange" contenteditable="true" class="docs-title-input" @blur="emitChange"> {{ content }}</h3>
         </v-flex>
     </v-layout>
 </v-container>
@@ -17,6 +17,9 @@ export default {
   },
   props: ['content'],
   methods: {
+    // submit:function(event){
+    //     this.$emit('update', event.target.textContent);
+    // },  
     emitChange: function (event) {
       this.$emit('update', event.target.textContent)
     }

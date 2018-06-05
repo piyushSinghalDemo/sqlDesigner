@@ -113,7 +113,6 @@ export default {
     
     async getMergeColumn(object){
       let _this = this;
-      //  debugger;
        this.tableObj.merge.optionColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == object.tableName});
         this.tableObj.merge.selectedColumns = [];
         for(var relationIndex =0; relationIndex < this.tableObj.relationshipArray.length; relationIndex++)
@@ -123,11 +122,7 @@ export default {
                     this.tableObj.merge.optionColumn = differenceBy(this.tableObj.merge.optionColumn, this.tableObj.merge.selectedColumns, 'name');
                     break;
           }
-      //  if(this.tableObj.merge.optionColumn.length && this.tableObj.merge.selectedColumns.length)
-      //     {
-      //       if(this.tableObj.merge.optionColumn[0].group !== this.tableObj.merge.selectedColumns[0].group)
-      //     }
-      console.log("Option Column"+JSON.stringify(this.tableObj.merge.optionColumn));
+      // console.log("Option Column"+JSON.stringify(this.tableObj.merge.optionColumn));
     },
     updateTableObj(arr) {
       let _this = this;
