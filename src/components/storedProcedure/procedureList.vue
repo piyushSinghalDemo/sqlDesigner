@@ -1,15 +1,14 @@
 <template>
-  <v-container grid-list-md>
+  <v-container grid-list-md style="overflow:auto">
     <div v-show="tableObj.loadProcedureList">
         <v-progress-circular indeterminate color="red"></v-progress-circular>
         <span style="color: red;font-size: 16px;">Procedure List Loading...</span>
     </div>
     <div v-show="!tableObj.loadProcedureList">
-    <ul>
+    <!-- <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Procedure List</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true}">Parameter</li>
-      <!-- <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li> -->
-    </ul>
+    </ul> -->
     <v-layout row wrap>
       <v-flex xs6  offset-xs3>
         <!-- <v-select :items="selectTable" v-model="tableObj.storedProcedure.name" :loading="loading"
@@ -20,7 +19,7 @@
     </v-layout> 
         <!-- table data : {{tableObj}} -->
     <v-layout justify-end>
-      <v-btn class="next" @click.stop="switchScreen(2)" color="info">Next</v-btn>
+      <v-btn class="next" @click.stop="switchScreen(2)" color="primary">Next</v-btn>
     </v-layout>
     </div>  
   </v-container>
@@ -215,7 +214,7 @@ export default {
 <style scoped>
  .next{
     position: absolute;
-    top: 537px;
+    bottom: 0px;
 }
 .chevron {
       cursor: pointer;

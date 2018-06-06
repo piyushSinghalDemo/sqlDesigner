@@ -1,17 +1,16 @@
 <template>
-  <v-container grid-list-md>
+  <v-container grid-list-md >
     <div v-show="tableObj.loadParamater">
         <v-progress-circular indeterminate color="red"></v-progress-circular>
         <span style="color: red;font-size: 16px;">Parameter List Loading...</span>
     </div>
     <div v-show="!tableObj.loadParamater">
-    <ul>
+    <!-- <ul>
       <li @click.stop="switchScreen(1)" :class="{chevron:true}">Procedure List</li>
       <li @click.stop="switchScreen(2)" :class="{chevron:true,chevron_active:true}">Parameter</li>
-      <!-- <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li> -->
-    </ul>
-    <v-layout row wrap>
-      <v-flex>
+    </ul> -->
+    <v-layout row wrap style="height:375px">
+      <v-flex style="overflow:auto">
         <!-- {{tableObj}} -->
          <v-data-table
             :headers="headers"
@@ -51,7 +50,14 @@
     </v-layout> 
         <!-- table data : {{tableObj}} -->
     <v-layout justify-end>
-      <v-btn class="next" @click.stop="updateStep" :loading="saveData" color="info">Save</v-btn>
+      <!-- <v-btn class="next" @click.stop="updateStep" :loading="saveData" color="info">Save</v-btn> -->
+         <v-flex xs1>
+        <v-btn class="next" @click.stop="switchScreen(1)" color="primary">Previous</v-btn>
+        </v-flex>
+        <v-flex xs9></v-flex>
+        <v-flex xs2>
+        <v-btn class="next" @click.stop="updateStep" color="primary">Next</v-btn>
+        </v-flex>
     </v-layout>
     </div>
   </v-container>
@@ -124,7 +130,7 @@ export default {
 <style scoped>
  .next{
     position: absolute;
-    top: 537px;
+    bottom: 0px;
 }
 .chevron {
       cursor: pointer;

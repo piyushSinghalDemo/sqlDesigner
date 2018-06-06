@@ -20,7 +20,27 @@
             <v-container grid-list-lg>
               <v-layout>
                 <!-- ************************************************************************************************************************** -->
-                <v-flex d-flex xs12>
+                <v-stepper v-model="stepper" style="width:100%">
+                <v-stepper-header>
+                    <v-stepper-step :complete="stepper > 1"  step="1">Procedure List</v-stepper-step>
+                    <v-divider></v-divider>
+                    <v-stepper-step step="2" >Parameter</v-stepper-step>
+                </v-stepper-header>
+                <v-stepper-items>
+                <v-stepper-content step="1">
+                  <!-- <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj" style="height:430px">
+                  </table-relationship> -->
+                  <procedure-list @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px">                      
+                  </procedure-list>
+                </v-stepper-content>
+                <v-stepper-content step="2">
+                   <!-- <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px">
+                   </work-table-output> -->
+                   <parameter-list @update-object='updateTableObj' @update-step='saveDialog' :tableObj="tableObj" style="height:430px"></parameter-list>
+                </v-stepper-content>
+                </v-stepper-items>
+              </v-stepper>
+                <!-- <v-flex d-flex xs12>
                   <div class="form-views" v-show="progressbar == 1" style="width:100%;margin-left:3%;height:500px">
 
                     <procedure-list @update-object='updateTableObj' :tableObj="tableObj">                      
@@ -32,7 +52,7 @@
                     <parameter-list @update-object='updateTableObj' @update-step='saveDialog' :tableObj="tableObj"></parameter-list>
 
                   </div>
-                </v-flex>
+                </v-flex> -->
                 <!-- **************************************************************************** -->
               </v-layout>
             </v-container>
@@ -73,6 +93,7 @@ export default {
       progressbar: 1,
       tableObj: cloneDeep(tableData),
       userData:'',
+      stepper:0,
       processDoc:false
     }
   },
@@ -163,7 +184,8 @@ export default {
     updateTableObj(arr) {
         let _this = this;
         _this.tableObj = arr[0];
-        this.progressbar = arr[1];
+        _this.stepper = arr[1];
+        // this.progressbar = arr[1];
         if(arr[1] == '2'){
           _this.loadParamaterList();
         }

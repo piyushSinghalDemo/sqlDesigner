@@ -25,13 +25,10 @@
                 </v-stepper-header>
                 <v-stepper-items>
                 <v-stepper-content step="1">
-                  <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj" style="height:430px">
+                  <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj" style="min-height:430px">
                   </table-relationship>
                 </v-stepper-content>
                 <v-stepper-content step="2">
-                   <!-- <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-        <v-btn color="primary" @click.native="stepper = 3">Continue</v-btn>
-        <v-btn flat>Cancel</v-btn> -->
                   <add-criteria @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px"></add-criteria>   
                 </v-stepper-content>
                 <v-stepper-content step="3">
