@@ -74,5 +74,8 @@ export default {
         distinct: false,
         selectAll: false,
         distinctAll: true,
+    },
+    archive: {
+        optionColumn: [],
     }
 }

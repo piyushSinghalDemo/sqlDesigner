@@ -91,7 +91,7 @@
                       <v-select clearable :items="functionArray" single-line label="Select Function" v-model="obj.function"></v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
+                      <v-select label="Select Column" :items="tableObj.merge.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
                     </v-flex>
                     <v-flex xs3>
                       <v-select clearable :items="filterArray" single-line label="Select Operator" v-model="obj.relOperator">
@@ -111,7 +111,7 @@
                           <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                         </v-date-picker>
                       </v-menu>
-                      <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
+                      <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
                         item-text="name" item-value="name + tblAlies"></v-select>
                     </v-flex>
                     <v-flex xs3>

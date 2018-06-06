@@ -18,14 +18,15 @@
     </v-layout>
     <v-layout v-for="(obj,index) in tableObj.criteriaArray" :key="index">
       <v-flex xs2>
-        <v-select :items="openbrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.openbrsis"></v-select>
+        <v-select :items="openbrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.openbrsis">
+        </v-select>
       </v-flex>
       <!-- <v-flex xs1>
         <v-select :items="functionArray" clearable single-line label="Select Function" v-model="obj.function"></v-select>
       </v-flex> -->
       <v-flex xs2>
         <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" 
-          single-line :filter="customFilter" return-object autocomplete></v-select>
+          single-line :filter="customFilter" item-value="colAlies"  return-object autocomplete></v-select>
       </v-flex>
       <v-flex xs1>
         <v-select :items="filterArray" clearable single-line label="Select Operator" v-model="obj.relOperator">
@@ -47,7 +48,7 @@
           </v-date-picker>
         </v-menu> -->
         <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-          item-text="name" item-value="name + tblAlies" :filter="customFilter" autocomplete></v-select>
+          item-text="name" item-value="colAlies" :filter="customFilter" autocomplete></v-select>
       </v-flex>
       <v-flex xs2>
         <v-select :items="closebrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.closebrsis">

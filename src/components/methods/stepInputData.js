@@ -3,7 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import flowchartLink from './getOperatorLink';
 export function getStepData(_this, tableObj) {
     // let _this = this;
-    console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
+    // console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
     let $flowchart = $("#droppable");
     var flowchartData = $flowchart.flowchart('getData');
     let objectLength = Object.keys(flowchartData.links).length;
@@ -52,6 +52,7 @@ export function getStepData(_this, tableObj) {
         "post_braces": "",
         "alias": "",
         "column_name": "",
+        "table_name": "",
         "operator": "",
         "value": "",
         "pre_braces": "",
@@ -109,7 +110,9 @@ export function getStepData(_this, tableObj) {
             if (whereObj.column) {
                 whereObject.post_braces = whereObj.closebrsis;
                 whereObject.alias = whereObj.column.tblAlies; //table alies
+                whereObject.table_name = whereObj.column.group;
                 whereObject.column_name = whereObj.column.name; //column alies
+                whereObject.colAlies = whereObj.column.colAlies; //column alies
                 whereObject.operator = getjoinOperator(whereObj.relOperator); //relational operator
                 whereObject.value = whereObj.value; //may be value date or column
                 whereObject.pre_braces = whereObj.openbrsis;
@@ -117,6 +120,8 @@ export function getStepData(_this, tableObj) {
                 whereObject.is_col_compare = whereObj.valueType == 'field' ? true : false;
                 whereObject.with_alias = whereObj.field.colAlies;
                 whereObject.with_col = whereObj.field.name;
+                whereObject.with_table = whereObj.field.group;
+                whereObject.with_colAlies = whereObj.field.colAlies;
                 relationObject.where.push(whereObject);
             }
         });

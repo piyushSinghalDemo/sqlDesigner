@@ -25,7 +25,7 @@
               <td class="table-data">{{ props.item.Is_output ? "OUT":"IN"}}</td>
               <!-- <td class="text-xs-right">{{ props.item.value}}</td> -->
               <td class="">
-                 <!-- <v-text-field name="value" label="Value" v-if="props.item.Type !== 'date'" single-line v-model="props.item.value"></v-text-field> -->
+                 <v-text-field name="value" label="Value" v-if="props.item.Type !== 'date'" single-line v-model="props.item.value"></v-text-field>
                     <!-- **********************************************************************************************   -->
                       <!-- <v-menu ref="props.item.value" :close-on-content-click="false"
                           v-model="props.item.value" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition" offset-y full-width min-width="290px" >
@@ -42,7 +42,7 @@
                             <v-btn flat color="primary" @click="$refs.menu.save(obj.date)">OK</v-btn>
                           </v-date-picker>
                         </v-menu> -->
-                         <calender @update="setDate($event,props)"></calender>
+                         <calender v-else @update="setDate($event,props)"></calender>
                          <!-- **********************************************************************************************        -->
               </td>
             </template>

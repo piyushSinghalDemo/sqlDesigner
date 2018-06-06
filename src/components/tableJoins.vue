@@ -103,7 +103,6 @@ export default {
       // debugger;
       console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
       // _this.tableObj = data.tableObj;
-      debugger;
       _this.tableObj.relationshipArray.map(function(obj, index){
           if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
               obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){

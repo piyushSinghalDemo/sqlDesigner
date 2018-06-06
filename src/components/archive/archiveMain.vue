@@ -59,6 +59,7 @@
 <script>
 import _def from '../various/defnitions'
 import cloneDeep from 'lodash/cloneDeep';
+import filter from 'lodash/filter';
 import uniq from 'lodash/uniq'
 import tableData from '../data/table-selection';
 import tableJoins from './tableJoins.vue'
@@ -112,9 +113,22 @@ export default {
       _this.$toaster.success('Name Change successfully')
       _this.processDoc = false;
     },
-    updateJoin() {
+    updateJoin(object) {
       let _this = this;
+      _this.getMergeColumn(object);
       _this.dialog2 = true;
+    },
+    async getMergeColumn(object){
+      let _this = this;
+      // debugger;
+       this.tableObj.archive.optionColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == object.tableName});
+      // console.log("relationshipArray"+JSON.stringify(_this.tableObj.relationshipArray));
+       _this.tableObj.relationshipArray.map(function(rlnObj, rlnIndex){
+         if(rlnObj.where && rlnObj.where[0].column && rlnObj.where[0].column.group == object.tableName){
+           _this.tableObj.criteriaArray = rlnObj.where;
+         }
+       });
+    //   console.log("optionColumn"+JSON.stringify(this.tableObj.archive.optionColumn));
     },
     updateTableObj(arr) {
       let _this = this;
