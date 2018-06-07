@@ -79,7 +79,7 @@
         <v-btn :loading="saveData" class="next" @click.stop="updateStep" color="primary">Save</v-btn>
       </v-flex>
     </v-layout>
-    <v-dialog v-model="aliesPanel" max-width="40%" max-height="50%">
+    <v-dialog v-model="aliesPanel" max-width="25%">
       <column-alies @save-alies="saveColumnAlies" :column="column" v-on:close="aliesPanel=false"></column-alies>
     </v-dialog>
   </v-container>

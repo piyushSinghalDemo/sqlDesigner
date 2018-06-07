@@ -220,16 +220,26 @@
       <v-btn @click.stop="savedata"> submit </v-btn>
       <v-btn v-on:click="$emit('close')"> close</v-btn>
     </v-card-actions>
+    <v-dialog v-model="aliesPanel" max-width="25%">
+      <column-alies @save-alies="saveColumnAlies" :column="column" v-on:close="aliesPanel=false"></column-alies>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
+import findIndex from 'lodash/findIndex';
 import draggable from 'vuedraggable'
-import filter from 'lodash/filter'
+import filter from 'lodash/filter';
+import columnAlies from '../columnAlies.vue';
 export default {
+    //  components: {
+    //       'column-alies':columnAlies
+    //  }, 
      data() {
     return {
+          aliesPanel:false,
+          column:{},
           joinType:["inner join","left join","right join","full join"],
           filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
                   "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
@@ -247,6 +257,7 @@ export default {
    props: ['tableObj'],
    components: {
           draggable,
+          'column-alies':columnAlies
      },
      computed: {
         dragOptions () {
@@ -258,6 +269,13 @@ export default {
         },
      },
    methods: {
+     saveColumnAlies(columnObj){
+        let _this = this;
+        let index = findIndex(_this.tableObj.merge.selectedColumns,{'group':columnObj, 'name':columnObj.name});
+        _this.tableObj.merge.selectedColumns[index] = columnObj; 
+        _this.aliesPanel = false;
+        // console.log("Selected Index "+JSON.stringify(_this.tableObj.selectedColumns));
+      },
      getColumn(value){
        let _this = this;
        this.availableColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == value.tableName});
@@ -351,6 +369,10 @@ export default {
       // this.orderList();
     },
     updateGroup2(event){
+      if(event.added){
+        this.column = event.added.element;
+        this.aliesPanel = true;
+      }
       // this.orderselectedColumns();
     }
 

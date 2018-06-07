@@ -1,31 +1,31 @@
 <template>
-  <v-card>
-    <v-card-title style="color:blue;font-size:16px;">
-            Column Alies Name
-    </v-card-title>
-    <v-card-text>
-      <v-form v-model="valid" ref="form" lazy-validation autocomplete="off">
-        <v-container grid-list-md>
-          <v-layout row wrap>
-            <v-flex>
-              <v-text-field name="Column Name" disabled v-model="column.name" label="Column Name" 
+ <v-layout align-center justify-center>
+        <v-flex>
+          <v-card>
+            <v-form v-model="valid" ref="form" lazy-validation>
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>Column Alies Name</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn icon large v-on:click="$emit('close')">
+                  <v-icon large>close</v-icon>
+                </v-btn>
+              </v-toolbar>
+              <v-card-text>
+                <v-text-field v-if="column.group" name="Table Name" disabled v-model="column.group" label="Table Name" 
                 ></v-text-field>
-            </v-flex>
-          </v-layout>
-           <v-layout row wrap>
-            <v-flex>
-              <v-text-field name="Alies Name" v-model="column.colAlies" label="Alies Name" 
+                <v-text-field name="Column Name" disabled v-model="column.name" label="Column Name" 
                 ></v-text-field>
-            </v-flex>
-          </v-layout>
-          <v-layout row wrap>
-            <v-btn color="success" :disabled="!valid" @click="saveProcess">Save</v-btn>
-            <v-btn v-on:click="$emit('close')">close</v-btn>
-          </v-layout>
-        </v-container>
-      </v-form>
-    </v-card-text>
-  </v-card>
+                <v-text-field name="Alies Name" v-model="column.colAlies" label="Alies Name" 
+                ></v-text-field>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" :disabled="!valid" @click="saveProcess">Save</v-btn>
+              </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-flex>
+      </v-layout>
 </template>
 
 <script>

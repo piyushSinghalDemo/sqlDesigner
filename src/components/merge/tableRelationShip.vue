@@ -95,136 +95,146 @@
 import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
-import { post as postToServer } from '../methods/serverCall'
+import {
+  post as postToServer
+} from '../methods/serverCall'
 export default {
   data() {
-      return {
-        loading: false,
-        search: null,
-        searchDriver:null,
-        allTables:[],
-        saveData:false,
-        isDriverTable:false,
-        allArchiveTablesCopy:[],
-        createCopy : false,
-        allDbTablesCopy : [],
-        createTableCopy : false,
-        // conn_str:this.$store.state.conn_str,
-        // schema :_this.$store.state.schema,
+    return {
+      loading: false,
+      search: null,
+      searchDriver: null,
+      allTables: [],
+      saveData: false,
+      isDriverTable: false,
+      allArchiveTablesCopy: [],
+      createCopy: false,
+      allDbTablesCopy: [],
+      createTableCopy: false,
+      // conn_str:this.$store.state.conn_str,
+      // schema :_this.$store.state.schema,
+    }
+  },
+  props: ['tableObj'],
+  computed: {
+    selectTable() {
+      let _this = this;
+      return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables); //_this.tableObj.allDbTables;
+    },
+    selectDriverTable() {
+      let _this = this;
+      return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables); //_this.tableObj.allDbTables;
+    },
+    conn_str() {
+      return this.$store.state.conn_str;
+    },
+    schema() {
+      return this.$store.state.schema;
+    }
+  },
+  watch: {
+    search(val) {
+      this.queryTableSelections(val)
+    },
+    searchDriver(val) {
+      this.querySelections(val)
+    }
+  },
+  methods: {
+    updateStep() {
+      let _this = this;
+      _this.saveData = true;
+      _this.$emit('update-step', _this.tableObj);
+      setTimeout(function () {
+        _this.saveData = false
+      }, 8000);
+    },
+    addDriverTable() {
+      let _this = this;
+      let obj = {
+        'tableName': cloneDeep(_this.tableObj.relationship.driverTable.name),
+        'aliesTableName': cloneDeep(_this.tableObj.relationship.driverTable.name + _this.$store.state.aliesCounter++),
+        'group': 'Driver Table',
+        'stepId': _this.tableObj.relationship.driverTable.stepId
+      }
+      _this.tableObj.relationship.driverTable.aliesTableName = obj.aliesTableName;
+      if (!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))
+        _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
+      _this.isDriverTable = true;
+      if (_this.tableObj.relationship.driverTable.stepId == 'Previous Steps') {
+        obj.columns = _this.tableObj.relationship.driverTable.columns;
+        _this.getPrevStepCol(cloneDeep(obj));
+      } else {
+        _this.getColumn(obj);
       }
     },
-    props: ['tableObj'],
-    computed: {
-       selectTable() {
-        let _this = this;
-        return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
-      },
-      selectDriverTable() {
-         let _this = this;
-        return union(_this.tableObj.allDbTables, _this.tableObj.allPrevStepTables);//_this.tableObj.allDbTables;
-      },
-      conn_str(){
-        return this.$store.state.conn_str;
-      },
-      schema(){
-        return this.$store.state.schema;
-      }
+    updateJoin(object) {
+      let _this = this;
+      _this.$emit('update-join', object);
     },
-    watch: {
-      search(val) {
-         this.queryTableSelections(val)
-      },
-      searchDriver(val) {
-         this.querySelections(val)
-      }
+    switchScreen(num) {
+      let _this = this;
+      _this.$emit('update-object', [_this.tableObj, num]);
     },
-    methods: {
-        updateStep(){
-          let _this = this;
-          _this.saveData = true;
-          _this.$emit('update-step', _this.tableObj);
-          setTimeout(function(){ _this.saveData = false }, 8000);
-        },
-        addDriverTable(){
-          let _this = this;
-          let obj = {'tableName':cloneDeep(_this.tableObj.relationship.driverTable.name),
-                   'aliesTableName':cloneDeep(_this.tableObj.relationship.driverTable.name + _this.$store.state.aliesCounter++),
-                   'group':'Driver Table', 'stepId':_this.tableObj.relationship.driverTable.stepId}
-           _this.tableObj.relationship.driverTable.aliesTableName = obj.aliesTableName;         
-           if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))        
-            _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-            _this.isDriverTable = true;
-            if(_this.tableObj.relationship.driverTable.stepId == 'Previous Steps'){
-              obj.columns = _this.tableObj.relationship.driverTable.columns;
-              _this.getPrevStepCol(cloneDeep(obj));
-            }else{
-              _this.getColumn(obj);
-            }            
-        },
-        updateJoin(object){
-          let _this = this;
-            _this.$emit('update-join',object);
-        },
-      switchScreen(num) {
-        let _this = this;
-        _this.$emit('update-object', [_this.tableObj, num]);
-      },
-      querySelections(value) {
+    querySelections(value) {
 
-        let _this = this;
-       // this search will work only on every third character
-        if (value && value.length % 3 !== 0) {
-          return
+      let _this = this;
+      // this search will work only on every third character
+      if (value && value.length % 3 !== 0) {
+        return
+      }
+      // if search input is blank, It will load all previous tables
+      if (!value && _this.createCopy) {
+        _this.tableObj.allDbTables = cloneDeep(_this.allDbTablesCopy);
+        return;
+      }
+      //Firstly It will search data in current list   
+      let found = false;
+      _this.tableObj.allDbTables.map((obj, index) => {
+        if (obj.name.indexOf(value) !== -1) {
+          found = true;
         }
-        // if search input is blank, It will load all previous tables
-        if(!value && _this.createCopy){
-          _this.tableObj.allDbTables = cloneDeep(_this.allDbTablesCopy); 
-          return;
-        }
-        //Firstly It will search data in current list   
-        let found = false;
-        _this.tableObj.allDbTables.map((obj, index)=>{
-          if(obj.name.indexOf(value)!== -1){
-            found = true;  
-          }
-        });
-        if(found){
-          return;
-        }else{
-        if(!_this.createCopy){
+      });
+      if (found) {
+        return;
+      } else {
+        if (!_this.createCopy) {
           // _this.tableObj.allDbTables = _this.allDbTablesCopy
-           _this.allDbTablesCopy = cloneDeep(_this.tableObj.allDbTables);
+          _this.allDbTablesCopy = cloneDeep(_this.tableObj.allDbTables);
           _this.createCopy = true;
-          }
+        }
         this.loading = true;
-        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
-        let conn_str=_this.$store.state.conn_str;
-        let schema =_this.$store.state.schema;
-        let userData= JSON.parse(sessionStorage.getItem("userInfo"));
+        let url = config.AGENT_API_URL + 'get_tables' //'http://192.168.1.100:8010/get_tables';
+        let conn_str = _this.$store.state.conn_str;
+        let schema = _this.$store.state.schema;
+        let userData = JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
           "conn_str": conn_str,
-          "schema":schema,
+          "schema": schema,
           "table_name": value,
-          "table_count":userData.table_count,
-          "client_id":userData.client_id
+          "table_count": userData.table_count,
+          "client_id": userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
         //     'Content-Type': 'application/json'
         //   }
         // }).then(response => {
-        postToServer(this, url, inputJson).then(response=>{  
+        postToServer(this, url, inputJson).then(response => {
           // _this.tableObj.allDbTables= [];
           let tableList = response.table_name_list;
-          let dummyTableList=[];
-          if(tableList.length){
-              tableList.map(function(obj, index){
-              let tempObj = {name: obj, stepId:'Database Table'}
-              dummyTableList.push(cloneDeep(tempObj));   
+          let dummyTableList = [];
+          if (tableList.length) {
+            tableList.map(function (obj, index) {
+              let tempObj = {
+                name: obj,
+                stepId: 'Database Table'
+              }
+              dummyTableList.push(cloneDeep(tempObj));
             });
           }
           this.loading = false;
-         // debugger;
+          // debugger;
           _this.tableObj.allDbTables = dummyTableList;
           console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
@@ -232,64 +242,67 @@ export default {
           this.loading = false;
           _this.$toaster.error('Something went wrong...')
         })
-        }
-      },
-      queryTableSelections(value) {
+      }
+    },
+    queryTableSelections(value) {
 
-        let _this = this;
-       // this search will work only on every third character
-        if (value && value.length % 3 !== 0) {
-          return
+      let _this = this;
+      // this search will work only on every third character
+      if (value && value.length % 3 !== 0) {
+        return
+      }
+      // if search input is blank, It will load all previous tables
+      if (!value && _this.createTableCopy) {
+        _this.tableObj.allArchiveTables = cloneDeep(_this.allArchiveTablesCopy);
+        return;
+      }
+      //Firstly It will search data in current list   
+      let found = false;
+      _this.tableObj.allArchiveTables.map((obj, index) => {
+        if (obj.name.indexOf(value) !== -1) {
+          found = true;
         }
-        // if search input is blank, It will load all previous tables
-        if(!value && _this.createTableCopy){
-          _this.tableObj.allArchiveTables = cloneDeep(_this.allArchiveTablesCopy); 
-          return;
-        }
-        //Firstly It will search data in current list   
-        let found = false;
-        _this.tableObj.allArchiveTables.map((obj, index)=>{
-          if(obj.name.indexOf(value)!== -1){
-            found = true;  
-          }
-        });
-        if(found){
-          return;
-        }else{
-        if(!_this.createTableCopy){
+      });
+      if (found) {
+        return;
+      } else {
+        if (!_this.createTableCopy) {
           // _this.tableObj.allArchiveTables = _this.allArchiveTablesCopy
-           _this.allArchiveTablesCopy = cloneDeep(_this.tableObj.allArchiveTables);
+          _this.allArchiveTablesCopy = cloneDeep(_this.tableObj.allArchiveTables);
           _this.createTableCopy = true;
-          }
+        }
         this.loading = true;
-        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
-        let conn_str=_this.$store.state.conn_str;
-        let schema =_this.$store.state.schema;
+        let url = config.AGENT_API_URL + 'get_tables' //'http://192.168.1.100:8010/get_tables';
+        let conn_str = _this.$store.state.conn_str;
+        let schema = _this.$store.state.schema;
         let userData = JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
           "conn_str": conn_str,
-          "schema":schema,
+          "schema": schema,
           "table_name": value,
-          "table_count":userData.table_count,
-          "client_id":userData.client_id
+          "table_count": userData.table_count,
+          "client_id": userData.client_id
         }
         // this.$http.post(url, inputJson, {
         //   headers: {
         //     'Content-Type': 'application/json'
         //   }
         // }).then(response => {
-        postToServer(this, url, inputJson).then(response=>{
+        postToServer(this, url, inputJson).then(response => {
           // _this.tableObj.allArchiveTables= [];
           let tableList = response.table_name_list;
-          let dummyTableList=[];
-          if(tableList.length){
-              tableList.map(function(obj, index){
-              let tempObj = {name: obj, stepId:'Database Table'}
-              dummyTableList.push(cloneDeep(tempObj));   
+          let dummyTableList = [];
+          if (tableList.length) {
+            tableList.map(function (obj, index) {
+              let tempObj = {
+                name: obj,
+                stepId: 'Database Table'
+              }
+              dummyTableList.push(cloneDeep(tempObj));
             });
           }
           this.loading = false;
-         // debugger;
+          // debugger;
           _this.tableObj.allArchiveTables = dummyTableList;
           console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
@@ -297,90 +310,122 @@ export default {
           this.loading = false;
           _this.$toaster.error('Something went wrong...')
         })
-        }
-      },
-    addTable(){
+      }
+    },
+    addTable() {
       // alert("Click Working");
-      let validFlag=true;
+      let validFlag = true;
       let _this = this;
-      console.log("Demo "+JSON.stringify(_this.demo));
-      _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
-        if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
-           validFlag = false;
+      console.log("Demo " + JSON.stringify(_this.demo));
+      _this.tableObj.relationship.selectedTableArray.map(function (obj, index) {
+        if (obj.tableName == _this.tableObj.relationship.selectedTable.name) {
+          validFlag = false;
           _this.$toaster.error('Table Already Exist')
         }
       });
-      if(validFlag){
+      if (validFlag) {
         let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
         let tableName = tempName.join("");
-        let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
-                   'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
-                   'group':'Database Table','stepId':_this.tableObj.relationship.selectedTable.stepId}
+        let obj = {
+          'tableName': cloneDeep(_this.tableObj.relationship.selectedTable.name),
+          'aliesTableName': cloneDeep(tableName + _this.$store.state.aliesCounter++),
+          'group': 'Database Table',
+          'stepId': _this.tableObj.relationship.selectedTable.stepId
+        }
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-        if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){
-           obj.columns = _this.tableObj.relationship.selectedTable.columns;
+        if (_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps') {
+          obj.columns = _this.tableObj.relationship.selectedTable.columns;
           _this.getPrevStepCol(cloneDeep(obj));
-        }else{
+        } else {
           _this.getColumn(obj);
         }
-         _this.$toaster.success('Table Added Successfully'); 
+        _this.$toaster.success('Table Added Successfully');
       }
     },
-    getPrevStepCol(object){
+    getPrevStepCol(object) {
       let _this = this;
-      if(_this.tableObj.optionColumn.length){
-        _this.tableObj.optionColumn.push({ divider: true });
+      if (_this.tableObj.optionColumn.length) {
+        _this.tableObj.optionColumn.push({
+          divider: true
+        });
       }
-          let headerObj = { header: object.tableName};
-          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-          let allColumn = object.columns;
-          allColumn.map(function(obj, index){
-             let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++};  
-            // obj.group = object.tableName;
-            // obj.tblAlies = object.aliesTableName;
-            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-          });
-         _this.tableObj.is_drv_table = true;  
+      let headerObj = {
+        header: object.tableName
+      };
+      _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+      let allColumn = object.columns;
+      allColumn.map(function (obj, index) {
+        let columnObj = {};
+        if (obj.colAlies)
+          columnObj = {
+            name: obj.colAlies,
+            group: object.tableName,
+            fixed: false,
+            tblAlies: object.aliesTableName,
+            colAlies: ''
+          };
+        else
+          columnObj = {
+            name: obj.name,
+            group: object.tableName,
+            fixed: false,
+            tblAlies: object.aliesTableName,
+            colAlies: ''
+          };
+        // obj.group = object.tableName;
+        // obj.tblAlies = object.aliesTableName;
+        _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+      });
+      _this.tableObj.is_drv_table = true;
     },
-    getColumn(tableObject){
+    getColumn(tableObject) {
       let _this = this;
-      let url = config.AGENT_API_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
-       let userData= JSON.parse(sessionStorage.getItem("userInfo"));
-        let inputJson = {
-               "conn_str": _this.conn_str,
-               "env_id":userData.env_id,
-               "schema": _this.schema,
-               "dest_queue": "test",
-               "table_name": tableObject.tableName,
-               "client_id":userData.client_id
-            }
+      let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+      let userData = JSON.parse(sessionStorage.getItem("userInfo"));
+      let inputJson = {
+        "conn_str": _this.conn_str,
+        "env_id": userData.env_id,
+        "schema": _this.schema,
+        "dest_queue": "test",
+        "table_name": tableObject.tableName,
+        "client_id": userData.client_id
+      }
       // _this.$http.post(url, inputJson, {
       // headers: {
       //   'Content-Type': 'application/json'
       // }
       //   }).then(response => {
-        postToServer(this, url, inputJson).then(response=>{  
-          if(_this.tableObj.optionColumn.length){
-            _this.tableObj.optionColumn.push({ divider: true });
-          }
-          let headerObj = { header: tableObject.tableName};
-          _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-          let allColumn = response;
-          allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
-            _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+      postToServer(this, url, inputJson).then(response => {
+        if (_this.tableObj.optionColumn.length) {
+          _this.tableObj.optionColumn.push({
+            divider: true
           });
-          // console.log("Response from all tables"+JSON.stringify(response));
-        },response => {}).catch(e => {
-              console.log(e)
-            this.ErrorMessage = 'Something went wrong.'
+        }
+        let headerObj = {
+          header: tableObject.tableName
+        };
+        _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+        let allColumn = response;
+        allColumn.map(function (obj, index) {
+          let columnObj = {
+            name: obj,
+            group: tableObject.tableName,
+            fixed: false,
+            tblAlies: tableObject.aliesTableName,
+            colAlies: ''
+          };
+          _this.tableObj.optionColumn.push(cloneDeep(columnObj));
+        });
+        // console.log("Response from all tables"+JSON.stringify(response));
+      }, response => {}).catch(e => {
+        console.log(e)
+        this.ErrorMessage = 'Something went wrong.'
       })
-    
+
     },
-    }
   }
+}
+
 
 </script>
 <style scoped>
