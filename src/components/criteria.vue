@@ -1,14 +1,7 @@
 <template>
   <v-container grid-list-md>
-       <!-- <ul>
-            <li @click.stop="switchScreen(1)" :class="{chevron:true}">Table Relationship</li>
-            <li @click.stop="switchScreen(2)" :class="{chevron:true,chevron_active:true}">Criteria</li>
-            <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li>
-        </ul> -->
-        <!-- {{tableObj.criteriaArray}} -->
     <v-layout row wrap style="font-weight: bold;font-size:19px">
       <v-flex xs2>Parenthesis</v-flex>
-      <!-- <v-flex xs1>Function</v-flex> -->
       <v-flex xs2>Columns</v-flex>
       <v-flex xs1>Operator</v-flex>
       <v-flex xs2>Value Type</v-flex>
@@ -21,14 +14,8 @@
         <v-select :items="openbrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.openbrsis">
         </v-select>
       </v-flex>
-      <!-- <v-flex xs1>
-        <v-select :items="functionArray" clearable single-line label="Select Function" v-model="obj.function"></v-select>
-      </v-flex> -->
       <v-flex xs2>
-        <!-- {{tableObj.optionColumn}} -->
-
-        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" item-value="value" 
-          return-object></v-select>
+        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" autocomplete></v-select>
       </v-flex>
       <v-flex xs1>
         <v-select :items="filterArray" clearable single-line label="Select Operator" v-model="obj.relOperator">
@@ -41,14 +28,6 @@
       <v-flex xs2>
         <v-text-field name="input-1" v-show="obj.valueType == 'value' || obj.valueType == ''" single-line label="Label Text" v-model="obj.value"></v-text-field>
         <calender v-show="obj.valueType == 'date'" @update="setDate($event,index)"></calender>
-        <!-- <v-menu ref="menu" lazy :close-on-content-click="false" v-show="obj.valueType == 'date'" v-model="obj.menu" transition="scale-transition"
-          offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="obj.date">
-          <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly></v-text-field>
-          <v-date-picker v-model="obj.date" no-title scrollable>
-            <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-          </v-date-picker>
-        </v-menu> -->
         <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
           item-text="name" item-value="colAlies" :filter="customFilter" autocomplete></v-select>
       </v-flex>

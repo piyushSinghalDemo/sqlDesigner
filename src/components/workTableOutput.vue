@@ -1,10 +1,5 @@
 <template>
   <v-container grid-list-md>
-    <!-- <ul>
-      <li @click.stop="switchScreen(1)" :class="{chevron:true}">Table Relationship</li>
-      <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
-      <li @click.stop="switchScreen(3)" :class="{chevron:true,chevron_active:true}">Worktable Output</li>
-    </ul> -->
     <div id="createScroll2" class="createScroll2" style="width:100%">
       <div id="droppable2" class="">
         <v-container grid-list-md>
@@ -32,12 +27,13 @@
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
+                  <!-- {{tableObj.availableColumn}} -->
                   <draggable element="span" v-model="tableObj.availableColumn" :options="dragOptions" :move="onMove" @start="isDragging=true"
                     @end="isDragging=false" @change="updateGroup($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.availableColumn, SearchTable)"
+                      <li class="list-group-item" v-if="element.text" v-for="(element, index) in filterBy(tableObj.availableColumn, SearchTable)"
                         :key="index">
-                        {{element.group}}.{{element.name}}
+                        {{element.value.group}}.{{element.value.name}}
                       </li>
                     </transition-group>
                   </draggable>
@@ -59,7 +55,7 @@
                   <draggable element="span" v-model="tableObj.selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
                       <li class="list-group-item" v-for="(element, index) in filterBy(tableObj.selectedColumns, selectedSearch)" :key="index">
-                        {{element.group}}.{{element.name}}
+                        {{element.value.group}}.{{element.value.name}}
                       </li>
                     </transition-group>
                   </draggable>
@@ -118,10 +114,9 @@ export default {
     methods: {
       saveColumnAlies(columnObj){
         let _this = this;
-        let index = findIndex(_this.tableObj.selectedColumns,{'group':columnObj, 'name':columnObj.name});
+        let index = findIndex(_this.tableObj.selectedColumns,{'value.group':columnObj.value.group, 'name':columnObj.value.name});
         _this.tableObj.selectedColumns[index] = columnObj; 
         _this.aliesPanel = false;
-        // console.log("Selected Index "+JSON.stringify(_this.tableObj.selectedColumns));
       },
       updateStep(){
         let _this = this;
@@ -150,11 +145,11 @@ export default {
     },
      orderList () {
        let _this = this;
-      _this.tableObj.availableColumn = sortBy(_this.tableObj.availableColumn, ['group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
+      _this.tableObj.availableColumn = sortBy(_this.tableObj.availableColumn, ['value.group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
     },
     orderselectedColumns () {
       let _this = this;
-      _this.tableObj.selectedColumns = sortBy(_this.tableObj.selectedColumns, ['group']) //this.selectedColumns.sort((one,two) =>{return one.order-two.order; })
+      _this.tableObj.selectedColumns = sortBy(_this.tableObj.selectedColumns, ['value.group']) //this.selectedColumns.sort((one,two) =>{return one.order-two.order; })
     },
     
     } 

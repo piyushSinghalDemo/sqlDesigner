@@ -175,7 +175,6 @@ export async function setStepInfo(_this, processData) {
             tableObj.relationshipArray.push(cloneDeep(tempObj));
         });
         if (stpObj.drv_table && stpObj.drv_table.length) {
-            // debugger;
             tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name;
             tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? "Previous Steps" : "Database Table";
             tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias;
