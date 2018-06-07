@@ -1,3 +1,8 @@
+/**
+ * @author Piyush Singhal 
+ * @description It will return Input json for archival step to create step
+ * 
+ */
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
 import flowchartLink from './getOperatorLink';

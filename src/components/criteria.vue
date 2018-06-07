@@ -25,8 +25,10 @@
         <v-select :items="functionArray" clearable single-line label="Select Function" v-model="obj.function"></v-select>
       </v-flex> -->
       <v-flex xs2>
-        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" 
-          single-line :filter="customFilter" item-value="colAlies"  return-object autocomplete></v-select>
+        <!-- {{tableObj.optionColumn}} -->
+
+        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" item-text="name" item-value="value" 
+          return-object></v-select>
       </v-flex>
       <v-flex xs1>
         <v-select :items="filterArray" clearable single-line label="Select Operator" v-model="obj.relOperator">

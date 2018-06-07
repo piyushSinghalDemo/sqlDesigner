@@ -79,6 +79,9 @@
         <v-btn :loading="saveData" class="next" @click.stop="updateStep" color="primary">Save</v-btn>
       </v-flex>
     </v-layout>
+    <v-dialog v-model="aliesPanel" max-width="40%" max-height="50%">
+      <column-alies @save-alies="saveColumnAlies" :column="column" v-on:close="aliesPanel=false"></column-alies>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -86,35 +89,23 @@
 import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep';
 import sortBy from 'lodash/sortBy';
+import findIndex from 'lodash/findIndex';
+import columnAlies from './columnAlies.vue'
 export default {
      components: {
           draggable,
+          'column-alies':columnAlies
      },
    data(){
     return {
+        column:{},
+        aliesPanel:false,
         SearchTable:"",
         isDragging: false,
         selectedSearch:"",
         saveData:false,
-        // availableColumn:[],
     }},
     props: ['tableObj'],
-    // created(){
-    //   this.availableColumn = cloneDeep(this.tableObj.optionColumn);
-    // },
-    watch:{
-      // tableObj(newVAl){
-      //   debugger;
-      //   availableColumn = cloneDeep(newVAl.optionColumn);
-      // }
-    //      tableObj: {
-    //     handler: function (value, mutation) {
-    //         if(!this.tableObj.selectedColumns)
-    //           this.availableColumn = cloneDeep(value.optionColumn);
-    //     },
-    //     deep: true
-    // }
-    },
      computed: {
         dragOptions () {
         return  {
@@ -125,6 +116,13 @@ export default {
         },
      },
     methods: {
+      saveColumnAlies(columnObj){
+        let _this = this;
+        let index = findIndex(_this.tableObj.selectedColumns,{'group':columnObj, 'name':columnObj.name});
+        _this.tableObj.selectedColumns[index] = columnObj; 
+        _this.aliesPanel = false;
+        // console.log("Selected Index "+JSON.stringify(_this.tableObj.selectedColumns));
+      },
       updateStep(){
         let _this = this;
         _this.saveData = true;
@@ -144,6 +142,10 @@ export default {
       this.orderList();
     },
     updateGroup2(event){
+      if(event.added){
+        this.column = event.added.element;
+        this.aliesPanel = true;
+      }
       this.orderselectedColumns();
     },
      orderList () {

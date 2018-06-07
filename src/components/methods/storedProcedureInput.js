@@ -24,7 +24,7 @@ export default function getStepData(_this, tableObj) {
     tableObj.storedProcedure.params.map((param, index) => {
         paramObject.name = param.Parameter_name;
         paramObject.dataType = param.Type;
-        paramObject.type = param.Is_output ? "OUT" : "IN";
+        paramObject.type = param.Is_output;
         paramObject.value = param.value ? param.value : "";
         procedureStepInput.params.push(cloneDeep(paramObject));
     })

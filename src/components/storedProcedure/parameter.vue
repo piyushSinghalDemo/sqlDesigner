@@ -21,7 +21,7 @@
             <template slot="items" slot-scope="props">
               <td class="table-data">{{ props.item.Parameter_name }}</td>
               <td class="table-data">{{ props.item.Type }}</td>
-              <td class="table-data">{{ props.item.Is_output ? "OUT":"IN"}}</td>
+              <td class="table-data">{{ props.item.Is_output}}</td>
               <!-- <td class="text-xs-right">{{ props.item.value}}</td> -->
               <td class="">
                  <v-text-field name="value" label="Value" v-if="props.item.Type !== 'date'" single-line v-model="props.item.value"></v-text-field>

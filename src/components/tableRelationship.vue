@@ -228,8 +228,15 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = object.columns;
           allColumn.map(function(obj, index){
-           let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++}; 
+
+           let columnObj = {};
+           if(obj.colAlies)
+              columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''};
+            else
+              columnObj = { name: obj.name, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''};                 
+
             // obj.group = object.tableName;
             _this.tableObj.is_drv_table = true;
             //  obj.tblAlies = object.aliesTableName;
@@ -263,7 +270,7 @@ export default {
           let allColumn = response;
           allColumn.map(function(obj, index){
              let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
+                               tblAlies:tableObject.aliesTableName, colAlies:''};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
           });

@@ -10,7 +10,6 @@ export async function setStepInfo(_this, processData) {
     let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
     _this.$store.state.process_definition_name = processData.process_definition_name;
     _this.$store.state.process_definition_id = processData.process_definition_id;
-    // debugger;
     _this.$store.state.env_id = processData.steps[0].env_id;
     // let selectedTable = {};
     _this.$store.state.processArray = processData.steps;
@@ -152,7 +151,6 @@ export async function setStepInfo(_this, processData) {
                 }) //End of list of relotion Object array
             let criteriaArray = [];
             relationObj.where && relationObj.where.length && relationObj.where.map((whrObject, whrIndex) => {
-
                 let criteriaObject = cloneDeep(stepObject.parenthasisobject);
                 criteriaObject.openbrsis = whrObject.pre_braces;
                 criteriaObject.showLogicalOperator = whrObject.operand ? true : false;
@@ -190,8 +188,11 @@ export async function setStepInfo(_this, processData) {
             criteriaObject.openbrsis = whrObj.pre_braces;
             criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
             criteriaObject.column.name = whrObj.column_name;
+            criteriaObject.column.value = whrObj.column_name;
             criteriaObject.column.fixed = false;
             criteriaObject.column.tblAlies = whrObj.alias;
+            criteriaObject.column.colAlies = whrObj.colAlies;
+            criteriaObject.column.group = whrObj.table_name;
             criteriaObject.relOperator = getjoinOperator(whrObj.operator)
             criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
             criteriaObject.value = whrObj.value;
@@ -279,7 +280,7 @@ export async function setStepInfo(_this, processData) {
                 let paramater = { Parameter_name: "", Type: "", Is_output: "", value: "" };
                 paramater.Parameter_name = paramObj.name;
                 paramater.Type = paramObj.dataType;
-                paramater.Is_output = paramObj.type == "OUT" ? true : false;
+                paramater.Is_output = paramObj.type;
                 paramater.value = paramObj.value;
                 tableObj.storedProcedure.params.push(paramater);
             });

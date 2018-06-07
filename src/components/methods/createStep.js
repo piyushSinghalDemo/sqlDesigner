@@ -1,5 +1,7 @@
-//We pass this json to jquery.flowchart to draw steps on canvas
-
+/**
+ * @author Piyush Singhal
+ * @description this json is used to jquery.flowchart to draw steps on canvas
+ */
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
 import flowchartLink from './getOperatorLink'

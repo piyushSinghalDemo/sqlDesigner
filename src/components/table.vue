@@ -236,6 +236,8 @@ export default {
           let CriteriaObject = {
           'alias': obj.column.tblAlies, //table alies
           'column_name': obj.column.name, //column alies
+          'colAlies' : obj.column.colAlies, //column alies
+          'table_name':obj.column.group,
           'operator': _this.getjoinOperator(obj.relOperator), //relational operator
           'value': obj.value, //may be value date or column
           'operand': obj.logOperator ? 'AND' : 'OR',
@@ -243,7 +245,9 @@ export default {
           'post_braces': obj.closebrsis,
           'is_col_compare': obj.valueType == 'field' ? true : false,
           'with_alias': obj.field.colAlies,
-          'with_col': obj.field.name
+          'with_col': obj.field.name,
+          'with_table' : whereObj.field.group,
+          'with_colAlies' : whereObj.field.colAlies,
         }
         dbStepInput.where.push(cloneDeep(CriteriaObject));
         }
