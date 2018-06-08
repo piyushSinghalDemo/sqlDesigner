@@ -27,11 +27,10 @@
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
-                  <!-- {{tableObj.availableColumn}} -->
                   <draggable element="span" v-model="tableObj.availableColumn" :options="dragOptions" :move="onMove" @start="isDragging=true"
                     @end="isDragging=false" @change="updateGroup($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                      <li class="list-group-item" v-if="element.text" v-for="(element, index) in filterBy(tableObj.availableColumn, SearchTable)"
+                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.availableColumn, SearchTable)"
                         :key="index">
                         {{element.value.group}}.{{element.value.name}}
                       </li>
@@ -114,7 +113,7 @@ export default {
     methods: {
       saveColumnAlies(columnObj){
         let _this = this;
-        let index = findIndex(_this.tableObj.selectedColumns,{'value.group':columnObj.value.group, 'name':columnObj.value.name});
+        let index = findIndex(_this.tableObj.selectedColumns,{'group':columnObj, 'name':columnObj.name});
         _this.tableObj.selectedColumns[index] = columnObj; 
         _this.aliesPanel = false;
       },

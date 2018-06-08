@@ -226,7 +226,7 @@ export default {
 
             _this.tableObj.is_drv_table = true;
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-            _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+            _this.tableObj.availableColumn.push(cloneDeep(columnObj.value));
           });
     },
     getColumn(tableObject){
