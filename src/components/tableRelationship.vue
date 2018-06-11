@@ -5,11 +5,6 @@
         <span style="color: red;font-size: 16px;">Table Loading...</span>
     </div>
     <div v-show="!tableObj.loadTable">
-    <!-- <ul>
-      <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Table Relationship</li>
-      <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
-      <li @click.stop="switchScreen(3)" :class="{chevron:true}">Worktable Output</li>
-    </ul> -->
     <v-layout row wrap>
       <v-flex xs6>
         <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
@@ -30,7 +25,6 @@
         </div>
       </v-flex>
     </v-layout>
-    <!-- table data : {{tableObj}} -->
     <v-layout row wrap v-show="tableObj.relationshipArray.length">
       <v-flex>
         <b>From Table</b>
@@ -128,9 +122,7 @@ export default {
         _this.$emit('update-object', [_this.tableObj, num]);
       },
       querySelections(value) {
-        // console.log("_this.tableObj.allDbTables" +JSON.stringify(this.tableObj.allDbTables));
         let _this = this;
-       // this search will work only on every third character
         if (value && value.length % 3 !== 0) {
           return
         }
@@ -166,11 +158,6 @@ export default {
           "table_count":userData.table_count,
           "client_id":userData.client_id
         }
-        // this.$http.post(url, inputJson, {
-        //   headers: {
-        //     'Content-Type': 'application/json'
-        //   }
-        // }).then(response => {
         postToServer(this, url, inputJson).then(response=>{  
           // _this.tableObj.allDbTables= [];
           let tableList = response.table_name_list;
@@ -228,20 +215,18 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = object.columns;
           allColumn.map(function(obj, index){
-
            let columnObj = {};
            if(obj.colAlies)
-              columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: ''};
+              columnObj = {text:obj.colAlies,value:{name: obj.colAlies,value: obj.colAlies, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''}};
             else
-              columnObj = { name: obj.name, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: ''};                 
+              columnObj = {text:obj.name, value:{
+                              name: obj.name,value: obj.name, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''}};                 
 
-            // obj.group = object.tableName;
             _this.tableObj.is_drv_table = true;
-            //  obj.tblAlies = object.aliesTableName;
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-            _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+            _this.tableObj.availableColumn.push(cloneDeep(columnObj.value));
           });
     },
     getColumn(tableObject){
@@ -256,11 +241,6 @@ export default {
                "table_name": tableObject.tableName,
                "client_id":userData.client_id
       }
-      // _this.$http.post(url, inputJson, {
-      // headers: {
-      //   'Content-Type': 'application/json'
-      // }
-      //   }).then(response => {
         postToServer(this, url, inputJson).then(response=>{
           if(_this.tableObj.optionColumn.length){
             _this.tableObj.optionColumn.push({ divider: true });
@@ -269,10 +249,10 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = response;
           allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies:''};
+             let columnObj = { text: obj,value:{name:obj,group: tableObject.tableName, fixed: false, 
+                               tblAlies:tableObject.aliesTableName, colAlies:''}};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-            _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+            _this.tableObj.availableColumn.push(cloneDeep(columnObj.value));
           });
           console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {

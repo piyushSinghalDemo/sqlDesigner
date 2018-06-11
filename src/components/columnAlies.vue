@@ -11,8 +11,8 @@
                 </v-btn>
               </v-toolbar>
               <v-card-text>
-                <v-text-field v-if="column.group" name="Table Name" disabled v-model="column.group" label="Table Name" 
-                ></v-text-field>
+                <v-text-field v-if="column.group" name="Table Name" disabled v-model="column.group" 
+                  label="Table Name"></v-text-field>
                 <v-text-field name="Column Name" disabled v-model="column.name" label="Column Name" 
                 ></v-text-field>
                 <v-text-field name="Alies Name" v-model="column.colAlies" label="Alies Name" 

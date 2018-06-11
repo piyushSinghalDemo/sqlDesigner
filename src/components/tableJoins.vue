@@ -7,9 +7,6 @@
               <v-icon large>close</v-icon>
             </v-btn>  
           </v-toolbar>
-          <!-- <v-card-title>
-            Select Data
-          </v-card-title> -->
           <v-card-text>
              <v-form>
                <v-layout row wrap>

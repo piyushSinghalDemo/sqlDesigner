@@ -27,8 +27,15 @@ export function getStepData(_this, tableObj) {
                 "col_alias": "",
                 "col_name": "_*_"
             }]
-        }
+        },
+        'order_by': []
     }
+    let orderByObject = { 'column_name': '', 'is_desc': '' };
+    tableObj.archive.driverTable.selectedColumns.map(obj => {
+        orderByObject.column_name = obj.name;
+        orderByObject.is_desc = obj.decending;
+        DrvTableObj.order_by.push(cloneDeep(orderByObject));
+    });
     archiveStepInput.drv_table.push(DrvTableObj);
     let colsObject = { // all column dont have work table o/p as data selection
         "table_alias": "",

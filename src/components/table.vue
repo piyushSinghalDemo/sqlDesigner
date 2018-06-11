@@ -32,29 +32,11 @@
                   <add-criteria @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px"></add-criteria>   
                 </v-stepper-content>
                 <v-stepper-content step="3">
-                   <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px">
+                   <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :stepper="stepper" :tableObj="tableObj" style="min-height:430px">
                    </work-table-output>
                 </v-stepper-content>
                 </v-stepper-items>
-              </v-stepper>    
-                <!-- <v-flex d-flex xs12>
-                  <div class="form-views" v-show="progressbar == 1" style="width:100%;margin-left:3%;height:500px">
-
-                    <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj"></table-relationship>
-
-                  </div>
-                  <div class="form-views" v-show="progressbar == 2" style="width:100%;margin-left:3%;height:500px">
-
-                    <add-criteria @update-object='updateTableObj' :tableObj="tableObj"></add-criteria>
-
-                  </div>
-                  <div class="form-views" v-show="progressbar == 3" style="width:100%;margin-left:3%;height:500px">
-
-                    <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj"></work-table-output>
-
-                  </div>
-                </v-flex> -->
-                
+              </v-stepper>                    
               </v-layout>
             </v-container>
           </v-content>
