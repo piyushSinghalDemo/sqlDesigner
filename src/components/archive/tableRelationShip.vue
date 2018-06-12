@@ -323,17 +323,17 @@ export default {
           allColumn.map(function(obj, index){
              let columnObj ={}; 
              if(obj.colAlies)
-             columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: ''};
+             columnObj = { text:obj.colAlies,value:{name: obj.colAlies, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''}};
              else
-             columnObj = { name: obj.name, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: ''};                    
+             columnObj = {text:obj.name, value:{name: obj.name, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''}};                    
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             //For orderBy need saprate driver table column
             if(object.group == 'Driver Table'){
-              columnObj.decending = true;
-              _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
+              columnObj.value.decending = true;
+              _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
             }
           });
          _this.tableObj.is_drv_table = true;  
@@ -358,14 +358,14 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = response;
           allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: ''};
+             let columnObj = {text:obj, value:{name: obj, group: tableObject.tableName, fixed: false, 
+                               tblAlies:tableObject.aliesTableName, colAlies: ''}};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             
             if(tableObject.group == 'Driver Table'){
-              columnObj.decending = true;
-            _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
+              columnObj.value.decending = true;
+            _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
             }
           });
           // console.log("Response from all tables"+JSON.stringify(response));

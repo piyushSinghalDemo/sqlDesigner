@@ -115,19 +115,31 @@ export default {
     },
     updateJoin(object) {
       let _this = this;
-      _this.getMergeColumn(object);
+      _this.getCriteriaData(object);
       _this.dialog2 = true;
     },
-    async getMergeColumn(object){
+    async getCriteriaData(object){
       let _this = this;
-      // debugger;
-       this.tableObj.archive.optionColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == object.tableName});
+       this.tableObj.archive.optionColumn = filter(_this.tableObj.optionColumn, function(o){
+         if(o.value)
+           return o.value.group == object.tableName
+         });
       // console.log("relationshipArray"+JSON.stringify(_this.tableObj.relationshipArray));
-       _this.tableObj.relationshipArray.map(function(rlnObj, rlnIndex){
+      //  _this.tableObj.relationshipArray.map(function(rlnObj, rlnIndex){
+      //    debugger;
+      //    if(rlnObj.where && rlnObj.where[0].column && rlnObj.where[0].column.group == object.tableName){
+      //      _this.tableObj.criteriaArray = rlnObj.where;
+      //    }
+      //  });
+       for(var rlnIndex = 0; rlnIndex < _this.tableObj.relationshipArray.length;rlnIndex++){
+         let rlnObj = _this.tableObj.relationshipArray[rlnIndex];
          if(rlnObj.where && rlnObj.where[0].column && rlnObj.where[0].column.group == object.tableName){
            _this.tableObj.criteriaArray = rlnObj.where;
+           break;
+         }else{
+           _this.tableObj.criteriaArray = cloneDeep(tableData.criteriaArray);
          }
-       });
+       }
     //   console.log("optionColumn"+JSON.stringify(this.tableObj.archive.optionColumn));
     },
     updateTableObj(arr) {
