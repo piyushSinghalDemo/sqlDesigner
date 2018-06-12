@@ -23,16 +23,16 @@
                       <h3 class="panel-title">Available Column</h3>
                     </v-flex>
                     <v-flex xs4>
-                      <input type="text" class="srch-text" v-model="SearchTable" placeholder="Search..." />
+                      <input type="text" class="srch-text" v-model="SearchTable" @change="filterColumn" placeholder="Search..." />
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
-                  <draggable element="span" v-model="tableObj.availableColumn" :options="dragOptions" :move="onMove" @start="isDragging=true"
+                  <draggable element="span" v-model="worktableColumn"  :options="dragOptions" :move="onMove" @start="isDragging=true"
                     @end="isDragging=false" @change="updateGroup($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.availableColumn, SearchTable)"
+                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in worktableColumn"
                         :key="index">
-                        {{element.value.group}}.{{element.value.name}}
+                        {{element.group}}.{{element.name}}
                       </li>
                     </transition-group>
                   </draggable>
@@ -47,14 +47,14 @@
                       <h3 class="panel-title">Selected Column</h3>
                     </v-flex>
                     <v-flex xs4>
-                      <input type="text" class="srch-text" v-model="selectedSearch" placeholder="Search..." />
+                      <input type="text" class="srch-text" @change="filterSelColumn" v-model="selectedSearch" placeholder="Search..." />
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
-                  <draggable element="span" v-model="tableObj.selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
+                  <draggable element="span" v-model="selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                      <li class="list-group-item" v-for="(element, index) in filterBy(tableObj.selectedColumns, selectedSearch)" :key="index">
-                        {{element.value.group}}.{{element.value.name}}
+                      <li class="list-group-item" v-for="(element, index) in selectedColumns" :key="index">
+                        {{element.group}}.{{element.name}}
                       </li>
                     </transition-group>
                   </draggable>
@@ -83,6 +83,7 @@
 <script>
 import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep';
+import differenceBy from 'lodash/differenceBy';
 import sortBy from 'lodash/sortBy';
 import findIndex from 'lodash/findIndex';
 import columnAlies from './columnAlies.vue'
@@ -99,8 +100,10 @@ export default {
         isDragging: false,
         selectedSearch:"",
         saveData:false,
+        worktableColumn:[],
+        selectedColumns:[],
     }},
-    props: ['tableObj'],
+    props: ['tableObj','stepper'],
      computed: {
         dragOptions () {
         return  {
@@ -109,8 +112,27 @@ export default {
             ghostClass: 'ghost'
          };
         },
+
      },
+    watch: {
+      stepper :{
+        handler(newVal, oldVal) {
+          if(newVal == 3)
+            this.worktableColumn = cloneDeep(this.tableObj.availableColumn);
+        }
+      },
+    },
     methods: {
+      filterColumn(){
+            let array = this.filterBy(this.tableObj.availableColumn, this.SearchTable);
+            this.worktableColumn = cloneDeep(array);
+      },
+      filterSelColumn(){
+          // this.selectedColumns = this.filterBy(this.selectedColumns, this.selectedSearch);
+            // debugger;
+          let array = this.filterBy(this.tableObj.selectedColumns, this.selectedSearch);
+            this.selectedColumns = cloneDeep(array);
+      },
       saveColumnAlies(columnObj){
         let _this = this;
         let index = findIndex(_this.tableObj.selectedColumns,{'group':columnObj, 'name':columnObj.name});
@@ -133,22 +155,40 @@ export default {
       return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
     }, 
      updateGroup(event){
+       let _this = this;
+       if(event.added)
+        _this.tableObj.availableColumn.push(event.added.element);
+       if(event.removed){
+         let index = _this.tableObj.availableColumn.findIndex((item, index)=>{
+           return (item.name == event.removed.element.name && item.group == event.removed.element.group)
+         });
+         _this.tableObj.availableColumn.splice(index, 1);
+       }
+
       this.orderList();
     },
     updateGroup2(event){
-      if(event.added){
-        this.column = event.added.element;
-        this.aliesPanel = true;
-      }
+       let _this = this;
+       if(event.added){
+        _this.tableObj.selectedColumns.push(event.added.element);
+         this.column = event.added.element;
+         this.aliesPanel = true;
+       }
+       if(event.removed){
+         let index = _this.tableObj.selectedColumns.findIndex((item, index)=>{
+           return (item.name == event.removed.element.name && item.group == event.removed.element.group);
+         });
+         _this.tableObj.selectedColumns.splice(index, 1);
+       }
       this.orderselectedColumns();
     },
      orderList () {
        let _this = this;
-      _this.tableObj.availableColumn = sortBy(_this.tableObj.availableColumn, ['value.group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
+      _this.worktableColumn = sortBy(_this.worktableColumn, ['group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
     },
     orderselectedColumns () {
       let _this = this;
-      _this.tableObj.selectedColumns = sortBy(_this.tableObj.selectedColumns, ['value.group']) //this.selectedColumns.sort((one,two) =>{return one.order-two.order; })
+      _this.tableObj.selectedColumns = sortBy(_this.tableObj.selectedColumns, ['group']) //this.selectedColumns.sort((one,two) =>{return one.order-two.order; })
     },
     
     } 

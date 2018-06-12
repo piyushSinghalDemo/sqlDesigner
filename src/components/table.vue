@@ -32,7 +32,7 @@
                   <add-criteria @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px"></add-criteria>   
                 </v-stepper-content>
                 <v-stepper-content step="3">
-                   <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px">
+                   <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :stepper="stepper" :tableObj="tableObj" style="min-height:430px">
                    </work-table-output>
                 </v-stepper-content>
                 </v-stepper-items>

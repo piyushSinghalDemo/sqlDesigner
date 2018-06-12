@@ -120,6 +120,89 @@
                         </v-card-text>
                     </v-card>
                   </v-expansion-panel-content>
+
+              <!-- ******************************************Order By************************************************ -->
+                <v-expansion-panel-content>
+                  <div slot="header">
+                    Define OrderBy
+                  </div>
+                  <v-card>
+                    <v-card-text>
+                      <v-container grid-list-md>
+
+                        <!-- <div class="row clearfix">
+                          <div class="col-sm-6">
+                            <label style="font-size:20px;cursor:pointer">
+                              <input type="checkbox" v-model="tableObj.merge.selectAll" style="vertical-align: baseline;margin-right: 11px;"> Select All</label>
+                          </div>
+                          <div class="col-sm-6">
+                            <label style="font-size:20px;cursor:pointer">
+                              <input type="checkbox" v-model="tableObj.merge.distinct" style="vertical-align: baseline;margin-right: 11px;">Distinct</label>
+                          </div>
+                        </div> -->
+                        <v-layout row wrap>
+                          <v-flex xs6>
+                            <v-card>
+                              <v-card-text>
+                                <v-layout row wrap>
+                                  <v-flex xs8>
+                                    <h3 class="panel-title">Available Column</h3>
+                                  </v-flex>
+                                  <v-flex xs4>
+                                    <input type="text" class="srch-text" v-model="SearchTable" placeholder="Search..." />
+                                    <i class="fa fa-search srch-icon"></i>
+                                  </v-flex>
+                                </v-layout>
+                                <!-- {{tableObj.relationship}} -->
+                                <draggable element="span" v-model="tableObj.archive.driverTable.columns" :options="dragOptions" :move="onMove" @start="isDragging=true"
+                                  @end="isDragging=false" @change="updateGroup($event)">
+                                  <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
+                                    <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.archive.driverTable.columns, SearchTable)"
+                                      :key="index">
+                                      {{element.name}}
+                                    </li>
+                                  </transition-group>
+                                </draggable>
+                              </v-card-text>
+                            </v-card>
+                          </v-flex>
+                          <v-flex xs6>
+                            <v-card>
+                              <v-card-text>
+                                <v-layout row wrap>
+                                  <v-flex xs8>
+                                    <h3 class="panel-title">Selected Column</h3>
+                                  </v-flex>
+                                  <v-flex xs4>
+                                    <input type="text" class="srch-text" v-model="selectedSearch" placeholder="Search..." />
+                                    <i class="fa fa-search srch-icon"></i>
+                                  </v-flex>
+                                </v-layout>
+                                <draggable element="span" v-model="tableObj.archive.driverTable.selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
+                                  <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
+                                    <li class="list-group-item" v-for="(element, index) in filterBy(tableObj.archive.driverTable.selectedColumns, selectedSearch)" :key="index">
+                                           <v-layout row align-center>
+                                             <v-flex xs5>{{element.name}}</v-flex>
+                                             <v-flex xs7 style="padding:0px;">
+                                               <v-checkbox label="Decending" style="margin:0px;" hide-details v-model="element.decending">
+                                                 </v-checkbox></v-flex>
+                                           </v-layout>
+                                    </li>
+                                  </transition-group>
+                                </draggable>
+                              </v-card-text>
+                            </v-card>
+                          </v-flex>
+                        </v-layout>
+                        <!-- ********************************************        -->
+                      </v-container>
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+
+              <!-- ****************************************END **************************************************** -->
+
+
                </v-expansion-panel> 
               </v-form>
           </v-card-text>
@@ -131,6 +214,7 @@
 </template>
 <script>
 import cloneDeep from 'lodash/cloneDeep';
+import draggable from 'vuedraggable'
 export default {
      data() {
     return {
@@ -148,14 +232,43 @@ export default {
            openbrsisArray:['(','((','((('],
       closebrsisArray:[')','))',')))'],
       functionArray:['count','sum'],
-      valueTypeArray:['value','date','field'],             
+      valueTypeArray:['value','date','field'],
+      selectedSearch:"",
+      SearchTable:""             
     }},
    props: ['tableObj'],
+   components: {
+          draggable,
+     },
+   computed:{
+     dragOptions () {
+        return {
+            animation: 0,
+            group: 'description',
+            ghostClass: 'ghost'
+         };
+        },
+   },
    methods: {
-       addColumn(){
-      let _this = this;
-      _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
-    },
+      updateGroup(event){
+        // this.orderList();
+      },
+      updateGroup2(event){
+        if(event.added){
+          this.column = event.added.element;
+          this.aliesPanel = true;
+        }
+        // this.orderselectedColumns();
+      },
+      onMove ({relatedContext, draggedContext}) {
+        const relatedElement = relatedContext.element;
+        const draggedElement = draggedContext.element;
+        return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
+      },
+      addColumn(){
+        let _this = this;
+        _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
+      },
     savedata(){
       let arrayIndex = 0;
       let _this = this;
@@ -229,6 +342,13 @@ export default {
 }
 </script>
 <style scoped>
+/* .radio label, .checkbox label {
+  padding: 0px !important;
+} */
+/* .input-group__details{
+  min-height: 0px !important;
+
+} */
 .icn-css{
     background: red;
     color: white;
@@ -249,6 +369,46 @@ export default {
     }
   .ft-30 {
    font-size: 30px;
+}
+/* ************************ For drag and drop *************************************** */
+.ht-215{
+  height: 215px;
+  overflow: auto;
+}
+.srch-text{
+  border-bottom: 01px solid cadetblue;
+  width: 99%;
+  height: 100%;
+}
+.srch-icon{
+    position: absolute;
+    top: 7%;
+    right: 3%;
+}
+
+.flip-list-move {
+  transition: transform 0.5s;
+}
+
+.no-move {
+  transition: transform 0s;
+}
+
+.ghost {
+  opacity: .5;
+  background: #C8EBFB;
+}
+
+.list-group {
+  min-height: 150px;
+}
+
+.list-group-item {
+  cursor: move;
+}
+
+.list-group-item i{
+  cursor: pointer;
 }
 </style>
 

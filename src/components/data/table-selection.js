@@ -77,5 +77,9 @@ export default {
     },
     archive: {
         optionColumn: [],
+        driverTable: {
+            columns: [],
+            selectedColumns: [],
+        }
     }
 }

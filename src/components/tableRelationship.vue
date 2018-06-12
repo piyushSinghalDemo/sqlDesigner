@@ -252,7 +252,7 @@ export default {
              let columnObj = { text: obj,value:{name:obj,group: tableObject.tableName, fixed: false, 
                                tblAlies:tableObject.aliesTableName, colAlies:''}};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-            _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+            _this.tableObj.availableColumn.push(cloneDeep(columnObj.value));
           });
           console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {
