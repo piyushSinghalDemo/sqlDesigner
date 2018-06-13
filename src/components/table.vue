@@ -228,8 +228,8 @@ export default {
           'is_col_compare': obj.valueType == 'field' ? true : false,
           'with_alias': obj.field.colAlies,
           'with_col': obj.field.name,
-          'with_table' : whereObj.field.group,
-          'with_colAlies' : whereObj.field.colAlies,
+          'with_table' : obj.field.group,
+          'with_colAlies' : obj.field.colAlies,
         }
         dbStepInput.where.push(cloneDeep(CriteriaObject));
         }
