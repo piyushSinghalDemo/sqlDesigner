@@ -15,7 +15,10 @@
         </v-select>
       </v-flex>
       <v-flex xs2>
-        <v-select label="Select Column" :items="tableObj.optionColumn" v-model="obj.column" autocomplete></v-select>
+        <!-- {{obj.column}} -->
+        <v-select label="Select Column" cache-items :items="tableObj.optionColumn" v-model="obj.column" autocomplete>
+
+        </v-select>
       </v-flex>
       <v-flex xs1>
         <v-select :items="filterArray" clearable single-line label="Select Operator" v-model="obj.relOperator">

@@ -291,7 +291,7 @@ export default {
       var operatorData = flowchart$.flowchart('getOperatorData', _this.$store.state.currentStep);
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-      console.log("flowchartData "+JSON.stringify(flowchartData));
+      // console.log("flowchartData "+JSON.stringify(flowchartData));
       let inputParam = this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
@@ -352,7 +352,7 @@ export default {
         addData.map(linkObj=>{
         _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
         })
-        console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
+        // console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
         _this.$toaster.success('Data save successfully')
         this.$store.state.dialog = false;
       }, response => {

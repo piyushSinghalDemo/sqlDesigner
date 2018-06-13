@@ -19,14 +19,14 @@
         <v-layout row wrap v-show="!isDrivar">
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
-              single-line item-text="tableName" item-value="tableName + aliesTableName"></v-select>
+              single-line item-text="tableName" item-value="tableName + aliesTableName" clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
-            <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line></v-select>
+            <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" label="To Table" item-text="tableName"
-              item-value="tableName + aliesTableName" single-line></v-select>
+              item-value="tableName + aliesTableName" single-line clearable></v-select>
           </v-flex>
         </v-layout>
         <v-expansion-panel>
@@ -58,17 +58,17 @@
                   <v-flex xs4 style="margin-right:20px;">
                     <!-- *********************************** Group Column ********************************************* -->
                     <v-select label="From Column" :items="tableObj.optionColumn" v-model="column.fromColumn" single-line
-                      autocomplete></v-select>
+                      autocomplete clearable></v-select>
                     <!-- ********************************************************************************************** -->
                   </v-flex>
                   <v-flex xs2 style="margin-right:20px;">
-                    <v-select :items="filterArray" v-model="column.operator" label="Operator" single-line></v-select>
+                    <v-select :items="filterArray" v-model="column.operator" label="Operator" single-line clearable></v-select>
                   </v-flex>
                   <v-flex xs4 style="margin-right:20px;">
                     <v-layout>
                       <v-flex>
                         <v-select label="To Column" :items="tableObj.optionColumn" v-model="column.toColumn" single-line
-                          autocomplete></v-select>
+                          autocomplete clearable></v-select>
                       </v-flex>
                     </v-layout>
                   </v-flex>
@@ -93,7 +93,7 @@
                     </v-flex>
                     <v-flex xs3>
                       <v-select label="Select Column" :items="tableObj.archive.optionColumn" v-model="obj.column" single-line
-                          autocomplete></v-select>
+                          autocomplete clearable></v-select>
                     </v-flex>
                     <v-flex xs3>
                       <v-select clearable :items="filterArray" single-line label="Select Operator" v-model="obj.relOperator">
@@ -114,7 +114,7 @@
                         </v-date-picker>
                       </v-menu>
                       <v-select :items="tableObj.archive.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-                         ></v-select>
+                         clearable></v-select>
                     </v-flex>
                     <v-flex xs3>
                       <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">

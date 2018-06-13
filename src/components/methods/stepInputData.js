@@ -66,6 +66,7 @@ export function getStepData(_this, tableObj) {
         temp.with_colAlies = obj.field.colAlies;
         DrvTableObj.where.push(cloneDeep(temp));
     });
+    DrvTableObj.where.length ? DrvTableObj.where[DrvTableObj.where.length - 1].operand = '' : '';
     archiveStepInput.drv_table.push(DrvTableObj);
 
     let colsObject = { // all column dont have work table o/p as data selection

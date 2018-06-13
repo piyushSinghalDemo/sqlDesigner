@@ -192,7 +192,6 @@ export default {
      contextMenu,
      'process-name':processName,
      'validation-logs':validationLogs,
-     'logs':[] 
   },
   data() {
     return {
@@ -254,6 +253,7 @@ export default {
     openArchivePanel:false,
     userInfo:"",
     dialog2:false,
+    logs:[], 
     // processDocName:this.$store.state.process_definition_name
     }
   },
@@ -353,7 +353,7 @@ export default {
                 _this.$store.state.conn_str = tableResponse.conn_str;
                 setStepInfo(_this, response);
                 // debugger;
-                console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));   
+                // console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));   
             }
         }, tableResponse => {}).catch(e => {
             console.log(e)
@@ -394,7 +394,7 @@ export default {
           _this.$toaster.info('Data validated successfully') 
         },response => {
           if(response.message){
-            console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
+            // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
           _this.logs = response.message;
           let validatedData = _this.$store.state.processArray;
           
@@ -435,7 +435,7 @@ export default {
               console.log(e)
             _this.$toaster.error('Something went wrong...')
       })    
-      console.log("ideInputData " +JSON.stringify(ideInputData));
+      // console.log("ideInputData " +JSON.stringify(ideInputData));
     },
     getStepDetails(){ // take step name and description from user
       let _this = this;
@@ -470,7 +470,7 @@ export default {
            type:stepType
          }
          postToServer(this, url, inputJson).then(response=>{
-           console.log("Response from step save:"+JSON.stringify(response));
+          //  console.log("Response from step save:"+JSON.stringify(response));
              _this.$store.state.process_definition_id = response.process_definition_id;
              tableData.title = cloneDeep(_this.stepName); 
              tableData.description = cloneDeep(_this.stepDetail);
@@ -524,7 +524,7 @@ export default {
           postToServer(this, url, inputJson).then(listResponse => {
             if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
             _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=false;
-                console.log("listResponse"+JSON.stringify(listResponse));
+                // console.log("listResponse"+JSON.stringify(listResponse));
                 this.loading = false;
               _this.$store.state.database_name = listResponse.database_name;
               _this.$store.state.database_type = listResponse.database_type;
@@ -584,7 +584,7 @@ export default {
     },
     getIDEData() {
       var data = $('#droppable').flowchart('getData');
-      console.log(JSON.stringify(data));
+      // console.log(JSON.stringify(data));
     },
     closeRightPael() {
       console.log("this is log on 453");
@@ -633,7 +633,7 @@ export default {
       this.saveBlockData();
     },
     saveBlockData() {
-      console.log(this.blockData);
+      // console.log(this.blockData);
       var blockId = localStorage.getItem("operatorId")
       this.setOperatorData(this.operatorId)
     },
@@ -646,7 +646,7 @@ export default {
       this.setOperatorData(this.operatorId)
     },
     removeInput(index) {
-      console.log(index);
+      // console.log(index);
       delete this.blockData.properties.inputs[index];
       this.saveBlockData()
     },
@@ -683,7 +683,7 @@ export default {
     },
     getData() {
       var ideData = getData()
-      console.log(ideData);
+      // console.log(ideData);
     },//
 
     oneInZeroOutOperator(left, top, className) {
@@ -780,7 +780,7 @@ export default {
       // this.dataStr.workflow[this.dbOperatorId]['dbData'] = data
       this.dataStr.workflow[this.dbOperatorId] = JSON.parse(JSON.stringify(data))
       this.worflowData[this.dbOperatorId] = JSON.parse(JSON.stringify(data))
-      console.log(JSON.stringify(this.dataStr));
+      // console.log(JSON.stringify(this.dataStr));
     },
     getOperatorData(operatorId) {
       this.blockData = $('#droppable').flowchart('getOperatorData', operatorId);
@@ -800,17 +800,17 @@ export default {
       this.SPData = []
     },
     saveModalForm(formData, modal) {
-      console.log("sff", this.operatorId);
+      // console.log("sff", this.operatorId);
       if (this.dragType == 'table') {
       } else {
       }
       var IDEData = $('#droppable').flowchart('getData');
       console.log(JSON.stringify(IDEData));
       IDEData.operators[this.operatorId]["data"] = formData
-      console.log(IDEData.operators[this.operatorId]);
+      // console.log(IDEData.operators[this.operatorId]);
       setTimeout(function () {
         $('#droppable').flowchart('setData', IDEData);
-        console.log(JSON.stringify(IDEData));
+        // console.log(JSON.stringify(IDEData));
         // _this.loadData(this.dataStr.dbData)
       }.bind(this), 10)
       $("#" + modal).modal('hide')
@@ -821,7 +821,7 @@ export default {
       this.dragType = 'db'
       setTimeout(function () {
         $('#droppable').flowchart('setData', _this.dataStr.dbData);
-        console.log(JSON.stringify(_this.dbData));
+        // console.log(JSON.stringify(_this.dbData));
         // _this.loadData(this.dataStr.dbData)
       }.bind(this), 200)
     },
@@ -832,14 +832,14 @@ export default {
         
         onOperatorDoubleClick: function (operatorId) {
           var operator = $('#droppable').flowchart('getOperatorData', operatorId);
-          console.log(operator);
+          // console.log(operator);
           var type = operator.className
           var op = _this.operatorOptions[type]
           _this.operatorId = operatorId;
           // _this.$store.state.currentStep = operatorId;
           //  _this.$store.commit('setCurrentStep', operatorId);
           _this.$store.dispatch('setCurrentStep', operatorId);
-          console.log(op);
+          // console.log(op);
           // if (op['dblClick'] && op["modal"]) {
           //   $("#" + op["modalName"]).modal()
           // }
@@ -865,14 +865,14 @@ export default {
           return true;
         },
         onLinkCreate: (linkId, linkData) => {
-          console.log(linkData);
+          // console.log(linkData);
           var fromOperatorData = $('#droppable').flowchart('getOperatorData', linkData.fromOperator);
           var toOperatorData = $('#droppable').flowchart('getOperatorData', linkData.toOperator);
           linkData.fromTable = fromOperatorData.properties.title
           linkData.toTable = toOperatorData.properties.title
           setTimeout(function () {
             var data = $('#droppable').flowchart('getData')
-            console.log(JSON.stringify(data));
+            // console.log(JSON.stringify(data));
             if (_this.dragType == 'db') {
               _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
             } else {

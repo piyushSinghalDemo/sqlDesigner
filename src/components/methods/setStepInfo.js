@@ -252,11 +252,11 @@ export async function setStepInfo(_this, processData) {
             criteriaObject.openbrsis = whrObj.pre_braces;
             criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
             criteriaObject.column.name = whrObj.column_name;
-            criteriaObject.column.value = whrObj.column_name;
+            // criteriaObject.column.value = whrObj.column_name;
+            criteriaObject.column.group = whrObj.table_name;
             criteriaObject.column.fixed = false;
             criteriaObject.column.tblAlies = whrObj.alias;
             criteriaObject.column.colAlies = whrObj.colAlies;
-            criteriaObject.column.group = whrObj.table_name;
             criteriaObject.relOperator = getjoinOperator(whrObj.operator)
             criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
             criteriaObject.value = whrObj.value;

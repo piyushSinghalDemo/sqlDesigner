@@ -108,8 +108,8 @@ export default {
       },
       tableObj(newVal){
         // debugger;
-        console.log("newVal"+JSON.stringify(newVal));
-        console.log(this.tableObj);
+        // console.log("newVal"+JSON.stringify(newVal));
+        // console.log(this.tableObj);
       }
     },
     methods: {
@@ -171,7 +171,7 @@ export default {
           this.loading = false;
          // debugger;
           _this.tableObj.allDbTables = dummyTableList;
-          console.log("Response from all tables" + JSON.stringify(response));
+          // console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
           this.loading = false;
@@ -182,7 +182,7 @@ export default {
     addTable(){
       let validFlag=true;
       let _this = this;
-      console.log("Demo "+JSON.stringify(_this.demo));
+      // console.log("Demo "+JSON.stringify(_this.demo));
       _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
         if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
           validFlag = false;
@@ -254,7 +254,7 @@ export default {
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj.value));
           });
-          console.log("Response from all tables"+JSON.stringify(response));
+          // console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {
               console.log(e)
             this.ErrorMessage = 'Something went wrong.'
