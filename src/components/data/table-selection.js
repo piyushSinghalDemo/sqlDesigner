@@ -80,6 +80,7 @@ export default {
         driverTable: {
             columns: [],
             selectedColumns: [],
-        }
+        },
+        where: []
     }
 }

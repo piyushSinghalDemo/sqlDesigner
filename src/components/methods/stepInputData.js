@@ -28,7 +28,8 @@ export function getStepData(_this, tableObj) {
                 "col_name": "_*_"
             }]
         },
-        'order_by': []
+        'order_by': [],
+        'where': []
     }
     let orderByObject = { 'column_name': '', 'is_desc': '' };
     tableObj.archive.driverTable.selectedColumns.map(obj => {
@@ -36,7 +37,37 @@ export function getStepData(_this, tableObj) {
         orderByObject.is_desc = obj.decending;
         DrvTableObj.order_by.push(cloneDeep(orderByObject));
     });
+    let whereObject = {
+        "post_braces": "",
+        "alias": "",
+        "column_name": "",
+        "table_name": "",
+        "operator": "",
+        "value": "",
+        "pre_braces": "",
+        "operand": "",
+        "is_col_compare": "",
+    }
+    tableObj.archive.where.map(obj => {
+        let temp = cloneDeep(whereObject);
+        temp.post_braces = obj.closebrsis;
+        temp.alias = obj.column.tblAlies; //table alies
+        temp.table_name = obj.column.group;
+        temp.column_name = obj.column.name; //column alies
+        temp.colAlies = obj.column.colAlies; //column alies
+        temp.operator = getjoinOperator(obj.relOperator); //relational operator
+        temp.value = obj.value; //may be value date or column
+        temp.pre_braces = obj.openbrsis;
+        temp.operand = obj.logOperator ? 'AND' : 'OR';
+        temp.is_col_compare = obj.valueType == 'field' ? true : false;
+        temp.with_alias = obj.field.colAlies;
+        temp.with_col = obj.field.name;
+        temp.with_table = obj.field.group;
+        temp.with_colAlies = obj.field.colAlies;
+        DrvTableObj.where.push(cloneDeep(temp));
+    });
     archiveStepInput.drv_table.push(DrvTableObj);
+
     let colsObject = { // all column dont have work table o/p as data selection
         "table_alias": "",
         "func": "",
@@ -60,17 +91,7 @@ export function getStepData(_this, tableObj) {
         "to_alias": "",
         "operator": ""
     }
-    let whereObject = {
-        "post_braces": "",
-        "alias": "",
-        "column_name": "",
-        "table_name": "",
-        "operator": "",
-        "value": "",
-        "pre_braces": "",
-        "operand": "",
-        "is_col_compare": "",
-    }
+
     let relationObject = {
         "output_table": "", //From table
         "select_table": {

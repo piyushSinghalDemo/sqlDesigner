@@ -76,7 +76,7 @@
               </v-card-text>
             </v-card>
           </v-expansion-panel-content>
-
+            <!-- Driver VAlue:{{isDrivar}} -->
           <v-expansion-panel-content>
             <div slot="header">
               Define Criteria
@@ -135,7 +135,7 @@
             </v-card>
           </v-expansion-panel-content>
           <!-- ******************************************Order By************************************************ -->
-          <v-expansion-panel-content>
+          <v-expansion-panel-content v-show="isDrivar">
             <div slot="header">
               Define OrderBy
             </div>
@@ -305,13 +305,18 @@ export default {
 
       let object = {'relationship':_this.tableObj.relationship,
                     'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray};
-      if(arrayIndex){
-        _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
-        _this.$toaster.info('Relationship Updated successfully');
-      }else{
-        _this.tableObj.relationshipArray.push(cloneDeep(object));
-        _this.$toaster.success('Relationship added successfully');
-      }
+       if(_this.isDrivar){
+         _this.tableObj.archive.where=_this.tableObj.criteriaArray;
+       }else{
+          if(arrayIndex){
+            _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
+            _this.$toaster.info('Relationship Updated successfully');
+          }else{
+            _this.tableObj.relationshipArray.push(cloneDeep(object));
+            _this.$toaster.success('Relationship added successfully');
+          }
+       }             
+      
       this.resetForm();
       this.$emit('save-data', _this.tableObj)
     },
