@@ -47,7 +47,7 @@
       <!-- ********** tableObj is used to pass data(props) to table-joins vue &
           save-data is used to emit data from table-joins vue ************* -->
 
-      <table-joins @save-data="saveData" :tableObj="tableObj" v-on:close="dialog2=false"></table-joins>
+      <table-joins @save-data="saveData" :isDrivar="isDrivar" :tableObj="tableObj" v-on:close="dialog2=false"></table-joins>
 
     </v-dialog>
     <v-dialog v-model="processDoc" max-width="60%" max-height="50%">
@@ -78,6 +78,7 @@ export default {
   },
   data() {
     return {
+      isDrivar:false,
       drawer: null,
       dataStr: _def.dataStr,
       dialog2: false,
@@ -116,6 +117,10 @@ export default {
     updateJoin(object) {
       let _this = this;
       _this.getCriteriaData(object);
+      if(object.tableName == _this.tableObj.relationship.driverTable.name)
+        _this.isDrivar = true;
+      else
+        _this.isDrivar = false;
       _this.dialog2 = true;
     },
     async getCriteriaData(object){
@@ -124,13 +129,6 @@ export default {
          if(o.value)
            return o.value.group == object.tableName
          });
-      // console.log("relationshipArray"+JSON.stringify(_this.tableObj.relationshipArray));
-      //  _this.tableObj.relationshipArray.map(function(rlnObj, rlnIndex){
-      //    debugger;
-      //    if(rlnObj.where && rlnObj.where[0].column && rlnObj.where[0].column.group == object.tableName){
-      //      _this.tableObj.criteriaArray = rlnObj.where;
-      //    }
-      //  });
        for(var rlnIndex = 0; rlnIndex < _this.tableObj.relationshipArray.length;rlnIndex++){
          let rlnObj = _this.tableObj.relationshipArray[rlnIndex];
          if(rlnObj.where && rlnObj.where[0].column && rlnObj.where[0].column.group == object.tableName){

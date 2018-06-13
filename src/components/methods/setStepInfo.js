@@ -10,6 +10,7 @@ import stepObject from '../data/table-selection';
 import mergeAPIData from './setMergeStep'
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
+import { ClientResponse } from 'http';
 export async function setStepInfo(_this, processData) {
     let step = {};
     let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -185,6 +186,64 @@ export async function setStepInfo(_this, processData) {
             tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? "Previous Steps" : "Database Table";
             tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias;
             tableObj.is_drv_table = stpObj.drv_table[0].select_table.is_drv_table;
+            stpObj.drv_table[0].order_by && stpObj.drv_table[0].order_by.map(async orderObj => {
+                var temp = {
+                    name: orderObj.column_name,
+                    group: tableObj.relationship.driverTable.name,
+                    fixed: false,
+                    tblAlies: '',
+                    colAlies: '',
+                    decending: orderObj.is_desc
+                }
+                tableObj.archive.driverTable.selectedColumns.push(cloneDeep(temp));
+            });
+            if (stpObj.drv_table[0].select_table.is_drv_table) {
+
+                for (const item of processData.steps) {
+                    if (item.name === tableObj.relationship.driverTable.name) {
+                        item.select_table.cols.map((colObj) => {
+                            var temp = {
+                                name: colObj.col_name,
+                                group: tableObj.relationship.driverTable.name,
+                                fixed: false,
+                                tblAlies: '',
+                                colAlies: '',
+                                decending: orderObj.is_desc
+                            }
+                            tableObj.archive.driverTable.selectedColumns.push(cloneDeep(temp));
+                        });
+                    }
+                }
+
+            } else {
+                let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+                let inputJson = {
+                    "conn_str": _this.$store.state.conn_str,
+                    "schema": _this.$store.state.schema,
+                    "dest_queue": "test",
+                    "table_name": tableObj.relationship.driverTable.name,
+                    "client_id": userInfo.client_id
+                }
+                await postToServer(_this, url, inputJson).then(response => {
+                    let allColumn = response;
+                    allColumn.map(function(obj) {
+                        var temp = {
+                            name: obj,
+                            group: tableObj.relationship.driverTable.name,
+                            fixed: false,
+                            tblAlies: '',
+                            colAlies: '',
+                            decending: true
+                        }
+                        tableObj.archive.driverTable.columns.push(cloneDeep(temp));
+                    });
+                    _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for data selection
+                    // console.log("Response from all tables" + JSON.stringify(response));
+                }, response => {}).catch(e => {
+                    console.log(e)
+                        // this.ErrorMessage = 'Something went wrong.'
+                })
+            }
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];

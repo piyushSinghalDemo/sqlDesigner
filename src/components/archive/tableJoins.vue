@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text>
       <v-form>
-        <v-layout row wrap>
+        <v-layout row wrap v-show="!isDrivar">
           <v-flex style="margin-right:20px;">
             <b>From Table</b>
           </v-flex>
@@ -16,7 +16,7 @@
             <b>To Table</b>
           </v-flex>
         </v-layout>
-        <v-layout row wrap>
+        <v-layout row wrap v-show="!isDrivar">
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
               single-line item-text="tableName" item-value="tableName + aliesTableName"></v-select>
@@ -30,7 +30,7 @@
           </v-flex>
         </v-layout>
         <v-expansion-panel>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content v-show="!isDrivar">
             <div slot="header">
               Define Joins
             </div>
@@ -248,7 +248,7 @@ export default {
       selectedSearch:"",
       SearchTable:""             
     }},
-   props: ['tableObj'],
+   props: ['tableObj','isDrivar'],
    components: {
           draggable,
      },
