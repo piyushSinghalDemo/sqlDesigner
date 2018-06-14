@@ -218,7 +218,7 @@ export default {
           this.loading = false;
          // debugger;
           _this.tableObj.allDbTables = dummyTableList;
-          console.log("Response from all tables" + JSON.stringify(response));
+          // console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
           this.loading = false;
@@ -277,7 +277,7 @@ export default {
           this.loading = false;
          // debugger;
           _this.tableObj.allArchiveTables = dummyTableList;
-          console.log("Response from all tables" + JSON.stringify(response));
+          // console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
           this.loading = false;
@@ -289,7 +289,7 @@ export default {
       // alert("Click Working");
       let validFlag=true;
       let _this = this;
-      console.log("Demo "+JSON.stringify(_this.demo));
+      // console.log("Demo "+JSON.stringify(_this.demo));
       _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
         if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
            validFlag = false;

@@ -81,6 +81,19 @@ export default {
             columns: [],
             selectedColumns: [],
         },
-        where: []
+        where: [{
+            openbrsis: '',
+            function: '',
+            column: '',
+            relOperator: '',
+            valueType: '',
+            value: '',
+            closebrsis: '',
+            logOperator: true,
+            date: null,
+            menu: false,
+            modal: false,
+            field: '',
+        }]
     }
 }

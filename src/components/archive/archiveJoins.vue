@@ -218,7 +218,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-btn @click.stop="savedata"> submit </v-btn>
+      <v-btn @click.stop="saveArchiveData"> submit </v-btn>
       <v-btn v-on:click="$emit('close')"> close</v-btn>
     </v-card-actions>
   </v-card>
@@ -279,44 +279,45 @@ export default {
       },
       addColumn(){
         let _this = this;
+        // debugger;
+        // alert("In add Column");
         _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
       },
-    savedata(){
-      let arrayIndex = 0;
+    saveArchiveData(){
+      let arrayIndex = -1;
       let _this = this;
+      // alert("In save method");
       // _this.tableObj = data.tableObj;
-      _this.tableObj.relationshipArray.map(function(obj, index){
-               if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
-              obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
-            arrayIndex = index;
-          }
-      });
-      //debugger;
-      if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
-        _this.tableObj.relationship.jfrom_drv_table = true;
-      }else{
-        _this.tableObj.relationship.jfrom_drv_table = false;
-      }
-      if(_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
-        _this.tableObj.relationship.jto_drv_table = true;  
-      }else{
-        _this.tableObj.relationship.jto_drv_table = false;  
-      }
-
-      let object = {'relationship':_this.tableObj.relationship,
-                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray};
-       if(_this.isDrivar){
+      if(_this.isDrivar){
          _this.tableObj.archive.where=_this.tableObj.criteriaArray;
        }else{
-          if(arrayIndex){
+         _this.tableObj.relationshipArray.map(function(obj, index){
+                  if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
+                 obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
+               arrayIndex = index;
+             }
+         });
+         //debugger;
+         if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
+           _this.tableObj.relationship.jfrom_drv_table = true;
+         }else{
+           _this.tableObj.relationship.jfrom_drv_table = false;
+         }
+         if(_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
+           _this.tableObj.relationship.jto_drv_table = true;  
+         }else{
+           _this.tableObj.relationship.jto_drv_table = false;  
+         }
+      let object = {'relationship':_this.tableObj.relationship,
+                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray};
+          if(arrayIndex >= 0){
             _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
             _this.$toaster.info('Relationship Updated successfully');
           }else{
             _this.tableObj.relationshipArray.push(cloneDeep(object));
             _this.$toaster.success('Relationship added successfully');
           }
-       }             
-      
+       }//end of else(not driver table)
       this.resetForm();
       this.$emit('save-data', _this.tableObj)
     },
