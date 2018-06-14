@@ -332,7 +332,7 @@ export default {
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             //For orderBy need saprate driver table column
             if(object.group == 'Driver Table'){
-              columnObj.value.decending = true;
+              columnObj.value.decending = false;
               _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
             }
           });
@@ -364,7 +364,7 @@ export default {
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             
             if(tableObject.group == 'Driver Table'){
-              columnObj.value.decending = true;
+              columnObj.value.decending = false;
             _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
             }
           });

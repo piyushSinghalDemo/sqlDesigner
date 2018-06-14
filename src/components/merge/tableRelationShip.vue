@@ -18,8 +18,8 @@
           <a class="addTable" @click.stop="addDriverTable">Add</a>
           </v-flex> -->
           <v-flex xsx4>
-            <!-- distinctAll :{{tableObj.merge.distinctAll}} -->
-              <v-checkbox label="Distinct" style="margin-top:13%"  v-model="tableObj.merge.distinctAll"></v-checkbox>
+            <!-- distinctAll :{{tableObj.type}} -->
+              <v-checkbox v-if="tableObj.type=='merge'" label="Distinct" style="margin-top:13%"  v-model="tableObj.merge.distinctAll"></v-checkbox>
           </v-flex>
           <v-flex xs8>
             <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"

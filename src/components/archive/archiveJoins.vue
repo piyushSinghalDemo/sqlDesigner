@@ -197,8 +197,10 @@
                                 <v-layout row align-center>
                                   <v-flex xs5>{{element.name}}</v-flex>
                                   <v-flex xs7 style="padding:0px;">
-                                    <v-checkbox label="Decending" style="margin:0px;" hide-details v-model="element.decending">
-                                    </v-checkbox>
+                                    <!-- <v-checkbox label="Decending" style="margin:0px;" hide-details v-model="element.decending">
+                                    </v-checkbox> -->
+                                    <v-btn depressed  medium v-if="!element.decending" @click="element.decending = !element.decending" style="margin:0px;">Ascending</v-btn>
+                                    <v-btn depressed  medium v-if="element.decending" @click="element.decending = !element.decending" style="margin:0px;">Decending</v-btn>
                                   </v-flex>
                                 </v-layout>
                               </li>

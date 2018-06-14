@@ -5,6 +5,7 @@
         <v-card tile style="height:650px">
           <!-- ******************************Start ************************************* -->
           <v-toolbar card dark color="primary" app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
+            <v-toolbar-title>Archival Step</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-title>Close</v-toolbar-title>
             <v-btn icon @click.native="closeDialog" dark>
