@@ -1,3 +1,8 @@
+/**
+ * @author Piyush Singhal
+ * @description This method will load data in all steps data 
+ * 
+ */
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
 import uniqBy from 'lodash/uniqBy';
@@ -5,12 +10,12 @@ import stepObject from '../data/table-selection';
 import mergeAPIData from './setMergeStep'
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
+import { ClientResponse } from 'http';
 export async function setStepInfo(_this, processData) {
     let step = {};
     let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
     _this.$store.state.process_definition_name = processData.process_definition_name;
     _this.$store.state.process_definition_id = processData.process_definition_id;
-    // debugger;
     _this.$store.state.env_id = processData.steps[0].env_id;
     // let selectedTable = {};
     _this.$store.state.processArray = processData.steps;
@@ -108,6 +113,7 @@ export async function setStepInfo(_this, processData) {
         console.log("List of relations " + JSON.stringify(stpObj.list_of_relations));
         stpObj.list_of_relations && stpObj.list_of_relations.length && stpObj.list_of_relations.map(async(relationObj) => {
             let tempObj = {};
+            // debugger;
             relationObj.joins.map(async(joinObj, rlnIndex) => {
                     // debugger
                     let fromTableObj = {},
@@ -129,9 +135,9 @@ export async function setStepInfo(_this, processData) {
                     tableObj.relationship.selectedFilter = joinObj.type;
                     joinObj.condition.map((conditionObj, conditionIndex) => {
                         colObj.fromColumn.name = conditionObj.from_column;
-                        colObj.fromColumn.group = joinObj.jfrom;
-                        colObj.fromColumn.tblAlies = conditionObj.from_alias;
                         colObj.fromColumn.fixed = false;
+                        colObj.fromColumn.tblAlies = conditionObj.from_alias;
+                        colObj.fromColumn.group = joinObj.jfrom;
                         colObj.fromColumn.colAlies = ""; // Need to discuss and fill details
                         colObj.toColumn.name = conditionObj.to_column;
                         colObj.toColumn.group = joinObj.jto;
@@ -152,14 +158,13 @@ export async function setStepInfo(_this, processData) {
                 }) //End of list of relotion Object array
             let criteriaArray = [];
             relationObj.where && relationObj.where.length && relationObj.where.map((whrObject, whrIndex) => {
-
                 let criteriaObject = cloneDeep(stepObject.parenthasisobject);
                 criteriaObject.openbrsis = whrObject.pre_braces;
                 criteriaObject.showLogicalOperator = whrObject.operand ? true : false;
                 criteriaObject.column.name = whrObject.column_name;
+                criteriaObject.column.group = whrObject.table_name;
                 criteriaObject.column.fixed = false;
                 criteriaObject.column.tblAlies = whrObject.alias;
-                criteriaObject.column.group = whrObject.table_name;
                 criteriaObject.column.colAlies = whrObject.colAlies;
                 criteriaObject.relOperator = getjoinOperator(whrObject.operator)
                 criteriaObject.valueType = whrObject.is_col_compare ? 'field' : 'value';
@@ -177,11 +182,68 @@ export async function setStepInfo(_this, processData) {
             tableObj.relationshipArray.push(cloneDeep(tempObj));
         });
         if (stpObj.drv_table && stpObj.drv_table.length) {
-            // debugger;
             tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name;
             tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? "Previous Steps" : "Database Table";
             tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias;
             tableObj.is_drv_table = stpObj.drv_table[0].select_table.is_drv_table;
+            stpObj.drv_table[0].order_by && stpObj.drv_table[0].order_by.map(async orderObj => {
+                var temp = {
+                    name: orderObj.column_name,
+                    group: tableObj.relationship.driverTable.name,
+                    fixed: false,
+                    tblAlies: '',
+                    colAlies: '',
+                    decending: orderObj.is_desc
+                }
+                tableObj.archive.driverTable.selectedColumns.push(cloneDeep(temp));
+            });
+            if (stpObj.drv_table[0].select_table.is_drv_table) {
+
+                for (const item of processData.steps) {
+                    if (item.name === tableObj.relationship.driverTable.name) {
+                        item.select_table.cols.map((colObj) => {
+                            var temp = {
+                                name: colObj.col_name,
+                                group: tableObj.relationship.driverTable.name,
+                                fixed: false,
+                                tblAlies: '',
+                                colAlies: '',
+                                decending: orderObj.is_desc
+                            }
+                            tableObj.archive.driverTable.selectedColumns.push(cloneDeep(temp));
+                        });
+                    }
+                }
+
+            } else {
+                let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+                let inputJson = {
+                    "conn_str": _this.$store.state.conn_str,
+                    "schema": _this.$store.state.schema,
+                    "dest_queue": "test",
+                    "table_name": tableObj.relationship.driverTable.name,
+                    "client_id": userInfo.client_id
+                }
+                await postToServer(_this, url, inputJson).then(response => {
+                    let allColumn = response;
+                    allColumn.map(function(obj) {
+                        var temp = {
+                            name: obj,
+                            group: tableObj.relationship.driverTable.name,
+                            fixed: false,
+                            tblAlies: '',
+                            colAlies: '',
+                            decending: true
+                        }
+                        tableObj.archive.driverTable.columns.push(cloneDeep(temp));
+                    });
+                    _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for data selection
+                    // console.log("Response from all tables" + JSON.stringify(response));
+                }, response => {}).catch(e => {
+                    console.log(e)
+                        // this.ErrorMessage = 'Something went wrong.'
+                })
+            }
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
@@ -190,8 +252,11 @@ export async function setStepInfo(_this, processData) {
             criteriaObject.openbrsis = whrObj.pre_braces;
             criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
             criteriaObject.column.name = whrObj.column_name;
+            // criteriaObject.column.value = whrObj.column_name;
+            criteriaObject.column.group = whrObj.table_name;
             criteriaObject.column.fixed = false;
             criteriaObject.column.tblAlies = whrObj.alias;
+            criteriaObject.column.colAlies = whrObj.colAlies;
             criteriaObject.relOperator = getjoinOperator(whrObj.operator)
             criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
             criteriaObject.value = whrObj.value;
@@ -224,11 +289,14 @@ export async function setStepInfo(_this, processData) {
                     if (item.name === tblObj.tableName) {
                         item.select_table.cols.map((colObj, colIndex) => {
                             let columnObj = {
-                                name: colObj.col_name,
-                                group: '',
-                                fixed: false,
-                                tblAlies: colObj.table_alias,
-                                colAlies: colObj.col_alias
+                                text: colObj.col_name,
+                                value: {
+                                    name: colObj.col_name,
+                                    group: '',
+                                    fixed: false,
+                                    tblAlies: colObj.table_alias,
+                                    colAlies: colObj.col_alias
+                                }
                             };
                             tableObj.optionColumn.push(cloneDeep(columnObj));
                             tableObj.availableColumn.push(cloneDeep(columnObj));
@@ -256,11 +324,14 @@ export async function setStepInfo(_this, processData) {
 
                     allColumn.map(function(obj, index) {
                         let columnObj = {
-                            name: obj,
-                            group: tblObj.tableName,
-                            fixed: false,
-                            tblAlies: tblObj.aliesTableName,
-                            colAlies: obj + _this.$store.state.aliesCounter++
+                            text: obj,
+                            value: {
+                                name: obj,
+                                group: tblObj.tableName,
+                                fixed: false,
+                                tblAlies: tblObj.aliesTableName,
+                                colAlies: ''
+                            }
                         };
                         tableObj.optionColumn.push(cloneDeep(columnObj));
                         tableObj.availableColumn.push(cloneDeep(columnObj));
@@ -279,7 +350,7 @@ export async function setStepInfo(_this, processData) {
                 let paramater = { Parameter_name: "", Type: "", Is_output: "", value: "" };
                 paramater.Parameter_name = paramObj.name;
                 paramater.Type = paramObj.dataType;
-                paramater.Is_output = paramObj.type == "OUT" ? true : false;
+                paramater.Is_output = paramObj.type;
                 paramater.value = paramObj.value;
                 tableObj.storedProcedure.params.push(paramater);
             });

@@ -5,6 +5,7 @@
         <v-card tile style="height:650px">
           <!-- ******************************Start ************************************* -->
           <v-toolbar card dark color="primary" app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
+            <v-toolbar-title>Archival Step</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-title>Close</v-toolbar-title>
             <v-btn icon @click.native="closeDialog" dark>
@@ -47,7 +48,7 @@
       <!-- ********** tableObj is used to pass data(props) to table-joins vue &
           save-data is used to emit data from table-joins vue ************* -->
 
-      <table-joins @save-data="saveData" :tableObj="tableObj" v-on:close="dialog2=false"></table-joins>
+      <archive-joins @save-data="saveData" :isDrivar="isDrivar" :tableObj="tableObj" v-on:close="dialog2=false"></archive-joins>
 
     </v-dialog>
     <v-dialog v-model="processDoc" max-width="60%" max-height="50%">
@@ -62,7 +63,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
 import uniq from 'lodash/uniq'
 import tableData from '../data/table-selection';
-import tableJoins from './tableJoins.vue'
+import archiveJoins from './archiveJoins.vue'
 import processName from '../processName.vue'
 // import criteria from './criteria.vue'
 import tableRelationship from './tableRelationShip.vue';
@@ -72,12 +73,13 @@ import {getStepData} from '../methods/stepInputData'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
-    'table-joins': tableJoins,
+    'archive-joins': archiveJoins,
     'table-relationship': tableRelationship,
     'process-name':processName
   },
   data() {
     return {
+      isDrivar:false,
       drawer: null,
       dataStr: _def.dataStr,
       dialog2: false,
@@ -115,19 +117,36 @@ export default {
     },
     updateJoin(object) {
       let _this = this;
-      _this.getMergeColumn(object);
+      if(object.tableName == _this.tableObj.relationship.driverTable.name)
+        _this.isDrivar = true;
+      else
+        _this.isDrivar = false;
+      _this.getCriteriaData(object);
       _this.dialog2 = true;
     },
-    async getMergeColumn(object){
+    async getCriteriaData(object){
       let _this = this;
-      // debugger;
-       this.tableObj.archive.optionColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == object.tableName});
-      // console.log("relationshipArray"+JSON.stringify(_this.tableObj.relationshipArray));
-       _this.tableObj.relationshipArray.map(function(rlnObj, rlnIndex){
+      
+       this.tableObj.archive.optionColumn = filter(_this.tableObj.optionColumn, function(o){
+         if(o.value)
+           return o.value.group == object.tableName
+         });
+
+         if(_this.isDrivar)
+            _this.tableObj.criteriaArray = _this.tableObj.archive.where;
+
+         else{
+            for(var rlnIndex = 0; rlnIndex < _this.tableObj.relationshipArray.length;rlnIndex++){
+         let rlnObj = _this.tableObj.relationshipArray[rlnIndex];
          if(rlnObj.where && rlnObj.where[0].column && rlnObj.where[0].column.group == object.tableName){
-           _this.tableObj.criteriaArray = rlnObj.where;
+           _this.tableObj.criteriaArray = cloneDeep(rlnObj.where);
+           break;
+         }else{
+           _this.tableObj.criteriaArray = cloneDeep(tableData.criteriaArray);
          }
-       });
+       }
+      }
+       
     //   console.log("optionColumn"+JSON.stringify(this.tableObj.archive.optionColumn));
     },
     updateTableObj(arr) {

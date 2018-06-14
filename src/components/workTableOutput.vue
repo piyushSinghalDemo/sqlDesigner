@@ -1,10 +1,5 @@
 <template>
   <v-container grid-list-md>
-    <!-- <ul>
-      <li @click.stop="switchScreen(1)" :class="{chevron:true}">Table Relationship</li>
-      <li @click.stop="switchScreen(2)" :class="{chevron:true}">Criteria</li>
-      <li @click.stop="switchScreen(3)" :class="{chevron:true,chevron_active:true}">Worktable Output</li>
-    </ul> -->
     <div id="createScroll2" class="createScroll2" style="width:100%">
       <div id="droppable2" class="">
         <v-container grid-list-md>
@@ -28,14 +23,14 @@
                       <h3 class="panel-title">Available Column</h3>
                     </v-flex>
                     <v-flex xs4>
-                      <input type="text" class="srch-text" v-model="SearchTable" placeholder="Search..." />
+                      <input type="text" class="srch-text" v-model="SearchTable" @change="filterColumn" placeholder="Search..." />
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
-                  <draggable element="span" v-model="tableObj.availableColumn" :options="dragOptions" :move="onMove" @start="isDragging=true"
+                  <draggable element="span" v-model="worktableColumn"  :options="dragOptions" :move="onMove" @start="isDragging=true"
                     @end="isDragging=false" @change="updateGroup($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.availableColumn, SearchTable)"
+                      <li class="list-group-item" v-if="element.name" v-for="(element, index) in worktableColumn"
                         :key="index">
                         {{element.group}}.{{element.name}}
                       </li>
@@ -52,13 +47,13 @@
                       <h3 class="panel-title">Selected Column</h3>
                     </v-flex>
                     <v-flex xs4>
-                      <input type="text" class="srch-text" v-model="selectedSearch" placeholder="Search..." />
+                      <input type="text" class="srch-text" @change="filterSelColumn" v-model="selectedSearch" placeholder="Search..." />
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
-                  <draggable element="span" v-model="tableObj.selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
+                  <draggable element="span" v-model="selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                      <li class="list-group-item" v-for="(element, index) in filterBy(tableObj.selectedColumns, selectedSearch)" :key="index">
+                      <li class="list-group-item" v-for="(element, index) in selectedColumns" :key="index">
                         {{element.group}}.{{element.name}}
                       </li>
                     </transition-group>
@@ -79,42 +74,36 @@
         <v-btn :loading="saveData" class="next" @click.stop="updateStep" color="primary">Save</v-btn>
       </v-flex>
     </v-layout>
+    <v-dialog v-model="aliesPanel" max-width="25%">
+      <column-alies @save-alies="saveColumnAlies" :column="column" v-on:close="aliesPanel=false"></column-alies>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
 import cloneDeep from 'lodash/cloneDeep';
+import differenceBy from 'lodash/differenceBy';
 import sortBy from 'lodash/sortBy';
+import findIndex from 'lodash/findIndex';
+import columnAlies from './columnAlies.vue'
 export default {
      components: {
           draggable,
+          'column-alies':columnAlies
      },
    data(){
     return {
+        column:{},
+        aliesPanel:false,
         SearchTable:"",
         isDragging: false,
         selectedSearch:"",
         saveData:false,
-        // availableColumn:[],
+        worktableColumn:[],
+        selectedColumns:[],
     }},
-    props: ['tableObj'],
-    // created(){
-    //   this.availableColumn = cloneDeep(this.tableObj.optionColumn);
-    // },
-    watch:{
-      // tableObj(newVAl){
-      //   debugger;
-      //   availableColumn = cloneDeep(newVAl.optionColumn);
-      // }
-    //      tableObj: {
-    //     handler: function (value, mutation) {
-    //         if(!this.tableObj.selectedColumns)
-    //           this.availableColumn = cloneDeep(value.optionColumn);
-    //     },
-    //     deep: true
-    // }
-    },
+    props: ['tableObj','stepper'],
      computed: {
         dragOptions () {
         return  {
@@ -123,8 +112,33 @@ export default {
             ghostClass: 'ghost'
          };
         },
+
      },
+    watch: {
+      stepper :{
+        handler(newVal, oldVal) {
+          if(newVal == 3)
+            this.worktableColumn = cloneDeep(this.tableObj.availableColumn);
+        }
+      },
+    },
     methods: {
+      filterColumn(){
+            let array = this.filterBy(this.tableObj.availableColumn, this.SearchTable);
+            this.worktableColumn = cloneDeep(array);
+      },
+      filterSelColumn(){
+          // this.selectedColumns = this.filterBy(this.selectedColumns, this.selectedSearch);
+            // debugger;
+          let array = this.filterBy(this.tableObj.selectedColumns, this.selectedSearch);
+            this.selectedColumns = cloneDeep(array);
+      },
+      saveColumnAlies(columnObj){
+        let _this = this;
+        let index = findIndex(_this.tableObj.selectedColumns,{'group':columnObj, 'name':columnObj.name});
+        _this.tableObj.selectedColumns[index] = columnObj; 
+        _this.aliesPanel = false;
+      },
       updateStep(){
         let _this = this;
         _this.saveData = true;
@@ -141,14 +155,36 @@ export default {
       return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
     }, 
      updateGroup(event){
+       let _this = this;
+       if(event.added)
+        _this.tableObj.availableColumn.push(event.added.element);
+       if(event.removed){
+         let index = _this.tableObj.availableColumn.findIndex((item, index)=>{
+           return (item.name == event.removed.element.name && item.group == event.removed.element.group)
+         });
+         _this.tableObj.availableColumn.splice(index, 1);
+       }
+
       this.orderList();
     },
     updateGroup2(event){
+       let _this = this;
+       if(event.added){
+        _this.tableObj.selectedColumns.push(event.added.element);
+         this.column = event.added.element;
+         this.aliesPanel = true;
+       }
+       if(event.removed){
+         let index = _this.tableObj.selectedColumns.findIndex((item, index)=>{
+           return (item.name == event.removed.element.name && item.group == event.removed.element.group);
+         });
+         _this.tableObj.selectedColumns.splice(index, 1);
+       }
       this.orderselectedColumns();
     },
      orderList () {
        let _this = this;
-      _this.tableObj.availableColumn = sortBy(_this.tableObj.availableColumn, ['group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
+      _this.worktableColumn = sortBy(_this.worktableColumn, ['group'])//this.optionColumn.sort((one,two) =>{return one.order-two.order; })
     },
     orderselectedColumns () {
       let _this = this;

@@ -13,7 +13,7 @@
           </v-flex>
           <v-flex xs6>
             <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-           label="Select Driver Table"   item-text="name" item-value="name + group" autocomplete></v-select>
+           label="Select Driver Table" item-text="name" item-value="name + group" autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
           </v-flex>
           <v-flex xs12>
@@ -142,6 +142,7 @@ export default {
         },
         addDriverTable(){
           let _this = this;
+        
           let obj = {'tableName':cloneDeep(_this.tableObj.relationship.driverTable.name),
                    'aliesTableName':cloneDeep(_this.tableObj.relationship.driverTable.name + _this.$store.state.aliesCounter++),
                    'group':'Driver Table', 'stepId':_this.tableObj.relationship.driverTable.stepId}
@@ -149,6 +150,7 @@ export default {
            if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))        
             _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
             _this.isDriverTable = true;
+            // _this.tableObj.relationship.driverTable.columns
             if(_this.tableObj.relationship.driverTable.stepId == 'Previous Steps'){
               obj.columns = _this.tableObj.relationship.driverTable.columns;
               _this.getPrevStepCol(cloneDeep(obj));
@@ -203,11 +205,6 @@ export default {
           "table_count":userData.table_count,
           "client_id":userData.client_id
         }
-        // this.$http.post(url, inputJson, {
-        //   headers: {
-        //     'Content-Type': 'application/json'
-        //   }
-        // }).then(response => {
         postToServer(this, url, inputJson).then(response=>{  
           // _this.tableObj.allDbTables= [];
           let tableList = response.table_name_list;
@@ -221,7 +218,7 @@ export default {
           this.loading = false;
          // debugger;
           _this.tableObj.allDbTables = dummyTableList;
-          console.log("Response from all tables" + JSON.stringify(response));
+          // console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
           this.loading = false;
@@ -230,7 +227,6 @@ export default {
         }
       },
       queryTableSelections(value) {
-
         let _this = this;
        // this search will work only on every third character
         if (value && value.length % 3 !== 0) {
@@ -268,11 +264,6 @@ export default {
           "table_count":userData.table_count,
           "client_id":userData.client_id
         }
-        // this.$http.post(url, inputJson, {
-        //   headers: {
-        //     'Content-Type': 'application/json'
-        //   }
-        // }).then(response => {
         postToServer(this, url, inputJson).then(response=>{
           // _this.tableObj.allArchiveTables= [];
           let tableList = response.table_name_list;
@@ -286,7 +277,7 @@ export default {
           this.loading = false;
          // debugger;
           _this.tableObj.allArchiveTables = dummyTableList;
-          console.log("Response from all tables" + JSON.stringify(response));
+          // console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
           this.loading = false;
@@ -298,7 +289,7 @@ export default {
       // alert("Click Working");
       let validFlag=true;
       let _this = this;
-      console.log("Demo "+JSON.stringify(_this.demo));
+      // console.log("Demo "+JSON.stringify(_this.demo));
       _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
         if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
            validFlag = false;
@@ -330,12 +321,20 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = object.columns;
           allColumn.map(function(obj, index){
-             let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++};  
-            // obj.group = object.tableName;
-            // obj.tblAlies = object.aliesTableName;
+             let columnObj ={}; 
+             if(obj.colAlies)
+             columnObj = { text:obj.colAlies,value:{name: obj.colAlies, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''}};
+             else
+             columnObj = {text:obj.name, value:{name: obj.name, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''}};                    
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+            //For orderBy need saprate driver table column
+            if(object.group == 'Driver Table'){
+              columnObj.value.decending = false;
+              _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
+            }
           });
          _this.tableObj.is_drv_table = true;  
     },
@@ -351,11 +350,6 @@ export default {
                "table_name": tableObject.tableName,
                "client_id":userData.client_id
             }
-      // _this.$http.post(url, inputJson, {
-      // headers: {
-      //   'Content-Type': 'application/json'
-      // }
-      //   }).then(response => {
         postToServer(this, url, inputJson).then(response=>{  
           if(_this.tableObj.optionColumn.length){
             _this.tableObj.optionColumn.push({ divider: true });
@@ -364,10 +358,15 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = response;
           allColumn.map(function(obj, index){
-             let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
+             let columnObj = {text:obj, value:{name: obj, group: tableObject.tableName, fixed: false, 
+                               tblAlies:tableObject.aliesTableName, colAlies: ''}};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+            
+            if(tableObject.group == 'Driver Table'){
+              columnObj.value.decending = false;
+            _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
+            }
           });
           // console.log("Response from all tables"+JSON.stringify(response));
         },response => {}).catch(e => {

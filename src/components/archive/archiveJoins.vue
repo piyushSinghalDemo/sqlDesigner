@@ -5,7 +5,7 @@
     </v-card-title>
     <v-card-text>
       <v-form>
-        <v-layout row wrap>
+        <v-layout row wrap v-show="!isDrivar">
           <v-flex style="margin-right:20px;">
             <b>From Table</b>
           </v-flex>
@@ -16,21 +16,21 @@
             <b>To Table</b>
           </v-flex>
         </v-layout>
-        <v-layout row wrap>
+        <v-layout row wrap v-show="!isDrivar">
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
-              single-line item-text="tableName" item-value="tableName + aliesTableName"></v-select>
+              single-line item-text="tableName" item-value="tableName + aliesTableName" clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
-            <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line></v-select>
+            <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" label="To Table" item-text="tableName"
-              item-value="tableName + aliesTableName" single-line></v-select>
+              item-value="tableName + aliesTableName" single-line clearable></v-select>
           </v-flex>
         </v-layout>
         <v-expansion-panel>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content v-show="!isDrivar">
             <div slot="header">
               Define Joins
             </div>
@@ -57,18 +57,18 @@
                 <v-layout row wrap v-for="(column, index) in tableObj.colArray" :key="index">
                   <v-flex xs4 style="margin-right:20px;">
                     <!-- *********************************** Group Column ********************************************* -->
-                    <v-select label="From Column" :items="tableObj.optionColumn" v-model="column.fromColumn" item-text="name" single-line item-value="name + colAlies"
-                      autocomplete></v-select>
+                    <v-select label="From Column" :items="tableObj.optionColumn" v-model="column.fromColumn" single-line
+                      autocomplete clearable></v-select>
                     <!-- ********************************************************************************************** -->
                   </v-flex>
                   <v-flex xs2 style="margin-right:20px;">
-                    <v-select :items="filterArray" v-model="column.operator" label="Operator" single-line></v-select>
+                    <v-select :items="filterArray" v-model="column.operator" label="Operator" single-line clearable></v-select>
                   </v-flex>
                   <v-flex xs4 style="margin-right:20px;">
                     <v-layout>
                       <v-flex>
-                        <v-select label="To Column" :items="tableObj.optionColumn" v-model="column.toColumn" item-text="name" single-line item-value="name + colAlies"
-                          autocomplete></v-select>
+                        <v-select label="To Column" :items="tableObj.optionColumn" v-model="column.toColumn" single-line
+                          autocomplete clearable></v-select>
                       </v-flex>
                     </v-layout>
                   </v-flex>
@@ -76,6 +76,7 @@
               </v-card-text>
             </v-card>
           </v-expansion-panel-content>
+            <!-- Driver VAlue:{{isDrivar}} -->
           <v-expansion-panel-content>
             <div slot="header">
               Define Criteria
@@ -91,7 +92,8 @@
                       <v-select clearable :items="functionArray" single-line label="Select Function" v-model="obj.function"></v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <v-select label="Select Column" :items="tableObj.merge.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
+                      <v-select label="Select Column" :items="tableObj.archive.optionColumn" v-model="obj.column" single-line
+                          autocomplete clearable></v-select>
                     </v-flex>
                     <v-flex xs3>
                       <v-select clearable :items="filterArray" single-line label="Select Operator" v-model="obj.relOperator">
@@ -111,8 +113,8 @@
                           <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                         </v-date-picker>
                       </v-menu>
-                      <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-                        item-text="name" item-value="name + tblAlies"></v-select>
+                      <v-select :items="tableObj.archive.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
+                         clearable></v-select>
                     </v-flex>
                     <v-flex xs3>
                       <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
@@ -132,34 +134,24 @@
               </v-card-text>
             </v-card>
           </v-expansion-panel-content>
-
-
-          <v-expansion-panel-content>
+          <!-- ******************************************Order By************************************************ -->
+          <v-expansion-panel-content v-show="isDrivar">
             <div slot="header">
-              Define Column
+              Define OrderBy
             </div>
             <v-card>
               <v-card-text>
                 <v-container grid-list-md>
-                  <!-- <v-layout row wrap>
-                    <v-flex>
-                      <v-select :items="tableObj.relationship.selectedTableArray" v-model="selectedTable" item-text="tableName" @change="getColumn"
-                        label="Select Table" item-value="tableName" return-object>
-                      </v-select>
-                    </v-flex>
-                  </v-layout> -->
-                  <div class="row clearfix">
-                    <div class="col-sm-6">
-                      <label style="font-size:20px;cursor:pointer">
-                        <input type="checkbox" v-model="tableObj.merge.selectAll" style="vertical-align: baseline;margin-right: 11px;">
-                        Select All</label>
-                    </div>
-                    <div class="col-sm-6">
-                      <label style="font-size:20px;cursor:pointer">
-                        <input type="checkbox" v-model="tableObj.merge.distinct" style="vertical-align: baseline;margin-right: 11px;">Distinct</label>
-                    </div>
-                  </div>
-                  <!-- *************** Add Column *****************   -->
+                  <!-- <div class="row clearfix">
+                          <div class="col-sm-6">
+                            <label style="font-size:20px;cursor:pointer">
+                              <input type="checkbox" v-model="tableObj.merge.selectAll" style="vertical-align: baseline;margin-right: 11px;"> Select All</label>
+                          </div>
+                          <div class="col-sm-6">
+                            <label style="font-size:20px;cursor:pointer">
+                              <input type="checkbox" v-model="tableObj.merge.distinct" style="vertical-align: baseline;margin-right: 11px;">Distinct</label>
+                          </div>
+                        </div> -->
                   <v-layout row wrap>
                     <v-flex xs6>
                       <v-card>
@@ -173,12 +165,13 @@
                               <i class="fa fa-search srch-icon"></i>
                             </v-flex>
                           </v-layout>
-                          <!-- availableColumn: {{tableObj.merge}} -->
-                          <draggable element="span" v-model="tableObj.merge.optionColumn" :options="dragOptions" :move="onMove" @start="isDragging=true" @end="isDragging=false"
-                            @change="updateGroup($event)">
+                          <!-- {{tableObj.relationship}} -->
+                          <draggable element="span" v-model="tableObj.archive.driverTable.columns" :options="dragOptions" :move="onMove" @start="isDragging=true"
+                            @end="isDragging=false" @change="updateGroup($event)">
                             <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                              <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.merge.optionColumn, SearchTable)" :key="index">
-                                {{element.group}}.{{element.name}}
+                              <li class="list-group-item" v-if="element.name" v-for="(element, index) in filterBy(tableObj.archive.driverTable.columns, SearchTable)"
+                                :key="index">
+                                {{element.name}}
                               </li>
                             </transition-group>
                           </draggable>
@@ -197,10 +190,19 @@
                               <i class="fa fa-search srch-icon"></i>
                             </v-flex>
                           </v-layout>
-                          <draggable element="span" v-model="tableObj.merge.selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
+                          <draggable element="span" v-model="tableObj.archive.driverTable.selectedColumns" :options="dragOptions" :move="onMove" @change="updateGroup2($event)">
                             <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
-                              <li class="list-group-item" v-for="(element, index) in filterBy(tableObj.merge.selectedColumns, selectedSearch)" :key="index">
-                                {{element.group}}.{{element.name}}
+                              <li class="list-group-item" v-for="(element, index) in filterBy(tableObj.archive.driverTable.selectedColumns, selectedSearch)"
+                                :key="index">
+                                <v-layout row align-center>
+                                  <v-flex xs5>{{element.name}}</v-flex>
+                                  <v-flex xs7 style="padding:0px;">
+                                    <!-- <v-checkbox label="Decending" style="margin:0px;" hide-details v-model="element.decending">
+                                    </v-checkbox> -->
+                                    <v-btn depressed  medium v-if="!element.decending" @click="element.decending = !element.decending" style="margin:0px;">Ascending</v-btn>
+                                    <v-btn depressed  medium v-if="element.decending" @click="element.decending = !element.decending" style="margin:0px;">Decending</v-btn>
+                                  </v-flex>
+                                </v-layout>
                               </li>
                             </transition-group>
                           </draggable>
@@ -213,33 +215,31 @@
               </v-card-text>
             </v-card>
           </v-expansion-panel-content>
+          <!-- ****************************************END **************************************************** -->
         </v-expansion-panel>
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-btn @click.stop="savedata"> submit </v-btn>
+      <v-btn @click.stop="saveArchiveData"> submit </v-btn>
       <v-btn v-on:click="$emit('close')"> close</v-btn>
     </v-card-actions>
-    <v-dialog v-model="aliesPanel" max-width="25%">
-      <column-alies @save-alies="saveColumnAlies" :column="column" v-on:close="aliesPanel=false"></column-alies>
-    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import cloneDeep from 'lodash/cloneDeep';
-import findIndex from 'lodash/findIndex';
 import draggable from 'vuedraggable'
-import filter from 'lodash/filter';
-import columnAlies from '../columnAlies.vue';
 export default {
-    //  components: {
-    //       'column-alies':columnAlies
-    //  }, 
      data() {
     return {
-          aliesPanel:false,
-          column:{},
+          customFilter (item, queryText, itemText) {
+          const hasValue = val => val != null ? val : ''
+          const text = hasValue(item.name)
+          const query = hasValue(queryText)
+          return text.toString()
+            .toLowerCase()
+            .indexOf(query.toString().toLowerCase()) > -1
+          },
           joinType:["inner join","left join","right join","full join"],
           filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
                   "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
@@ -247,87 +247,79 @@ export default {
       closebrsisArray:[')','))',')))'],
       functionArray:['count','sum'],
       valueTypeArray:['value','date','field'],
-      SearchTable:"",
-        isDragging: false,
-        selectedSearch:"",
-        selectedTable:"",
-        availableColumn:[],
-        selectedColumns:[],             
+      selectedSearch:"",
+      SearchTable:""             
     }},
-   props: ['tableObj'],
+   props: ['tableObj','isDrivar'],
    components: {
           draggable,
-          'column-alies':columnAlies
      },
-     computed: {
-        dragOptions () {
-        return  {
+   computed:{
+     dragOptions () {
+        return {
             animation: 0,
             group: 'description',
             ghostClass: 'ghost'
          };
         },
-     },
+   },
    methods: {
-     saveColumnAlies(columnObj){
-        let _this = this;
-        let index = findIndex(_this.tableObj.merge.selectedColumns,{'group':columnObj, 'name':columnObj.name});
-        _this.tableObj.merge.selectedColumns[index] = columnObj; 
-        _this.aliesPanel = false;
-        // console.log("Selected Index "+JSON.stringify(_this.tableObj.selectedColumns));
+      updateGroup(event){
+        // this.orderList();
       },
-     getColumn(value){
-       let _this = this;
-       this.availableColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == value.tableName});
-     },
-    addColumn(){
-      let _this = this;
-      _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
-    },
-    savedata(){
+      updateGroup2(event){
+        if(event.added){
+          this.column = event.added.element;
+          this.aliesPanel = true;
+        }
+        // this.orderselectedColumns();
+      },
+      onMove ({relatedContext, draggedContext}) {
+        const relatedElement = relatedContext.element;
+        const draggedElement = draggedContext.element;
+        return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
+      },
+      addColumn(){
+        let _this = this;
+        // debugger;
+        // alert("In add Column");
+        _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
+      },
+    saveArchiveData(){
       let arrayIndex = -1;
       let _this = this;
+      // alert("In save method");
       // _this.tableObj = data.tableObj;
-      // _this.tableObj.relationshipArray.map(function(obj, index){
-      //     if(obj.relationship.fromTable == _this.tableObj.relationship.fromTable){
-      //       arrayIndex = index;
-      //     }
-      // });
-    _this.tableObj.relationshipArray.map(function(obj, index){
+      if(_this.isDrivar){
+         _this.tableObj.archive.where=_this.tableObj.criteriaArray;
+       }else{
+         _this.tableObj.relationshipArray.map(function(obj, index){
                   if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
                  obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
                arrayIndex = index;
              }
          });
-      if(_this.tableObj.relationship.fromTable && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
-        _this.tableObj.relationship.jfrom_drv_table = true;
-      }else{
-        _this.tableObj.relationship.jfrom_drv_table = false;
-      }
-      if(_this.tableObj.relationship.toTable && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
-        _this.tableObj.relationship.jto_drv_table = true;  
-      }else{
-        _this.tableObj.relationship.jto_drv_table = false;  
-      }
-        // debugger;
-        if(!_this.tableObj.selectedColumns.length && _this.tableObj.merge.selectedColumns.length)
-          _this.tableObj.selectedColumns = _this.tableObj.merge.selectedColumns
-          
+         //debugger;
+         if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
+           _this.tableObj.relationship.jfrom_drv_table = true;
+         }else{
+           _this.tableObj.relationship.jfrom_drv_table = false;
+         }
+         if(_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
+           _this.tableObj.relationship.jto_drv_table = true;  
+         }else{
+           _this.tableObj.relationship.jto_drv_table = false;  
+         }
       let object = {'relationship':_this.tableObj.relationship,
-                    'is_drv_table':_this.tableObj.merge.selectedTable.stepId=="Database Table"?false:true,
-                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 
-                    'workTableOutput':_this.tableObj.merge.selectedColumns,'distinct':_this.tableObj.merge.distinct,
-                    'selectAll':_this.tableObj.merge.selectAll
-                    };
-      //  _this.tableObj.relationshipArray.push(cloneDeep(object));
-      //   _this.$toaster.success('Relationship added successfully');
-      if(arrayIndex >= 0){
-        _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
-        _this.$toaster.info('Relationship Updated successfully');
-      }else{
-        _this.tableObj.relationshipArray.push(cloneDeep(object));
-        _this.$toaster.success('Relationship added successfully');
-      }
+                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray};
+          if(arrayIndex >= 0){
+            _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
+            _this.$toaster.info('Relationship Updated successfully');
+          }else{
+            _this.tableObj.relationshipArray.push(cloneDeep(object));
+            _this.$toaster.success('Relationship added successfully');
+          }
+       }//end of else(not driver table)
       this.resetForm();
       this.$emit('save-data', _this.tableObj)
     },
@@ -366,26 +358,17 @@ export default {
       _this.tableObj.criteriaArray[length-1].showLogicalOperator = true;
       _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject)); 
     },
-    onMove ({relatedContext, draggedContext}) {
-      const relatedElement = relatedContext.element;
-      const draggedElement = draggedContext.element;
-      return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
-    }, 
-     updateGroup(event){
-      // this.orderList();
-    },
-    updateGroup2(event){
-      if(event.added){
-        this.column = event.added.element;
-        this.aliesPanel = true;
-      }
-      // this.orderselectedColumns();
-    }
-
    }
 }
 </script>
 <style scoped>
+/* .radio label, .checkbox label {
+  padding: 0px !important;
+} */
+/* .input-group__details{
+  min-height: 0px !important;
+
+} */
 .icn-css{
     background: red;
     color: white;
@@ -407,8 +390,11 @@ export default {
   .ft-30 {
    font-size: 30px;
 }
-
-/* **************************************** */
+/* ************************ For drag and drop *************************************** */
+.ht-215{
+  height: 215px;
+  overflow: auto;
+}
 .srch-text{
   border-bottom: 01px solid cadetblue;
   width: 99%;
@@ -443,10 +429,6 @@ export default {
 
 .list-group-item i{
   cursor: pointer;
-}
-.ht-215{
-  height: 215px;
-  overflow: auto;
 }
 </style>
 

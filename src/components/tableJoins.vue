@@ -7,9 +7,6 @@
               <v-icon large>close</v-icon>
             </v-btn>  
           </v-toolbar>
-          <!-- <v-card-title>
-            Select Data
-          </v-card-title> -->
           <v-card-text>
              <v-form>
                <v-layout row wrap>
@@ -19,16 +16,16 @@
                </v-layout>
                <v-layout row wrap>
                <v-flex style="margin-right:20px;">
-                  <v-select  :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" 
-                    label="From Table" single-line item-text="tableName" item-value="tableName + aliesTableName"></v-select>
-               </v-flex>
-               <v-flex style="margin-right:20px;">
-                  <v-select  :items="joinType"  v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line ></v-select>
-               </v-flex>
-               <v-flex style="margin-right:20px;">
-                   <v-select  :items="tableObj.relationship.selectedTableArray"  v-model="tableObj.relationship.toTable" 
-                      label="To Table" item-text="tableName" item-value="tableName + aliesTableName" single-line></v-select>
-               </v-flex>
+            <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
+              single-line item-text="tableName" item-value="tableName + aliesTableName" clearable></v-select>
+          </v-flex>
+          <v-flex style="margin-right:20px;">
+            <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line clearable></v-select>
+          </v-flex>
+          <v-flex style="margin-right:20px;">
+            <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" label="To Table" item-text="tableName"
+              item-value="tableName + aliesTableName" single-line clearable></v-select>
+          </v-flex>
                </v-layout>
                <v-layout row wrap>
                <v-flex style="height:40px;padding-top:20px;margin-right:20px;"><b>From Column</b></v-flex>  
@@ -49,8 +46,8 @@
                <v-layout row wrap v-for="(column, index) in tableObj.colArray" :key="index">
                <v-flex xs4 style="margin-right:20px;">
                  <!-- *********************************** Group Column ********************************************* -->
-                   <v-select  label="From Column" :items="tableObj.optionColumn"  v-model="column.fromColumn" item-text="name" 
-                     single-line :filter="customFilter" return-object autocomplete></v-select>     
+                   <v-select  label="From Column" :items="tableObj.optionColumn"  v-model="column.fromColumn"
+                     single-line autocomplete></v-select>     
                  <!-- ********************************************************************************************** -->
                </v-flex>
                <v-flex xs2 style="margin-right:20px;">
@@ -59,7 +56,7 @@
                <v-flex xs4 style="margin-right:20px;">
                   <v-layout>
                     <v-flex>
-                      <v-select  label="To Column" :items="tableObj.optionColumn"  v-model="column.toColumn" item-text="name" 
+                      <v-select  label="To Column" :items="tableObj.optionColumn"  v-model="column.toColumn" 
                         single-line autocomplete></v-select> 
                     </v-flex>
                   </v-layout>

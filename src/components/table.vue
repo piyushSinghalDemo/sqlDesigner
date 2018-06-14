@@ -5,6 +5,7 @@
         <v-card tile style="height:650px">
           <!-- ******************************Start ************************************* -->
           <v-toolbar card dark color="primary" app :clipped-left="$vuetify.breakpoint.mdAndUp" fixed>
+            <v-toolbar-title>Selection Step</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-title>Close</v-toolbar-title>
             <v-btn icon @click.native="closeDialog" dark>
@@ -32,29 +33,11 @@
                   <add-criteria @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px"></add-criteria>   
                 </v-stepper-content>
                 <v-stepper-content step="3">
-                   <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj" style="min-height:430px">
+                   <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :stepper="stepper" :tableObj="tableObj" style="min-height:430px">
                    </work-table-output>
                 </v-stepper-content>
                 </v-stepper-items>
-              </v-stepper>    
-                <!-- <v-flex d-flex xs12>
-                  <div class="form-views" v-show="progressbar == 1" style="width:100%;margin-left:3%;height:500px">
-
-                    <table-relationship @update-object='updateTableObj' @update-join="updateJoin" :tableObj="tableObj"></table-relationship>
-
-                  </div>
-                  <div class="form-views" v-show="progressbar == 2" style="width:100%;margin-left:3%;height:500px">
-
-                    <add-criteria @update-object='updateTableObj' :tableObj="tableObj"></add-criteria>
-
-                  </div>
-                  <div class="form-views" v-show="progressbar == 3" style="width:100%;margin-left:3%;height:500px">
-
-                    <work-table-output @update-step='saveDialog' @update-object='updateTableObj' :tableObj="tableObj"></work-table-output>
-
-                  </div>
-                </v-flex> -->
-                
+              </v-stepper>                    
               </v-layout>
             </v-container>
           </v-content>
@@ -236,6 +219,8 @@ export default {
           let CriteriaObject = {
           'alias': obj.column.tblAlies, //table alies
           'column_name': obj.column.name, //column alies
+          'colAlies' : obj.column.colAlies, //column alies
+          'table_name':obj.column.group,
           'operator': _this.getjoinOperator(obj.relOperator), //relational operator
           'value': obj.value, //may be value date or column
           'operand': obj.logOperator ? 'AND' : 'OR',
@@ -243,7 +228,9 @@ export default {
           'post_braces': obj.closebrsis,
           'is_col_compare': obj.valueType == 'field' ? true : false,
           'with_alias': obj.field.colAlies,
-          'with_col': obj.field.name
+          'with_col': obj.field.name,
+          'with_table' : obj.field.group,
+          'with_colAlies' : obj.field.colAlies,
         }
         dbStepInput.where.push(cloneDeep(CriteriaObject));
         }
@@ -305,7 +292,7 @@ export default {
       var operatorData = flowchart$.flowchart('getOperatorData', _this.$store.state.currentStep);
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-      console.log("flowchartData "+JSON.stringify(flowchartData));
+      // console.log("flowchartData "+JSON.stringify(flowchartData));
       let inputParam = this.getSelectionData();
       inputParam.top = operatorData.top+"";
       inputParam.left = operatorData.left+"";
@@ -366,7 +353,7 @@ export default {
         addData.map(linkObj=>{
         _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
         })
-        console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
+        // console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));
         _this.$toaster.success('Data save successfully')
         this.$store.state.dialog = false;
       }, response => {

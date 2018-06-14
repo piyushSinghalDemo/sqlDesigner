@@ -113,3 +113,14 @@ function getjoinOperator(sign) {
     };
     return operatorArray[sign];
 }
+
+function setOperand(param) {
+    let operandArray = {
+        'AND': true,
+        'OR': false
+    }
+    if (param)
+        return operandArray[param]
+    else
+        return false;
+}

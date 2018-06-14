@@ -77,5 +77,23 @@ export default {
     },
     archive: {
         optionColumn: [],
+        driverTable: {
+            columns: [],
+            selectedColumns: [],
+        },
+        where: [{
+            openbrsis: '',
+            function: '',
+            column: '',
+            relOperator: '',
+            valueType: '',
+            value: '',
+            closebrsis: '',
+            logOperator: true,
+            date: null,
+            menu: false,
+            modal: false,
+            field: '',
+        }]
     }
 }
