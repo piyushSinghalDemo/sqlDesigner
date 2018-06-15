@@ -247,6 +247,7 @@ export async function setStepInfo(_this, processData) {
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
+
         stpObj.where && stpObj.where.map((whrObj, whrIndex) => {
             let criteriaObject = cloneDeep(stepObject.parenthasisobject);
             criteriaObject.openbrsis = whrObj.pre_braces;
@@ -299,7 +300,7 @@ export async function setStepInfo(_this, processData) {
                                 }
                             };
                             tableObj.optionColumn.push(cloneDeep(columnObj));
-                            tableObj.availableColumn.push(cloneDeep(columnObj));
+                            tableObj.availableColumn.push(cloneDeep(columnObj.value));
                         });
                     }
                 }
@@ -334,7 +335,7 @@ export async function setStepInfo(_this, processData) {
                             }
                         };
                         tableObj.optionColumn.push(cloneDeep(columnObj));
-                        tableObj.availableColumn.push(cloneDeep(columnObj));
+                        tableObj.availableColumn.push(cloneDeep(columnObj.value));
                     });
                     _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for data selection
                     // console.log("Response from all tables" + JSON.stringify(response));

@@ -15,8 +15,8 @@
         </v-select>
       </v-flex>
       <v-flex xs2>
-        <!-- {{obj.column}} -->
-        <v-select label="Select Column" cache-items :items="tableObj.optionColumn" v-model="obj.column" autocomplete>
+        <!-- {{tableObj.optionColumn}} -->
+        <v-select label="Select Column" clearable :items="tableObj.optionColumn" v-model="obj.column" autocomplete>
 
         </v-select>
       </v-flex>
@@ -32,7 +32,7 @@
         <v-text-field name="input-1" v-show="obj.valueType == 'value' || obj.valueType == ''" single-line label="Label Text" v-model="obj.value"></v-text-field>
         <calender v-show="obj.valueType == 'date'" @update="setDate($event,index)"></calender>
         <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-          item-text="name" item-value="colAlies" :filter="customFilter" autocomplete></v-select>
+          item-text="name" clearable item-value="colAlies" :filter="customFilter" autocomplete></v-select>
       </v-flex>
       <v-flex xs2>
         <v-select :items="closebrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.closebrsis">

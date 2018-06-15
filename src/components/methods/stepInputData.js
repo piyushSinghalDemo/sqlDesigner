@@ -50,21 +50,23 @@ export function getStepData(_this, tableObj) {
     }
     tableObj.archive.where.map(obj => {
         let temp = cloneDeep(whereObject);
-        temp.post_braces = obj.closebrsis;
-        temp.alias = obj.column.tblAlies; //table alies
-        temp.table_name = obj.column.group;
-        temp.column_name = obj.column.name; //column alies
-        temp.colAlies = obj.column.colAlies; //column alies
-        temp.operator = getjoinOperator(obj.relOperator); //relational operator
-        temp.value = obj.value; //may be value date or column
-        temp.pre_braces = obj.openbrsis;
-        temp.operand = obj.logOperator ? 'AND' : 'OR';
-        temp.is_col_compare = obj.valueType == 'field' ? true : false;
-        temp.with_alias = obj.field.colAlies;
-        temp.with_col = obj.field.name;
-        temp.with_table = obj.field.group;
-        temp.with_colAlies = obj.field.colAlies;
-        DrvTableObj.where.push(cloneDeep(temp));
+        if (obj.column && obj.column.name) {
+            temp.post_braces = obj.closebrsis;
+            temp.alias = obj.column.tblAlies; //table alies
+            temp.table_name = obj.column.group;
+            temp.column_name = obj.column.name; //column alies
+            temp.colAlies = obj.column.colAlies; //column alies
+            temp.operator = getjoinOperator(obj.relOperator); //relational operator
+            temp.value = obj.value; //may be value date or column
+            temp.pre_braces = obj.openbrsis;
+            temp.operand = obj.logOperator ? 'AND' : 'OR';
+            temp.is_col_compare = obj.valueType == 'field' ? true : false;
+            temp.with_alias = obj.field.colAlies;
+            temp.with_col = obj.field.name;
+            temp.with_table = obj.field.group;
+            temp.with_colAlies = obj.field.colAlies;
+            DrvTableObj.where.push(cloneDeep(temp));
+        }
     });
     DrvTableObj.where.length ? DrvTableObj.where[DrvTableObj.where.length - 1].operand = '' : '';
     archiveStepInput.drv_table.push(DrvTableObj);

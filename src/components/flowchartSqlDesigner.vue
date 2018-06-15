@@ -387,29 +387,32 @@ export default {
         let url = config.VALIDATE+'validate_process_definition/true' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         postToServer(this, url, ideInputData).then(response=>{
-          // bottomSheet = true;
-          _this.$store.state.processArray.map((validObj, validIndex)=>{
-            $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
-          });  
-          _this.$toaster.info('Data validated successfully') 
+          if(response.status == "success"){
+
+            _this.$store.state.processArray.map((validObj, validIndex)=>{
+              $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
+            });  
+            _this.$toaster.info('Data validated successfully') 
+          }else if(response.result && response.result.length){
+            _this.logs = response.result;
+            let validatedData = _this.$store.state.processArray;
+            // debugger;
+            response.result.map((step, stepIndex)=>{
+            $flowchart.flowchart('addClassOperator', step.step_id, 'stepError');
+                validatedData = filter(validatedData, function(obj){
+                  if(obj.id != step.step_id){
+                   return obj; 
+                  }
+                });
+            });
+            validatedData.map((validObj, validIndex)=>{
+              $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
+            });
+            _this.bottomSheet = true;
+          }
         },response => {
           if(response.message){
-            // console.log("processArray"+JSON.stringify(_this.$store.state.processArray));
-          _this.logs = response.message;
-          let validatedData = _this.$store.state.processArray;
-          
-          response.message.map((step, stepIndex)=>{
-          $flowchart.flowchart('addClassOperator', step.step_id, 'stepError');
-              validatedData = filter(validatedData, function(obj){
-                if(obj.id != step.step_id){
-                 return obj; 
-                }
-              });
-          });
-          validatedData.map((validObj, validIndex)=>{
-            $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
-          });
-          _this.bottomSheet = true;
+            _this.$toaster.error(response.message);
           }
           else
            _this.$toaster.error('There is some internal error please try again later.')
