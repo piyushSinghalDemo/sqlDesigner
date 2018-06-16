@@ -95,7 +95,7 @@ export async function setStepInfo(_this, processData) {
                         colObj.operator = getjoinOperator(conditionObj.operator); //conditionObj.operator;
                         colArray.push(cloneDeep(colObj));
                     });
-                    // debugger;
+                    // 
                     tableObj.relationship.jto_drv_table = joinObj.jto_drv_table;
                     tableObj.relationship.jfrom_drv_table = joinObj.jfrom_drv_table;
 
@@ -113,7 +113,7 @@ export async function setStepInfo(_this, processData) {
         console.log("List of relations " + JSON.stringify(stpObj.list_of_relations));
         stpObj.list_of_relations && stpObj.list_of_relations.length && stpObj.list_of_relations.map(async(relationObj) => {
             let tempObj = {};
-            // debugger;
+            // 
             relationObj.joins.map(async(joinObj, rlnIndex) => {
                     // debugger
                     let fromTableObj = {},
@@ -286,6 +286,7 @@ export async function setStepInfo(_this, processData) {
                 }
                 let headerObj = { header: tblObj.tableName };
                 tableObj.optionColumn.push(cloneDeep(headerObj));
+
                 for (const item of processData.steps) {
                     if (item.name === tblObj.tableName) {
                         item.select_table.cols.map((colObj, colIndex) => {
@@ -358,7 +359,7 @@ export async function setStepInfo(_this, processData) {
 
             // tableObj.storedProcedure.params = stpObj.params;
         }
-        // debugger;
+        // 
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
         // console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));

@@ -56,7 +56,7 @@ import tableJoins from './tableJoins.vue'
 import processName from '../processName.vue'
 import filter from 'lodash/filter'
 // import criteria from './criteria.vue'
-import tableRelationship from './tableRelationShip.vue';
+import tableRelationship from './mergeTableRelationShip.vue';
 import config from '../../config.json'
 import { post as postToServer  } from '../methods/serverCall'
 import mergeStepData from '../methods/mergeStepInput'

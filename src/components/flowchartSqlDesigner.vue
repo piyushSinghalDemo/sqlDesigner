@@ -387,7 +387,7 @@ export default {
         let url = config.VALIDATE+'validate_process_definition/true' //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         postToServer(this, url, ideInputData).then(response=>{
-          if(response.status == "success"){
+          if(response.status == "SUCCESS"){
 
             _this.$store.state.processArray.map((validObj, validIndex)=>{
               $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
