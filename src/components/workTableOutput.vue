@@ -117,8 +117,10 @@ export default {
     watch: {
       stepper :{
         handler(newVal, oldVal) {
-          if(newVal == 3)
+          if(newVal == 3){
             this.worktableColumn = cloneDeep(this.tableObj.availableColumn);
+            this.selectedColumns = cloneDeep(this.tableObj.selectedColumns);
+          }
         }
       },
     },

@@ -17,14 +17,14 @@
                <v-layout row wrap>
                <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
-              single-line item-text="tableName" item-value="tableName + aliesTableName" clearable></v-select>
+              single-line item-text="tableName" item-value="tableName" return-object clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" label="To Table" item-text="tableName"
-              item-value="tableName + aliesTableName" single-line clearable></v-select>
+              item-value="tableName" return-object single-line clearable></v-select>
           </v-flex>
                </v-layout>
                <v-layout row wrap>
@@ -46,8 +46,8 @@
                <v-layout row wrap v-for="(column, index) in tableObj.colArray" :key="index">
                <v-flex xs4 style="margin-right:20px;">
                  <!-- *********************************** Group Column ********************************************* -->
-                   <v-select  label="From Column" :items="tableObj.optionColumn"  v-model="column.fromColumn"
-                     single-line autocomplete></v-select>     
+                   <v-select  label="From Column" :items="tableObj.optionColumn" item-text="name"  v-model="column.fromColumn"
+                     single-line autocomplete return-object></v-select>     
                  <!-- ********************************************************************************************** -->
                </v-flex>
                <v-flex xs2 style="margin-right:20px;">
@@ -56,8 +56,8 @@
                <v-flex xs4 style="margin-right:20px;">
                   <v-layout>
                     <v-flex>
-                      <v-select  label="To Column" :items="tableObj.optionColumn"  v-model="column.toColumn" 
-                        single-line autocomplete></v-select> 
+                      <v-select  label="To Column" :items="tableObj.optionColumn" item-text="name" v-model="column.toColumn" 
+                        single-line autocomplete return-object></v-select> 
                     </v-flex>
                   </v-layout>
                </v-flex>
@@ -98,7 +98,7 @@ export default {
       let arrayIndex = -1;
       let _this = this;
       // debugger;
-      console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
+      // console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
       // _this.tableObj = data.tableObj;
       _this.tableObj.relationshipArray.map(function(obj, index){
           if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 

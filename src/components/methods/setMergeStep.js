@@ -54,17 +54,19 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
 
     relationObj.where && relationObj.where.length && relationObj.where.map((whrObj, whrIndex) => {
         let criteriaObject = cloneDeep(tableObj.parenthasisobject);
-        criteriaObject.openbrsis = whrObj.pre_braces;
-        criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
-        criteriaObject.column.name = whrObj.column_name;
-        criteriaObject.column.fixed = false;
-        criteriaObject.column.tblAlies = whrObj.alias;
-        criteriaObject.relOperator = getjoinOperator(whrObj.operator)
-        criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
-        criteriaObject.value = whrObj.value;
-        criteriaObject.closebrsis = whrObj.post_braces;
-        criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
-        criteriaArray.push(cloneDeep(criteriaObject));
+        if (criteriaObject.column && criteriaObject.column.name) {
+            criteriaObject.openbrsis = whrObj.pre_braces;
+            criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
+            criteriaObject.column.name = whrObj.column_name;
+            criteriaObject.column.fixed = false;
+            criteriaObject.column.tblAlies = whrObj.alias;
+            criteriaObject.relOperator = getjoinOperator(whrObj.operator)
+            criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
+            criteriaObject.value = whrObj.value;
+            criteriaObject.closebrsis = whrObj.post_braces;
+            criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
+            criteriaArray.push(cloneDeep(criteriaObject));
+        }
     });
     relationObj.select_table.cols && relationObj.select_table.cols.length && relationObj.select_table.cols.map((workTableObj, workIndex) => {
         let tempObject = {

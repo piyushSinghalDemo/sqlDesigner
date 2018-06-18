@@ -23,7 +23,7 @@
           </v-flex>
           <v-flex xs8>
             <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
-               label="Select Table" item-text="name" item-value="name + group" autocomplete></v-select>
+               label="Select Table" item-text="name" item-value="name" return-object autocomplete></v-select>
           <a class="addTable" @click.stop="addTable">Add Table</a>
           </v-flex>
         </v-layout>
@@ -134,7 +134,7 @@ export default {
   },
   watch: {
     search(val) {
-      this.queryTableSelections(val)
+      this.querySelections(val)
     },
     searchDriver(val) {
       this.querySelections(val)
@@ -177,7 +177,6 @@ export default {
       _this.$emit('update-object', [_this.tableObj, num]);
     },
     querySelections(value) {
-
       let _this = this;
       // this search will work only on every third character
       if (value && value.length % 3 !== 0) {
@@ -215,13 +214,7 @@ export default {
           "table_count": userData.table_count,
           "client_id": userData.client_id
         }
-        // this.$http.post(url, inputJson, {
-        //   headers: {
-        //     'Content-Type': 'application/json'
-        //   }
-        // }).then(response => {
         postToServer(this, url, inputJson).then(response => {
-          // _this.tableObj.allDbTables= [];
           let tableList = response.table_name_list;
           let dummyTableList = [];
           if (tableList.length) {
@@ -235,76 +228,8 @@ export default {
           }
           this.loading = false;
           // debugger;
+          // console.log("Response from all tables in merge step **********" + JSON.stringify(dummyTableList));
           _this.tableObj.allDbTables = dummyTableList;
-          console.log("Response from all tables" + JSON.stringify(response));
-        }, response => {}).catch(e => {
-          console.log(e)
-          this.loading = false;
-          _this.$toaster.error('Something went wrong...')
-        })
-      }
-    },
-    queryTableSelections(value) {
-
-      let _this = this;
-      // this search will work only on every third character
-      if (value && value.length % 3 !== 0) {
-        return
-      }
-      // if search input is blank, It will load all previous tables
-      if (!value && _this.createTableCopy) {
-        _this.tableObj.allArchiveTables = cloneDeep(_this.allArchiveTablesCopy);
-        return;
-      }
-      //Firstly It will search data in current list   
-      let found = false;
-      _this.tableObj.allArchiveTables.map((obj, index) => {
-        if (obj.name.indexOf(value) !== -1) {
-          found = true;
-        }
-      });
-      if (found) {
-        return;
-      } else {
-        if (!_this.createTableCopy) {
-          // _this.tableObj.allArchiveTables = _this.allArchiveTablesCopy
-          _this.allArchiveTablesCopy = cloneDeep(_this.tableObj.allArchiveTables);
-          _this.createTableCopy = true;
-        }
-        this.loading = true;
-        let url = config.AGENT_API_URL + 'get_tables' //'http://192.168.1.100:8010/get_tables';
-        let conn_str = _this.$store.state.conn_str;
-        let schema = _this.$store.state.schema;
-        let userData = JSON.parse(sessionStorage.getItem("userInfo"));
-        let inputJson = {
-          "conn_str": conn_str,
-          "schema": schema,
-          "table_name": value,
-          "table_count": userData.table_count,
-          "client_id": userData.client_id
-        }
-        // this.$http.post(url, inputJson, {
-        //   headers: {
-        //     'Content-Type': 'application/json'
-        //   }
-        // }).then(response => {
-        postToServer(this, url, inputJson).then(response => {
-          // _this.tableObj.allArchiveTables= [];
-          let tableList = response.table_name_list;
-          let dummyTableList = [];
-          if (tableList.length) {
-            tableList.map(function (obj, index) {
-              let tempObj = {
-                name: obj,
-                stepId: 'Database Table'
-              }
-              dummyTableList.push(cloneDeep(tempObj));
-            });
-          }
-          this.loading = false;
-          // debugger;
-          _this.tableObj.allArchiveTables = dummyTableList;
-          console.log("Response from all tables" + JSON.stringify(response));
         }, response => {}).catch(e => {
           console.log(e)
           this.loading = false;
@@ -359,6 +284,7 @@ export default {
         if (obj.colAlies)
           columnObj = {
             name: obj.colAlies,
+            value:object.tableName+'-'+obj.colAlies,
             group: object.tableName,
             fixed: false,
             tblAlies: object.aliesTableName,
@@ -367,13 +293,12 @@ export default {
         else
           columnObj = {
             name: obj.name,
+            value:object.tableName+'-'+obj.name,
             group: object.tableName,
             fixed: false,
             tblAlies: object.aliesTableName,
             colAlies: ''
           };
-        // obj.group = object.tableName;
-        // obj.tblAlies = object.aliesTableName;
         _this.tableObj.optionColumn.push(cloneDeep(columnObj));
       });
       _this.tableObj.is_drv_table = true;
@@ -390,11 +315,6 @@ export default {
         "table_name": tableObject.tableName,
         "client_id": userData.client_id
       }
-      // _this.$http.post(url, inputJson, {
-      // headers: {
-      //   'Content-Type': 'application/json'
-      // }
-      //   }).then(response => {
       postToServer(this, url, inputJson).then(response => {
         if (_this.tableObj.optionColumn.length) {
           _this.tableObj.optionColumn.push({
@@ -409,6 +329,7 @@ export default {
         allColumn.map(function (obj, index) {
           let columnObj = {
             name: obj,
+            value:tableObject.tableName+'-'+obj,
             group: tableObject.tableName,
             fixed: false,
             tblAlies: tableObject.aliesTableName,

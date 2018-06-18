@@ -13,12 +13,12 @@
           </v-flex>
           <v-flex xs6>
             <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-           label="Select Driver Table" item-text="name" item-value="name + group" autocomplete></v-select>
+           label="Select Driver Table" item-text="name" item-value="name" return-object autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
           </v-flex>
           <v-flex xs12>
             <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
-               label="Select Table" item-text="name" item-value="name + group" autocomplete></v-select>
+               label="Select Table" item-text="name" item-value="name" return-object autocomplete></v-select>
           <a class="addTable" @click.stop="addTable">Add Table</a>
           </v-flex>
         </v-layout>
@@ -323,17 +323,17 @@ export default {
           allColumn.map(function(obj, index){
              let columnObj ={}; 
              if(obj.colAlies)
-             columnObj = { text:obj.colAlies,value:{name: obj.colAlies, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: ''}};
+             columnObj = {name: obj.colAlies,value:object.tableName+'-'+obj.colAlies, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''};
              else
-             columnObj = {text:obj.name, value:{name: obj.name, group: object.tableName, fixed: false, 
-                               tblAlies:object.aliesTableName, colAlies: ''}};                    
+             columnObj = {name: obj.name,value:object.tableName+'-'+obj.name, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''};                    
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             //For orderBy need saprate driver table column
             if(object.group == 'Driver Table'){
-              columnObj.value.decending = false;
-              _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
+              columnObj.decending = false;
+              _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
             }
           });
          _this.tableObj.is_drv_table = true;  
@@ -358,14 +358,14 @@ export default {
           _this.tableObj.optionColumn.push(cloneDeep(headerObj));
           let allColumn = response;
           allColumn.map(function(obj, index){
-             let columnObj = {text:obj, value:{name: obj, group: tableObject.tableName, fixed: false, 
-                               tblAlies:tableObject.aliesTableName, colAlies: ''}};
+             let columnObj = {name: obj,value:tableObject.tableName+'-'+obj, group: tableObject.tableName, fixed: false, 
+                               tblAlies:tableObject.aliesTableName, colAlies: ''};
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             
             if(tableObject.group == 'Driver Table'){
-              columnObj.value.decending = false;
-            _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj.value));
+              columnObj.decending = false;
+            _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
             }
           });
           // console.log("Response from all tables"+JSON.stringify(response));

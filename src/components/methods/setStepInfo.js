@@ -83,11 +83,13 @@ export async function setStepInfo(_this, processData) {
                     tableObj.relationship.selectedFilter = joinObj.type;
                     joinObj.condition.map((conditionObj, conditionIndex) => {
                         colObj.fromColumn.name = conditionObj.from_column;
+                        colObj.fromColumn.value = joinObj.jfrom + '-' + conditionObj.from_column;
                         colObj.fromColumn.group = joinObj.jfrom;
                         colObj.fromColumn.tblAlies = conditionObj.from_alias;
                         colObj.fromColumn.fixed = false;
                         colObj.fromColumn.colAlies = ""; // Need to discuss and fill details
                         colObj.toColumn.name = conditionObj.to_column;
+                        colObj.toColumn.value = joinObj.jto + '-' + conditionObj.to_column;
                         colObj.toColumn.group = joinObj.jto;
                         colObj.toColumn.tblAlies = conditionObj.to_alias;
                         colObj.toColumn.fixed = false;
@@ -95,7 +97,7 @@ export async function setStepInfo(_this, processData) {
                         colObj.operator = getjoinOperator(conditionObj.operator); //conditionObj.operator;
                         colArray.push(cloneDeep(colObj));
                     });
-                    // debugger;
+                    // 
                     tableObj.relationship.jto_drv_table = joinObj.jto_drv_table;
                     tableObj.relationship.jfrom_drv_table = joinObj.jfrom_drv_table;
 
@@ -110,10 +112,10 @@ export async function setStepInfo(_this, processData) {
 
         }
         //For archival step
-        console.log("List of relations " + JSON.stringify(stpObj.list_of_relations));
+        // console.log("List of relations " + JSON.stringify(stpObj.list_of_relations));
         stpObj.list_of_relations && stpObj.list_of_relations.length && stpObj.list_of_relations.map(async(relationObj) => {
             let tempObj = {};
-            // debugger;
+            // 
             relationObj.joins.map(async(joinObj, rlnIndex) => {
                     // debugger
                     let fromTableObj = {},
@@ -135,11 +137,13 @@ export async function setStepInfo(_this, processData) {
                     tableObj.relationship.selectedFilter = joinObj.type;
                     joinObj.condition.map((conditionObj, conditionIndex) => {
                         colObj.fromColumn.name = conditionObj.from_column;
+                        colObj.fromColumn.value = joinObj.jfrom + '-' + conditionObj.from_column;
                         colObj.fromColumn.fixed = false;
                         colObj.fromColumn.tblAlies = conditionObj.from_alias;
                         colObj.fromColumn.group = joinObj.jfrom;
                         colObj.fromColumn.colAlies = ""; // Need to discuss and fill details
                         colObj.toColumn.name = conditionObj.to_column;
+                        colObj.toColumn.value = joinObj.jto + '-' + conditionObj.to_column;
                         colObj.toColumn.group = joinObj.jto;
                         colObj.toColumn.tblAlies = conditionObj.to_alias;
                         colObj.toColumn.fixed = false;
@@ -162,6 +166,7 @@ export async function setStepInfo(_this, processData) {
                 criteriaObject.openbrsis = whrObject.pre_braces;
                 criteriaObject.showLogicalOperator = whrObject.operand ? true : false;
                 criteriaObject.column.name = whrObject.column_name;
+                criteriaObject.column.value = whrObject.table_name + '-' + whrObject.column_name;
                 criteriaObject.column.group = whrObject.table_name;
                 criteriaObject.column.fixed = false;
                 criteriaObject.column.tblAlies = whrObject.alias;
@@ -204,6 +209,7 @@ export async function setStepInfo(_this, processData) {
                         item.select_table.cols.map((colObj) => {
                             var temp = {
                                 name: colObj.col_name,
+                                value: tableObj.relationship.driverTable.name + '-' + colObj.col_name,
                                 group: tableObj.relationship.driverTable.name,
                                 fixed: false,
                                 tblAlies: '',
@@ -229,6 +235,7 @@ export async function setStepInfo(_this, processData) {
                     allColumn.map(function(obj) {
                         var temp = {
                             name: obj,
+                            value: tableObj.relationship.driverTable.name + '-' + obj,
                             group: tableObj.relationship.driverTable.name,
                             fixed: false,
                             tblAlies: '',
@@ -247,12 +254,13 @@ export async function setStepInfo(_this, processData) {
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
+
         stpObj.where && stpObj.where.map((whrObj, whrIndex) => {
             let criteriaObject = cloneDeep(stepObject.parenthasisobject);
             criteriaObject.openbrsis = whrObj.pre_braces;
             criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
             criteriaObject.column.name = whrObj.column_name;
-            // criteriaObject.column.value = whrObj.column_name;
+            criteriaObject.column.value = whrObj.table_name + '-' + whrObj.column_name;
             criteriaObject.column.group = whrObj.table_name;
             criteriaObject.column.fixed = false;
             criteriaObject.column.tblAlies = whrObj.alias;
@@ -285,18 +293,17 @@ export async function setStepInfo(_this, processData) {
                 }
                 let headerObj = { header: tblObj.tableName };
                 tableObj.optionColumn.push(cloneDeep(headerObj));
+
                 for (const item of processData.steps) {
                     if (item.name === tblObj.tableName) {
                         item.select_table.cols.map((colObj, colIndex) => {
                             let columnObj = {
-                                text: colObj.col_name,
-                                value: {
-                                    name: colObj.col_name,
-                                    group: '',
-                                    fixed: false,
-                                    tblAlies: colObj.table_alias,
-                                    colAlies: colObj.col_alias
-                                }
+                                name: colObj.col_name,
+                                value: tblObj.tableName + '-' + colObj.col_name,
+                                group: tblObj.tableName,
+                                fixed: false,
+                                tblAlies: colObj.table_alias,
+                                colAlies: colObj.col_alias
                             };
                             tableObj.optionColumn.push(cloneDeep(columnObj));
                             tableObj.availableColumn.push(cloneDeep(columnObj));
@@ -324,14 +331,12 @@ export async function setStepInfo(_this, processData) {
 
                     allColumn.map(function(obj, index) {
                         let columnObj = {
-                            text: obj,
-                            value: {
-                                name: obj,
-                                group: tblObj.tableName,
-                                fixed: false,
-                                tblAlies: tblObj.aliesTableName,
-                                colAlies: ''
-                            }
+                            name: obj,
+                            value: tblObj.tableName + '-' + obj,
+                            group: tblObj.tableName,
+                            fixed: false,
+                            tblAlies: tblObj.aliesTableName,
+                            colAlies: ''
                         };
                         tableObj.optionColumn.push(cloneDeep(columnObj));
                         tableObj.availableColumn.push(cloneDeep(columnObj));
@@ -357,7 +362,7 @@ export async function setStepInfo(_this, processData) {
 
             // tableObj.storedProcedure.params = stpObj.params;
         }
-        // debugger;
+        // 
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
         // console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
