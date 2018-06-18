@@ -83,11 +83,13 @@ export async function setStepInfo(_this, processData) {
                     tableObj.relationship.selectedFilter = joinObj.type;
                     joinObj.condition.map((conditionObj, conditionIndex) => {
                         colObj.fromColumn.name = conditionObj.from_column;
+                        colObj.fromColumn.value = joinObj.jfrom + '-' + conditionObj.from_column;
                         colObj.fromColumn.group = joinObj.jfrom;
                         colObj.fromColumn.tblAlies = conditionObj.from_alias;
                         colObj.fromColumn.fixed = false;
                         colObj.fromColumn.colAlies = ""; // Need to discuss and fill details
                         colObj.toColumn.name = conditionObj.to_column;
+                        colObj.toColumn.value = joinObj.jto + '-' + conditionObj.to_column;
                         colObj.toColumn.group = joinObj.jto;
                         colObj.toColumn.tblAlies = conditionObj.to_alias;
                         colObj.toColumn.fixed = false;
@@ -110,7 +112,7 @@ export async function setStepInfo(_this, processData) {
 
         }
         //For archival step
-        console.log("List of relations " + JSON.stringify(stpObj.list_of_relations));
+        // console.log("List of relations " + JSON.stringify(stpObj.list_of_relations));
         stpObj.list_of_relations && stpObj.list_of_relations.length && stpObj.list_of_relations.map(async(relationObj) => {
             let tempObj = {};
             // 
@@ -135,11 +137,13 @@ export async function setStepInfo(_this, processData) {
                     tableObj.relationship.selectedFilter = joinObj.type;
                     joinObj.condition.map((conditionObj, conditionIndex) => {
                         colObj.fromColumn.name = conditionObj.from_column;
+                        colObj.fromColumn.value = joinObj.jfrom + '-' + conditionObj.from_column;
                         colObj.fromColumn.fixed = false;
                         colObj.fromColumn.tblAlies = conditionObj.from_alias;
                         colObj.fromColumn.group = joinObj.jfrom;
                         colObj.fromColumn.colAlies = ""; // Need to discuss and fill details
                         colObj.toColumn.name = conditionObj.to_column;
+                        colObj.toColumn.value = joinObj.jto + '-' + conditionObj.to_column;
                         colObj.toColumn.group = joinObj.jto;
                         colObj.toColumn.tblAlies = conditionObj.to_alias;
                         colObj.toColumn.fixed = false;
@@ -162,6 +166,7 @@ export async function setStepInfo(_this, processData) {
                 criteriaObject.openbrsis = whrObject.pre_braces;
                 criteriaObject.showLogicalOperator = whrObject.operand ? true : false;
                 criteriaObject.column.name = whrObject.column_name;
+                criteriaObject.column.value = whrObject.table_name + '-' + whrObject.column_name;
                 criteriaObject.column.group = whrObject.table_name;
                 criteriaObject.column.fixed = false;
                 criteriaObject.column.tblAlies = whrObject.alias;
@@ -204,6 +209,7 @@ export async function setStepInfo(_this, processData) {
                         item.select_table.cols.map((colObj) => {
                             var temp = {
                                 name: colObj.col_name,
+                                value: tableObj.relationship.driverTable.name + '-' + colObj.col_name,
                                 group: tableObj.relationship.driverTable.name,
                                 fixed: false,
                                 tblAlies: '',
@@ -229,6 +235,7 @@ export async function setStepInfo(_this, processData) {
                     allColumn.map(function(obj) {
                         var temp = {
                             name: obj,
+                            value: tableObj.relationship.driverTable.name + '-' + obj,
                             group: tableObj.relationship.driverTable.name,
                             fixed: false,
                             tblAlies: '',
@@ -253,7 +260,7 @@ export async function setStepInfo(_this, processData) {
             criteriaObject.openbrsis = whrObj.pre_braces;
             criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
             criteriaObject.column.name = whrObj.column_name;
-            // criteriaObject.column.value = whrObj.column_name;
+            criteriaObject.column.value = whrObj.table_name + '-' + whrObj.column_name;
             criteriaObject.column.group = whrObj.table_name;
             criteriaObject.column.fixed = false;
             criteriaObject.column.tblAlies = whrObj.alias;
@@ -291,17 +298,15 @@ export async function setStepInfo(_this, processData) {
                     if (item.name === tblObj.tableName) {
                         item.select_table.cols.map((colObj, colIndex) => {
                             let columnObj = {
-                                text: colObj.col_name,
-                                value: {
-                                    name: colObj.col_name,
-                                    group: '',
-                                    fixed: false,
-                                    tblAlies: colObj.table_alias,
-                                    colAlies: colObj.col_alias
-                                }
+                                name: colObj.col_name,
+                                value: tblObj.tableName + '-' + colObj.col_name,
+                                group: tblObj.tableName,
+                                fixed: false,
+                                tblAlies: colObj.table_alias,
+                                colAlies: colObj.col_alias
                             };
                             tableObj.optionColumn.push(cloneDeep(columnObj));
-                            tableObj.availableColumn.push(cloneDeep(columnObj.value));
+                            tableObj.availableColumn.push(cloneDeep(columnObj));
                         });
                     }
                 }
@@ -326,17 +331,15 @@ export async function setStepInfo(_this, processData) {
 
                     allColumn.map(function(obj, index) {
                         let columnObj = {
-                            text: obj,
-                            value: {
-                                name: obj,
-                                group: tblObj.tableName,
-                                fixed: false,
-                                tblAlies: tblObj.aliesTableName,
-                                colAlies: ''
-                            }
+                            name: obj,
+                            value: tblObj.tableName + '-' + obj,
+                            group: tblObj.tableName,
+                            fixed: false,
+                            tblAlies: tblObj.aliesTableName,
+                            colAlies: ''
                         };
                         tableObj.optionColumn.push(cloneDeep(columnObj));
-                        tableObj.availableColumn.push(cloneDeep(columnObj.value));
+                        tableObj.availableColumn.push(cloneDeep(columnObj));
                     });
                     _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for data selection
                     // console.log("Response from all tables" + JSON.stringify(response));

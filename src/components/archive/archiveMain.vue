@@ -128,8 +128,8 @@ export default {
       let _this = this;
       
        this.tableObj.archive.optionColumn = filter(_this.tableObj.optionColumn, function(o){
-         if(o.value)
-           return o.value.group == object.tableName
+        //  if(o.value)
+           return o.group == object.tableName
          });
 
          if(_this.isDrivar)
@@ -170,7 +170,7 @@ export default {
     },
     getSelectionData() {
           let _this = this;
-          console.log("selectedTableArray" + JSON.stringify(_this.tableObj.relationshipArray));
+          // console.log("selectedTableArray" + JSON.stringify(_this.tableObj.relationshipArray));
            let archiveStepInput = cloneDeep(_this.$store.state.archiveStepObject);
            archiveStepInput.name = _this.tableObj.title;
            archiveStepInput.desc = _this.tableObj.description;
@@ -319,7 +319,7 @@ export default {
       inputParam.env_id = _this.userData.env_id;
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
-      console.log("inputParam in archive step " +JSON.stringify(inputParam));
+      // console.log("inputParam in archive step " +JSON.stringify(inputParam));
       let url = config.IDE_API_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
       postToServer(this, url, inputParam).then(response=>{
         _this.tableObj.stepId = response.id;
@@ -359,8 +359,8 @@ export default {
         addData.map(linkObj=>{
           _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
         })
-        console.log("flowchartData in save step" + JSON.stringify(flowchartData));
-        console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
+        // console.log("flowchartData in save step" + JSON.stringify(flowchartData));
+        // console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully');
         this.$store.state.openArchivePanel = false;
       },response=>{

@@ -19,14 +19,14 @@
         <v-layout row wrap>
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
-              single-line item-text="tableName" item-value="tableName + aliesTableName"></v-select>
+              single-line item-text="tableName" item-value="tableName" return-object></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" label="To Table" item-text="tableName"
-              item-value="tableName + aliesTableName" single-line></v-select>
+              item-value="tableName" return-object single-line></v-select>
           </v-flex>
         </v-layout>
         <v-expansion-panel>
@@ -57,8 +57,8 @@
                 <v-layout row wrap v-for="(column, index) in tableObj.colArray" :key="index">
                   <v-flex xs4 style="margin-right:20px;">
                     <!-- *********************************** Group Column ********************************************* -->
-                    <v-select label="From Column" :items="tableObj.optionColumn" v-model="column.fromColumn" item-text="name" single-line item-value="name + colAlies"
-                      autocomplete></v-select>
+                    <v-select label="From Column" :items="tableObj.optionColumn" v-model="column.fromColumn" item-text="name" single-line
+                      autocomplete return-object></v-select>
                     <!-- ********************************************************************************************** -->
                   </v-flex>
                   <v-flex xs2 style="margin-right:20px;">
@@ -67,8 +67,8 @@
                   <v-flex xs4 style="margin-right:20px;">
                     <v-layout>
                       <v-flex>
-                        <v-select label="To Column" :items="tableObj.optionColumn" v-model="column.toColumn" item-text="name" single-line item-value="name + colAlies"
-                          autocomplete></v-select>
+                        <v-select label="To Column" :items="tableObj.optionColumn" v-model="column.toColumn" item-text="name" single-line
+                          autocomplete return-object></v-select>
                       </v-flex>
                     </v-layout>
                   </v-flex>
@@ -91,7 +91,8 @@
                       <v-select clearable :items="functionArray" single-line label="Select Function" v-model="obj.function"></v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <v-select label="Select Column" :items="tableObj.merge.optionColumn" v-model="obj.column" item-text="name" single-line item-value="name + tblAlies"></v-select>
+                      <v-select label="Select Column" :items="tableObj.merge.optionColumn" v-model="obj.column" 
+                          item-text="name" return-object single-line></v-select>
                     </v-flex>
                     <v-flex xs3>
                       <v-select clearable :items="filterArray" single-line label="Select Operator" v-model="obj.relOperator">
@@ -112,7 +113,7 @@
                         </v-date-picker>
                       </v-menu>
                       <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-                        item-text="name" item-value="name + tblAlies"></v-select>
+                        item-text="name" return-object></v-select>
                     </v-flex>
                     <v-flex xs3>
                       <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
@@ -132,8 +133,6 @@
               </v-card-text>
             </v-card>
           </v-expansion-panel-content>
-
-
           <v-expansion-panel-content>
             <div slot="header">
               Define Column
@@ -141,13 +140,6 @@
             <v-card>
               <v-card-text>
                 <v-container grid-list-md>
-                  <!-- <v-layout row wrap>
-                    <v-flex>
-                      <v-select :items="tableObj.relationship.selectedTableArray" v-model="selectedTable" item-text="tableName" @change="getColumn"
-                        label="Select Table" item-value="tableName" return-object>
-                      </v-select>
-                    </v-flex>
-                  </v-layout> -->
                   <div class="row clearfix">
                     <div class="col-sm-6">
                       <label style="font-size:20px;cursor:pointer">
@@ -315,8 +307,6 @@ export default {
                     };
         _this.tableObj.relationshipArray.push(cloneDeep(object));
         _this.$toaster.success('Relationship added successfully');              
-      //  _this.tableObj.relationshipArray.push(cloneDeep(object));
-      //   _this.$toaster.success('Relationship added successfully');
       // if(arrayIndex >= 0){
       //   _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
       //   _this.$toaster.info('Relationship Updated successfully');
