@@ -53,6 +53,7 @@ export default {
     colObj: { "fromColumn": '', 'toColumn': '', 'operator': '' },
     colArray: [{ "fromColumn": '', 'toColumn': '', 'operator': '' }],
     limit: '',
+    isSingleTableArchival: false,
     allPrevStepTables: [],
     top: '',
     left: '',

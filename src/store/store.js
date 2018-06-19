@@ -42,6 +42,7 @@ const state = {
         "name": "temp name archival",
         "desc": "temp desc archival",
         "limit": '',
+        "isSingleTableArchival": false,
         "drv_table": [],
         "list_of_relations": [],
         links: []

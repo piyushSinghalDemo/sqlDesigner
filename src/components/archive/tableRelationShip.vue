@@ -16,7 +16,11 @@
            label="Select Driver Table" item-text="name" item-value="name" return-object autocomplete></v-select>
           <a class="addTable" @click.stop="addDriverTable">Add</a>
           </v-flex>
-          <v-flex xs12>
+          <v-flex xs6>
+             <v-checkbox v-model="tableObj.isSingleTableArchival" label="Single Table Archival" style="margin-top:8%">
+             </v-checkbox>
+          </v-flex>
+          <v-flex xs6>
             <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
                label="Select Table" item-text="name" item-value="name" return-object autocomplete></v-select>
           <a class="addTable" @click.stop="addTable">Add Table</a>
