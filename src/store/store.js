@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { stat } from 'fs';
+// import { stat } from 'fs';
 
 Vue.use(Vuex);
 const state = {
