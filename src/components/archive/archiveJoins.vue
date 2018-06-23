@@ -289,8 +289,6 @@ export default {
     saveArchiveData(){
       let arrayIndex = -1;
       let _this = this;
-      // alert("In save method");
-      // _this.tableObj = data.tableObj;
       if(_this.isDrivar){
          _this.tableObj.archive.where=_this.tableObj.criteriaArray;
        }else{
@@ -312,7 +310,7 @@ export default {
            _this.tableObj.relationship.jto_drv_table = false;  
          }
       let object = {'relationship':_this.tableObj.relationship,
-                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray};
+                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 'select_table':_this.tableObj.archive.selectedTable};
           if(arrayIndex >= 0){
             _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
             _this.$toaster.info('Relationship Updated successfully');

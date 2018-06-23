@@ -73,6 +73,8 @@ export default function getMergeStepData(_this, tableObj) {
             // debugger;
         relationObject.distinct = obj.distinct;
         relationObject.select_table.is_drv_table = obj.is_drv_table;
+        relationObject.select_table.alias = obj.selectedTable.aliesTableName;
+        relationObject.select_table.name = obj.selectedTable.tableName;
         if (obj.selectAll) {
             relationObject.select_table.cols.push({
                 'table_alias': 'cu',
@@ -82,8 +84,6 @@ export default function getMergeStepData(_this, tableObj) {
             });
         } else {
             obj.workTableOutput.map(function(selColumn, selIndex) {
-                relationObject.select_table.alias = selColumn.tblAlies;
-                relationObject.select_table.name = selColumn.group;
                 colsObject.col_name = selColumn.name;
                 colsObject.col_alias = selColumn.colAlies;
                 colsObject.table_alias = selColumn.tblAlies;

@@ -259,10 +259,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['processArray','process_definition_id','archivalStep','database_name','database_type','schema','conn_str','currentStep']),
-    // ...mapMutations([]),
+    ...mapState(['processArray','process_definition_id','process_definition_name','archivalStep',
+                  'database_name','database_type','schema','conn_str','currentStep','env_id']),
     processDocName: function(){
-      return this.$store.state.process_definition_name;
+      return this.process_definition_name;
     },
     total: function () {
       return this.value.interval ? (this.value.interval * this.value.multiplier).toFixed(2) : 0
@@ -283,7 +283,7 @@ export default {
     }
     // debugger;
     if(_this.userInfo.env_id){
-      _this.$store.state.env_id = _this.userInfo.env_id;
+      _this.set_env_id(_this.userInfo.env_id);
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -333,7 +333,8 @@ export default {
     }.bind(this), 1000)
   },
   methods: {
-    ...mapActions(['set_process_definition_id','setCurrentStep','set_database_name','set_database_type','set_schema','set_conn_str','set_dialog']),
+    ...mapActions(['set_process_definition_id','set_process_definition_name','setCurrentStep','set_database_name',
+                    'set_database_type','set_schema','set_conn_str','set_dialog','set_env_id','set_openArchivePanel','set_openMergePanel','set_openStoredProcedure']),
     async createProcessData(){       
       let _this = this;
       let inputJson = _this.userInfo.process_definition_id;
@@ -374,7 +375,8 @@ export default {
     //   this.$store.state.process_definition_name = ev.target.textContent;
     // },
     updateHeadline (content) {
-      this.$store.state.process_definition_name = content;
+      // this.$store.state.process_definition_name = content;
+      this.set_process_definition_name(content);
       // console.log("process-definition-name"+JSON.stringify(this.$store.state.process_definition_name));
     },
     saveName(name){
@@ -524,7 +526,7 @@ export default {
           let inputJson = {
               "procedure_name": "",
               "procedure_count": _this.userInfo.table_count,
-              "env_id": _this.userInfo.env_id?_this.userInfo.env_id:_this.$store.state.env_id,
+              "env_id": _this.userInfo.env_id?_this.userInfo.env_id:_this.env_id,
               "database_name":_this.database_name,
               "database_type":_this.database_type,
               "schema":_this.schema,
@@ -868,13 +870,16 @@ export default {
            }
            else if(operator.className == 'archive'){
              _this.gettables();
-             _this.$store.state.openArchivePanel = true;
+            //  _this.$store.state.openArchivePanel = true;
+            _this.set_openArchivePanel(true);
            }else if(operator.className == 'merge' || operator.className == 'minus'){
              _this.gettables();
-             _this.$store.state.openMergePanel = true;
+            //  _this.$store.state.openMergePanel = true;
+            _this.set_openMergePanel(true);
            }else if(operator.className == 'spstep'){
              _this.getProcedureList();
-             _this.$store.state.openStoredProcedure = true;
+            //  _this.$store.state.openStoredProcedure = true;
+            _this.set_openStoredProcedure(true);
            } 
           return true;
         },

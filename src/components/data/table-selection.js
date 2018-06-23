@@ -76,6 +76,7 @@ export default {
         distinctAll: true,
     },
     archive: {
+        selectedTable: {},
         optionColumn: [],
         driverTable: {
             columns: [],
