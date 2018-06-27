@@ -161,6 +161,7 @@
 
 
 <script>
+import { mapState,mapMutations,mapActions } from 'vuex'
 import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
@@ -258,8 +259,10 @@ export default {
     }
   },
   computed: {
+    ...mapState(['processArray','process_definition_id','process_definition_name','archivalStep',
+                  'database_name','database_type','schema','conn_str','currentStep','env_id']),
     processDocName: function(){
-      return this.$store.state.process_definition_name;
+      return this.process_definition_name;
     },
     total: function () {
       return this.value.interval ? (this.value.interval * this.value.multiplier).toFixed(2) : 0
@@ -280,7 +283,7 @@ export default {
     }
     // debugger;
     if(_this.userInfo.env_id){
-      _this.$store.state.env_id = _this.userInfo.env_id;
+      _this.set_env_id(_this.userInfo.env_id);
     } 
     sessionStorage.setItem("userInfo",JSON.stringify(_this.userInfo));
     var title = '';
@@ -330,6 +333,8 @@ export default {
     }.bind(this), 1000)
   },
   methods: {
+    ...mapActions(['set_process_definition_id','set_process_definition_name','setCurrentStep','set_database_name',
+                    'set_database_type','set_schema','set_conn_str','set_dialog','set_env_id','set_openArchivePanel','set_openMergePanel','set_openStoredProcedure']),
     async createProcessData(){       
       let _this = this;
       let inputJson = _this.userInfo.process_definition_id;
@@ -349,8 +354,10 @@ export default {
         }
         postToServer(this, tableUrl, inputJson).then(tableResponse => {
             if (tableResponse && tableResponse.table_name_list) {
-                _this.$store.state.schema = tableResponse.schema;
-                _this.$store.state.conn_str = tableResponse.conn_str;
+                // _this.$store.state.schema = tableResponse.schema;
+                _this.set_schema(tableResponse.schema);
+                // _this.$store.state.conn_str = tableResponse.conn_str;
+                _this.set_conn_str(tableResponse.conn_str);
                 setStepInfo(_this, response);
                 // debugger;
                 // console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));   
@@ -368,7 +375,8 @@ export default {
     //   this.$store.state.process_definition_name = ev.target.textContent;
     // },
     updateHeadline (content) {
-      this.$store.state.process_definition_name = content;
+      // this.$store.state.process_definition_name = content;
+      this.set_process_definition_name(content);
       // console.log("process-definition-name"+JSON.stringify(this.$store.state.process_definition_name));
     },
     saveName(name){
@@ -389,13 +397,13 @@ export default {
         postToServer(this, url, ideInputData).then(response=>{
           if(response.status == "SUCCESS"){
 
-            _this.$store.state.processArray.map((validObj, validIndex)=>{
+            _this.processArray.map((validObj, validIndex)=>{
               $flowchart.flowchart('removeClassOperator', validObj.id, 'stepError');
             });  
             _this.$toaster.info('Data validated successfully') 
           }else if(response.result && response.result.length){
             _this.logs = response.result;
-            let validatedData = _this.$store.state.processArray;
+            let validatedData = _this.processArray;
             // debugger;
             response.result.map((step, stepIndex)=>{
             $flowchart.flowchart('addClassOperator', step.step_id, 'stepError');
@@ -467,14 +475,15 @@ export default {
         //  let joinString = stringArray.join("");
         //  console.log("joinString " +joinString);
          let inputJson = {
-           process_definition_id : _this.$store.state.process_definition_id,
+           process_definition_id : _this.process_definition_id,
            name:_this.stepName,
            description:_this.stepDetail,
            type:stepType
          }
          postToServer(this, url, inputJson).then(response=>{
           //  console.log("Response from step save:"+JSON.stringify(response));
-             _this.$store.state.process_definition_id = response.process_definition_id;
+            //  _this.$store.state.process_definition_id = response.process_definition_id;
+            _this.set_process_definition_id(response.process_definition_id);
              tableData.title = cloneDeep(_this.stepName); 
              tableData.description = cloneDeep(_this.stepDetail);
              tableData.type = _this.type;
@@ -512,30 +521,34 @@ export default {
       },
       getProcedureList(){
           let _this = this;
-          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=true;
+          _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=true;
           let url = config.AGENT_API_URL+"get_stored_procedure_list";
           let inputJson = {
               "procedure_name": "",
               "procedure_count": _this.userInfo.table_count,
-              "env_id": _this.userInfo.env_id?_this.userInfo.env_id:_this.$store.state.env_id,
-              "database_name":_this.$store.state.database_name,
-              "database_type":_this.$store.state.database_type,
-              "schema":_this.$store.state.schema,
-              "connstr":_this.$store.state.conn_str,
+              "env_id": _this.userInfo.env_id?_this.userInfo.env_id:_this.env_id,
+              "database_name":_this.database_name,
+              "database_type":_this.database_type,
+              "schema":_this.schema,
+              "connstr":_this.conn_str,
               "client_id":_this.userInfo.client_id
           };
           postToServer(this, url, inputJson).then(listResponse => {
-            if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
-            _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=false;
+            if(_this.$store.state.archivalStep[_this.currentStep])
+            _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
                 // console.log("listResponse"+JSON.stringify(listResponse));
                 this.loading = false;
-              _this.$store.state.database_name = listResponse.database_name;
-              _this.$store.state.database_type = listResponse.database_type;
-              _this.$store.state.schema = listResponse.schema;
-              _this.$store.state.archivalStep[_this.$store.state.currentStep].storedProcedure.procedureList = listResponse.result;
-              _this.$store.state.conn_str = listResponse.connstr;
+              // _this.$store.state.database_name = listResponse.database_name;
+              // _this.$store.state.database_type = listResponse.database_type;
+              // _this.$store.state.schema = listResponse.schema;
+              // _this.$store.state.conn_str = listResponse.connstr;
+              _this.set_database_name(listResponse.database_name);
+              _this.set_database_type(listResponse.database_type);
+              _this.set_schema(listResponse.schema);
+              _this.set_conn_str(listResponse.connstr);
+              _this.$store.state.archivalStep[_this.currentStep].storedProcedure.procedureList = listResponse.result;
           },listResponse => {
-            _this.$store.state.archivalStep[_this.$store.state.currentStep].loadProcedureList=false;
+            _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
             if(listResponse && listResponse.message)
                 _this.$toaster.error(listResponse.message);
             else    
@@ -545,8 +558,8 @@ export default {
       gettables(){
         let _this = this;
         let url = config.AGENT_API_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
-        if(_this.$store.state.archivalStep[_this.$store.state.currentStep])
-        _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=true;
+        if(_this.$store.state.archivalStep[_this.currentStep])
+        _this.$store.state.archivalStep[_this.currentStep].loadTable=true;
         let inputJson = {
                 "table_name": "",
                 "table_count":_this.userInfo.table_count,
@@ -554,22 +567,24 @@ export default {
                 "client_id":_this.userInfo.client_id
         }
         postToServer(this, url, inputJson).then(response=>{
-          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=false;
+          _this.$store.state.archivalStep[_this.currentStep].loadTable=false;
           if(response && response.table_name_list){
               let allDbTables = response;//JSON.parse(response.bodyText);
-              _this.$store.state.schema = allDbTables.schema;
-              _this.$store.state.conn_str = allDbTables.conn_str;
-              _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables=[];
-              _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables=[];             
+              // _this.$store.state.schema = allDbTables.schema;
+              _this.set_schema(allDbTables.schema);
+              _this.set_conn_str(allDbTables.conn_str);
+              // _this.$store.state.conn_str = allDbTables.conn_str;
+              _this.$store.state.archivalStep[_this.currentStep].allArchiveTables=[];
+              _this.$store.state.archivalStep[_this.currentStep].allDbTables=[];             
               allDbTables.table_name_list.map(function(obj, index){
                 let temp = {'name':obj, 'stepId':'Database Table'};
-                _this.$store.state.archivalStep[_this.$store.state.currentStep].allArchiveTables.push(cloneDeep(temp));
-                _this.$store.state.archivalStep[_this.$store.state.currentStep].allDbTables.push(cloneDeep(temp));             
+                _this.$store.state.archivalStep[_this.currentStep].allArchiveTables.push(cloneDeep(temp));
+                _this.$store.state.archivalStep[_this.currentStep].allDbTables.push(cloneDeep(temp));             
               });
           }
           // console.log("Response from all tables"+JSON.stringify(response));
         },response => {
-          _this.$store.state.archivalStep[_this.$store.state.currentStep].loadTable=false;
+          _this.$store.state.archivalStep[_this.currentStep].loadTable=false;
         }).catch(e => {
           console.log(e)
             this.ErrorMessage = 'Something went wrong.'
@@ -841,7 +856,7 @@ export default {
           _this.operatorId = operatorId;
           // _this.$store.state.currentStep = operatorId;
           //  _this.$store.commit('setCurrentStep', operatorId);
-          _this.$store.dispatch('setCurrentStep', operatorId);
+          _this.setCurrentStep(operatorId);
           // console.log(op);
           // if (op['dblClick'] && op["modal"]) {
           //   $("#" + op["modalName"]).modal()
@@ -850,17 +865,21 @@ export default {
           //   return
            if(operator.className == 'db'){
               _this.gettables();
-             _this.$store.state.dialog = true;
+            //  _this.$store.state.dialog = true;
+            _this.set_dialog(true);
            }
            else if(operator.className == 'archive'){
              _this.gettables();
-             _this.$store.state.openArchivePanel = true;
+            //  _this.$store.state.openArchivePanel = true;
+            _this.set_openArchivePanel(true);
            }else if(operator.className == 'merge' || operator.className == 'minus'){
              _this.gettables();
-             _this.$store.state.openMergePanel = true;
+            //  _this.$store.state.openMergePanel = true;
+            _this.set_openMergePanel(true);
            }else if(operator.className == 'spstep'){
              _this.getProcedureList();
-             _this.$store.state.openStoredProcedure = true;
+            //  _this.$store.state.openStoredProcedure = true;
+            _this.set_openStoredProcedure(true);
            } 
           return true;
         },

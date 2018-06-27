@@ -303,7 +303,8 @@ export default {
                     'is_drv_table':_this.tableObj.merge.selectedTable.stepId=="Database Table"?false:true,
                     'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 
                     'workTableOutput':_this.tableObj.merge.selectedColumns,'distinct':_this.tableObj.merge.distinct,
-                    'selectAll':_this.tableObj.merge.selectAll
+                    'selectAll':_this.tableObj.merge.selectAll,
+                    'selectedTable':_this.tableObj.merge.selectedTable,
                     };
         _this.tableObj.relationshipArray.push(cloneDeep(object));
         _this.$toaster.success('Relationship added successfully');              

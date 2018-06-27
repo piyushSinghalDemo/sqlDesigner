@@ -121,6 +121,7 @@ export default {
         _this.isDrivar = true;
       else
         _this.isDrivar = false;
+      _this.tableObj.archive.selectedTable = object;  
       _this.getCriteriaData(object);
       _this.dialog2 = true;
     },
