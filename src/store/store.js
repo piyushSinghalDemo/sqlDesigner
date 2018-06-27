@@ -161,6 +161,10 @@ const getters = {
     get_database_name: state => {
         return state.database_name
     },
+    is_currentStep: (state, currentStep) => {
+        return state.archivalStep[currentStep]
+    },
+
 }
 const mutations = {
     // mutateUpdateSchedulerId: function(state, id) {
@@ -241,9 +245,73 @@ const mutations = {
     set_database_name: (state, database_name) => {
         state.database_name = database_name;
     },
+    set_process_definition_step: (state, id, object) => {
+        state.archivalStep[id] = object;
+    },
+    enable_loadProcedureList: (state, currentStep) => {
+        state.archivalStep[currentStep].loadProcedureList = true;
+    },
+    disable_loadProcedureList: (state, currentStep) => {
+        state.archivalStep[currentStep].loadProcedureList = false;
+    },
+    set_procedureList: (state, currentStep, list) => {
+        state.archivalStep[currentStep].storedProcedure.procedureList = list;
+    },
+    enable_loadTable: (state, currentStep) => {
+        state.archivalStep[currentStep].loadTable = true;
+    },
+    disable_loadTable: (state, currentStep) => {
+        state.archivalStep[currentStep].loadTable = false;
+    },
+    remove_allArchiveTables: (state, currentStep) => {
+        state.archivalStep[currentStep].allArchiveTables = [];
+    },
+    remove_allDbTables: (state, currentStep) => {
+        state.archivalStep[currentStep].allDbTables = [];
+    },
+    pushTO_allArchiveTables: (state, currentStep, object) => {
+        state.archivalStep[currentStep].allArchiveTables.push(object);
+    },
+    pushTO_allDbTables: (state, currentStep, object) => {
+        state.archivalStep[currentStep].allDbTables.push(object);
+    },
+    remove_operatorId: (state, operatorId) => {
+        state.archivalStep[operatorId] = '';
+    },
+
 }
 
 const actions = {
+    remove_operatorId: (context, operatorId) => {
+        context.commit('remove_operatorId', operatorId);
+    },
+    remove_allArchiveTables: (context, currentStep) => {
+        context.commit('remove_allArchiveTables', currentStep);
+    },
+    remove_allDbTables: (context, currentStep) => {
+        context.commit('remove_allDbTables', currentStep);
+    },
+    pushTO_allArchiveTables: (context, currentStep, object) => {
+        context.commit('pushTO_allArchiveTables', currentStep, object);
+    },
+    pushTO_allDbTables: (context, currentStep, object) => {
+        context.commit('pushTO_allDbTables', currentStep, object);
+    },
+    disable_loadTable: (context, currentStep) => {
+        context.commit('disable_loadTable', currentStep);
+    },
+    enable_loadTable: (context, currentStep) => {
+        context.commit('enable_loadTable', currentStep);
+    },
+    set_procedureList: (context, currentStep, list) => {
+        context.commit('set_procedureList', currentStep, list);
+    },
+    disable_loadProcedureList: (context, currentStep) => {
+        context.commit('disable_loadProcedureList', currentStep);
+    },
+    enable_loadProcedureList: (context, currentStep) => {
+        context.commit('enable_loadProcedureList', currentStep);
+    },
     setCurrentStep: (context, stepId) => {
         context.commit('setCurrentStep', stepId);
     },
@@ -318,6 +386,9 @@ const actions = {
     },
     set_database_name: (context, database_name) => {
         context.commit('set_database_name', database_name);
+    },
+    set_process_definition_step: (context, id, object) => {
+        context.commit('set_process_definition_step', id, object);
     },
 }
 export default new Vuex.Store({
