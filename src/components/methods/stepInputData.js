@@ -17,6 +17,7 @@ export function getStepData(_this, tableObj) {
     archiveStepInput.name = tableObj.title;
     archiveStepInput.desc = tableObj.description;
     archiveStepInput.limit = tableObj.limit;
+    archiveStepInput.isSingleTableArchival = tableObj.isSingleTableArchival;
     let DrvTableObj = {
         "select_table": {
             "alias": tableObj.relationship.driverTable.aliesTableName,
