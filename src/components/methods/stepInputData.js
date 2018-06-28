@@ -118,8 +118,8 @@ export function getStepData(_this, tableObj) {
                 "where": []
             }
             // debugger;
-        relationObject.output_table = obj.relationship.toTable.tableName;
-        relationObject.select_table.alias = obj.relationship.toTable.aliesTableName;
+        relationObject.output_table = obj.select_table.tableName;
+        relationObject.select_table.alias = obj.select_table.aliesTableName;
         relationObject.select_table.name = obj.select_table.tableName;
         colsObject.table_alias = obj.select_table.aliesTableName;
         relationObject.select_table.cols.push(cloneDeep(colsObject));
