@@ -1,6 +1,6 @@
 /**
  * @author Piyush Singhal 
- * @description It will return Input json for archival step to create step
+ * @description It will return Output json from archival step to create step
  * 
  */
 'use strict'
@@ -108,19 +108,20 @@ export function getStepData(_this, tableObj) {
     }
     tableObj.relationshipArray.map(function(obj, index) {
         let relationObject = {
-            "output_table": "", //From table
-            "select_table": {
-                "alias": "", //From Table alies
-                "name": "", //From Table
-                "cols": []
-            },
-            "joins": [],
-            "where": []
-        }
-        relationObject.output_table = obj.relationship.toTable.tableName;
-        relationObject.select_table.alias = obj.relationship.toTable.aliesTableName;
-        relationObject.select_table.name = obj.relationship.toTable.tableName;
-        colsObject.table_alias = obj.relationship.toTable.aliesTableName;
+                "output_table": "", //From table
+                "select_table": {
+                    "alias": "", //From Table alies
+                    "name": "", //From Table
+                    "cols": []
+                },
+                "joins": [],
+                "where": []
+            }
+            // debugger;
+        relationObject.output_table = obj.select_table.tableName;
+        relationObject.select_table.alias = obj.select_table.aliesTableName;
+        relationObject.select_table.name = obj.select_table.tableName;
+        colsObject.table_alias = obj.select_table.aliesTableName;
         relationObject.select_table.cols.push(cloneDeep(colsObject));
 
         joinObject.jto = obj.relationship.toTable.tableName;
@@ -141,7 +142,9 @@ export function getStepData(_this, tableObj) {
                 joinObject.condition.push(cloneDeep(conditionObject));
             }
         });
-        relationObject.joins.push(cloneDeep(joinObject));
+        //check for join have some data or not
+        if (joinObject.jto)
+            relationObject.joins.push(cloneDeep(joinObject));
 
         obj.where && obj.where.map(function(whereObj, whereIndex) {
             if (whereObj.column) {
