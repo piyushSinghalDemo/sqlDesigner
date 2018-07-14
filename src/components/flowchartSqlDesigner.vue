@@ -161,7 +161,7 @@
 
 
 <script>
-import { mapState,mapMutations,mapActions } from 'vuex'
+import { mapState,mapMutations,mapActions, mapGetters } from 'vuex'
 import Simplert from 'vue2-simplert'
 import _def from './various/defnitions'
 import table from './table.vue'
@@ -334,7 +334,8 @@ export default {
   },
   methods: {
     ...mapActions(['set_process_definition_id','set_process_definition_name','setCurrentStep','set_database_name',
-                    'set_database_type','set_schema','set_conn_str','set_dialog','set_env_id','set_openArchivePanel','set_openMergePanel','set_openStoredProcedure']),
+                    'set_database_type','set_schema','set_conn_str','set_dialog','set_env_id','set_openArchivePanel',
+                    'set_openMergePanel','set_openStoredProcedure','enable_loadProcedureList','disable_loadProcedureList']),
     async createProcessData(){       
       let _this = this;
       let inputJson = _this.userInfo.process_definition_id;
@@ -521,7 +522,9 @@ export default {
       },
       getProcedureList(){
           let _this = this;
-          _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=true;
+          // debugger;
+          // _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=true;
+          _this.enable_loadProcedureList(_this.currentStep);
           let url = config.AGENT_API_URL+"get_stored_procedure_list";
           let inputJson = {
               "procedure_name": "",
@@ -535,7 +538,8 @@ export default {
           };
           postToServer(this, url, inputJson).then(listResponse => {
             if(_this.$store.state.archivalStep[_this.currentStep])
-            _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
+                _this.disable_loadProcedureList(_this.currentStep);
+            // _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
                 // console.log("listResponse"+JSON.stringify(listResponse));
                 this.loading = false;
               // _this.$store.state.database_name = listResponse.database_name;
@@ -548,7 +552,8 @@ export default {
               _this.set_conn_str(listResponse.connstr);
               _this.$store.state.archivalStep[_this.currentStep].storedProcedure.procedureList = listResponse.result;
           },listResponse => {
-            _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
+                _this.disable_loadProcedureList(_this.currentStep);
+            // _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
             if(listResponse && listResponse.message)
                 _this.$toaster.error(listResponse.message);
             else    

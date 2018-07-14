@@ -279,12 +279,21 @@ export default {
     savedata(){
       let arrayIndex = -1;
       let _this = this;
-    // _this.tableObj.relationshipArray.map(function(obj, index){
-    //               if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
-    //              obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
-    //            arrayIndex = index;
-    //          }
-    //      });
+      _this.tableObj.relationshipArray.map(function(obj, index){
+                  if(_this.tableObj.relationship.fromTable.tableName && 
+                      _this.tableObj.relationship.toTable.tableName &&
+                    obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
+                 obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
+               arrayIndex = index;
+             }
+      });
+      if(!_this.tableObj.relationship.fromTable && !_this.tableObj.relationship.toTable){
+        _this.tableObj.relationshipArray.map(function(obj, index){
+          if(obj.selectedTable.tableName == _this.tableObj.merge.selectedTable.tableName){
+            arrayIndex = index;
+          }
+        });
+      }
       if(_this.tableObj.relationship.fromTable && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
         _this.tableObj.relationship.jfrom_drv_table = true;
       }else{
@@ -306,15 +315,15 @@ export default {
                     'selectAll':_this.tableObj.merge.selectAll,
                     'selectedTable':_this.tableObj.merge.selectedTable,
                     };
+        // _this.tableObj.relationshipArray.push(cloneDeep(object));
+        // _this.$toaster.success('Relationship added successfully');              
+      if(arrayIndex >= 0){
+        _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
+        _this.$toaster.info('Relationship Updated successfully');
+      }else{
         _this.tableObj.relationshipArray.push(cloneDeep(object));
-        _this.$toaster.success('Relationship added successfully');              
-      // if(arrayIndex >= 0){
-      //   _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
-      //   _this.$toaster.info('Relationship Updated successfully');
-      // }else{
-      //   _this.tableObj.relationshipArray.push(cloneDeep(object));
-      //   _this.$toaster.success('Relationship added successfully');
-      // }
+        _this.$toaster.success('Relationship added successfully');
+      }
       this.resetForm();
       this.$emit('save-data', _this.tableObj)
     },

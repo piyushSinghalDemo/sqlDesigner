@@ -124,6 +124,16 @@ export default {
                     this.tableObj.merge.optionColumn = differenceBy(this.tableObj.merge.optionColumn, this.tableObj.merge.selectedColumns, 'name');
                     break;
           }
+          // This will add the where condition in the current selected table
+          for(var relationIndex =0; relationIndex < this.tableObj.relationshipArray.length; relationIndex++){
+            let relObject = this.tableObj.relationshipArray[relationIndex];
+            if(relObject.selectedTable.tableName == object.tableName){
+              this.tableObj.criteriaArray = cloneDeep(relObject.where);
+              break;
+            }else{
+              _this.tableObj.criteriaArray = cloneDeep(tableData.criteriaArray);
+            }
+          }
       // console.log("Option Column"+JSON.stringify(this.tableObj.merge.optionColumn));
     },
     updateTableObj(arr) {
