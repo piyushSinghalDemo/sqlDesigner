@@ -172,7 +172,8 @@ export async function setStepInfo(_this, processData) {
                 criteriaObject.column.tblAlies = whrObject.alias;
                 criteriaObject.column.colAlies = whrObject.colAlies;
                 criteriaObject.relOperator = getjoinOperator(whrObject.operator)
-                criteriaObject.valueType = whrObject.is_col_compare ? 'field' : 'value';
+                criteriaObject.valueType = whrObject.valueType;
+                criteriaObject.dateType = whrObject.date_type;
                 criteriaObject.value = whrObject.value;
                 criteriaObject.closebrsis = whrObject.post_braces;
                 criteriaObject.logOperator = setOperand(whrObject.operand); // ? true : false;
@@ -254,7 +255,6 @@ export async function setStepInfo(_this, processData) {
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
-
         stpObj.where && stpObj.where.map((whrObj, whrIndex) => {
             let criteriaObject = cloneDeep(stepObject.parenthasisobject);
             criteriaObject.openbrsis = whrObj.pre_braces;
@@ -266,7 +266,8 @@ export async function setStepInfo(_this, processData) {
             criteriaObject.column.tblAlies = whrObj.alias;
             criteriaObject.column.colAlies = whrObj.colAlies;
             criteriaObject.relOperator = getjoinOperator(whrObj.operator)
-            criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
+            criteriaObject.valueType = whrObj.valueType;
+            criteriaObject.dateType = whrObj.date_type;
             criteriaObject.value = whrObj.value;
             criteriaObject.closebrsis = whrObj.post_braces;
             criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;

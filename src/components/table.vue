@@ -222,6 +222,8 @@ export default {
           'colAlies' : obj.column.colAlies, //column alies
           'table_name':obj.column.group,
           'operator': _this.getjoinOperator(obj.relOperator), //relational operator
+          'valueType':obj.valueType,
+          'date_type':obj.dateType,
           'value': obj.value, //may be value date or column
           'operand': obj.logOperator ? 'AND' : 'OR',
           'pre_braces': obj.openbrsis,

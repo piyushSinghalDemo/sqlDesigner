@@ -10,9 +10,10 @@
             <v-btn flat color="primary" @click="$refs.menu.save(obj.date)">OK</v-btn>
           </v-date-picker>
         </v-menu> -->
+         <!-- model value : {{calenderDate}} -->
          <v-menu ref="menu2" :close-on-content-click="false" v-model="menu2" :nudge-right="40" 
            :return-value.sync="calenderDate" lazy transition="scale-transition" offset-y full-width  min-width="290px">
-        <v-text-field slot="activator" v-model="calenderDate" single-line label="Date" readonly ></v-text-field>
+        <v-text-field slot="activator" v-model="calenderDate" clearable label="Date" readonly style="height:38px;"></v-text-field>
         <v-date-picker v-model="calenderDate" @input="emitChange"></v-date-picker>
       </v-menu>
       </v-flex>

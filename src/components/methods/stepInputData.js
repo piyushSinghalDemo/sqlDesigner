@@ -44,6 +44,8 @@ export function getStepData(_this, tableObj) {
         "column_name": "",
         "table_name": "",
         "operator": "",
+        "date_type": "",
+        "valueType": "",
         "value": "",
         "pre_braces": "",
         "operand": "",
@@ -58,6 +60,8 @@ export function getStepData(_this, tableObj) {
             temp.column_name = obj.column.name; //column alies
             temp.colAlies = obj.column.colAlies; //column alies
             temp.operator = getjoinOperator(obj.relOperator); //relational operator
+            temp.date_type = obj.dateType;
+            temp.valueType = obj.valueType;
             temp.value = obj.value; //may be value date or column
             temp.pre_braces = obj.openbrsis;
             temp.operand = obj.logOperator ? 'AND' : 'OR';
@@ -154,6 +158,8 @@ export function getStepData(_this, tableObj) {
                 whereObject.column_name = whereObj.column.name; //column alies
                 whereObject.colAlies = whereObj.column.colAlies; //column alies
                 whereObject.operator = getjoinOperator(whereObj.relOperator); //relational operator
+                whereObject.date_type = whereObj.dateType;
+                whereObject.valueType = whereObj.valueType;
                 whereObject.value = whereObj.value; //may be value date or column
                 whereObject.pre_braces = whereObj.openbrsis;
                 whereObject.operand = whereObj.logOperator ? 'AND' : 'OR';
