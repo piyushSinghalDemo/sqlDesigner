@@ -103,25 +103,25 @@
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.valueType == 'date'">
-                      <v-select :items="dateTypeArray" clearable  label="Select Date Type" v-model="obj.dateType">
+                      <v-select :items="dateTypeArray" clearable label="Select Date Type" v-model="obj.dateType" style="padding-top: 14px;">
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
-                      <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" style="padding-top: 10px;" clearable 
-                        label="Date Format" v-model="obj.formatType" @change="obj.value=''">
+                      <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" clearable 
+                        label="Date Format" v-model="obj.formatType" @change="obj.value=''" style="padding-top: 14px;">
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value" @update="setDate($event,index)"></calender>
+                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value" @update="setDate($event,index)" ></calender>
 
                       <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-else-if="obj.valueType == 'field'" v-model="obj.field"
-                        item-text="name" return-object></v-select>
+                        item-text="name" return-object style="padding-top: 14px;"></v-select>
 
-                      <v-text-field name="input-1" v-else single-line label="Label Text" v-model="obj.value"></v-text-field>
+                      <v-text-field name="input-1" v-else single-line label="Label Text" v-model="obj.value" style="padding-top: 14px;"></v-text-field>
                       
                     </v-flex>
                     <v-flex xs3>
-                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
+                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis" style="padding-top: 14px;">
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
@@ -325,7 +325,6 @@ export default {
       // debugger;
       if (!_this.tableObj.selectedColumns.length && _this.tableObj.merge.selectedColumns.length)
         _this.tableObj.selectedColumns = _this.tableObj.merge.selectedColumns
-
       let object = {
         'relationship': _this.tableObj.relationship,
         'is_drv_table': _this.tableObj.merge.selectedTable.stepId == "Database Table" ? false : true,

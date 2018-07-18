@@ -124,6 +124,7 @@ export default {
                     this.tableObj.merge.optionColumn = differenceBy(this.tableObj.merge.optionColumn, this.tableObj.merge.selectedColumns, 'name');
                     break;
           }
+          debugger;
           // This will add the where condition in the current selected table
           for(var relationIndex =0; relationIndex < this.tableObj.relationshipArray.length; relationIndex++){
             let relObject = this.tableObj.relationshipArray[relationIndex];

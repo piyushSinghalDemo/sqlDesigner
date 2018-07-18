@@ -8,17 +8,7 @@
     <v-layout row wrap>
       <v-flex xs6>
         <v-layout row wrap>
-          <!-- <v-flex xs6>
-            {{tableObj}}
-              <v-text-field name="limit" label="Limit" v-model="tableObj.limit"></v-text-field>
-          </v-flex>
-          <v-flex xs6>
-            <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-           label="Select Driver Table"   item-text="name" item-value="name + group" autocomplete></v-select>
-          <a class="addTable" @click.stop="addDriverTable">Add</a>
-          </v-flex> -->
           <v-flex xsx4>
-            <!-- distinctAll :{{tableObj.type}} -->
               <v-checkbox v-if="tableObj.type=='merge'" label="Distinct" style="margin-top:13%"  v-model="tableObj.merge.distinctAll"></v-checkbox>
           </v-flex>
           <v-flex xs8>
@@ -29,7 +19,6 @@
         </v-layout>
       </v-flex>
       <v-flex xs6>
-        <!-- {{tableObj.relationship}} -->
         <div class="panel panel-success" v-show="tableObj.relationship.selectedTableArray.length">
           <div class="panel-heading">Selected Table</div>
           <div class="panel-body">
