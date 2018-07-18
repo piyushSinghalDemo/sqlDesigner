@@ -11,6 +11,7 @@ import VueTabs from 'vue-nav-tabs'
 import underscore from 'vue-underscore';
 import Toaster from 'v-toaster';
 import ToggleButton from 'vue-js-toggle-button'
+
 // import '../node_modules/vuetify/dist/vuetify.min.css';
 // my-project/src/index.js
 import 'babel-polyfill'

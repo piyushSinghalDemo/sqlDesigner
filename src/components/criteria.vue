@@ -1,63 +1,76 @@
 <template>
   <v-container grid-list-md>
-    <v-layout row wrap style="font-weight: bold;font-size:19px">
-      <v-flex xs2>Parenthesis</v-flex>
-      <v-flex xs2>Columns</v-flex>
-      <v-flex xs1>Operator</v-flex>
-      <v-flex xs2>Value Type</v-flex>
-      <v-flex xs2>Value</v-flex>
-      <v-flex xs2>Parenthesis</v-flex>
-      <v-flex xs1>Operator</v-flex>
-    </v-layout>
-    <v-layout v-for="(obj,index) in tableObj.criteriaArray" :key="index">
-      <v-flex xs2>
-        <v-select :items="openbrsisArray" clearable single-line label="Select Parenthisis" v-model="obj.openbrsis">
-        </v-select>
-      </v-flex>
-      <v-flex xs2>
-        <!-- {{tableObj.optionColumn}} -->
-        <v-select label="Select Column" clearable :items="tableObj.optionColumn" item-text="name" single-line
-            v-model="obj.column" return-object autocomplete>
+        <!-- <v-layout row wrap style="font-weight: bold;font-size:19px">
+          <v-flex xs2>Parenthesis</v-flex>
+          <v-flex xs2>Columns</v-flex>
+          <v-flex xs1>Operator</v-flex>
+          <v-flex xs2>Value Type</v-flex>
+          <v-flex xs2>Value</v-flex>
+          <v-flex xs2>Parenthesis</v-flex>
+          <v-flex xs1>Operator</v-flex>
+        </v-layout> -->
+        <v-layout row wrap v-for="(obj,index) in tableObj.criteriaArray" :key="index">
+          <!-- tableObj.criteriaArray : {{tableObj.criteriaArray}} -->
+          <v-flex xs3>
+            <v-select :items="openbrsisArray" clearable  label="Select Parenthisis" v-model="obj.openbrsis">
+            </v-select>
+          </v-flex>
+          <v-flex xs3>
+            <!-- {{tableObj.optionColumn}} -->
+            <v-select label="Select Column" clearable :items="tableObj.optionColumn" item-text="name"  v-model="obj.column"
+              return-object autocomplete>
+            </v-select>
+          </v-flex>
+          <v-flex xs3>
+            <v-select :items="filterArray" clearable  label="Select Operator" v-model="obj.relOperator">
+            </v-select>
+          </v-flex>
+          <v-flex xs3>
+            <v-select :items="valueTypeArray" clearable  label="Select ValueType" v-model="obj.valueType">
+            </v-select>
+          </v-flex>
+           <v-flex xs3 v-if="obj.valueType == 'date'">
+             <!-- obj.dateType value : {{obj.dateType}} -->
+            <v-select :items="dateTypeArray" style="padding-top: 10px;" clearable single-line label="Select Date Type" v-model="obj.dateType">
+            </v-select>
+          </v-flex>
+          <v-flex xs3 v-if="obj.dateType == 'date'">
+            <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" style="padding-top: 10px;" clearable 
+              label="Date Format" v-model="obj.formatType" @change="obj.value=''">
+            </v-select>
+          </v-flex>
+          <v-flex xs3>
+            <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :format="obj.formatType" 
+              :input="obj.value" @update="setDate($event,index)"></calender>
 
-        </v-select>
-      </v-flex>
+            <v-select v-else-if="obj.valueType == 'field'" label="Select Column" clearable :items="tableObj.optionColumn" 
+              item-text="name"  v-model="obj.field" return-object autocomplete style="padding-top: 10px;">
+            </v-select>    
+            <v-text-field name="input-1" v-else  label="Value" style="padding-top: 10px;" v-model="obj.value"></v-text-field>
+          </v-flex>
+          <v-flex xs3>
+            <v-select :items="closebrsisArray" style="padding-top: 10px;" item-text="name" clearable  label="Select Parenthisis" v-model="obj.closebrsis"
+              return-object autocomplete>
+            </v-select>
+          </v-flex>
+          <v-flex xs3>
+            <toggle-button v-show="obj.showLogicalOperator" :width=80 :height=30 :value="obj.logOperator" v-model="obj.logOperator" :labels="{checked: 'AND', unchecked: 'OR'}"
+              style="margin-top:12%" :sync="true" />
+            <div v-show="!obj.showLogicalOperator">
+              <i class="fa fa-plus criteria-opr" @click.stop="addCriteria()" aria-hidden="true"></i>
+              <span class="ft-30">|</span>
+              <i class="fa fa-trash criteria-opr" @click.stop="deleteCriteria(index)" aria-hidden="true"></i>
+            </div>
+          </v-flex>
+        </v-layout>
+    <v-layout row wrap>
       <v-flex xs1>
-        <v-select :items="filterArray" clearable single-line label="Select Operator" v-model="obj.relOperator">
-        </v-select>
-      </v-flex>
-      <v-flex xs2>
-        <v-select :items="valueTypeArray" clearable single-line label="Select ValueType" v-model="obj.valueType">
-        </v-select>
-      </v-flex>
-      <v-flex xs2>
-        <v-text-field name="input-1" v-show="obj.valueType == 'value' || obj.valueType == ''" single-line label="Label Text" v-model="obj.value"></v-text-field>
-        <calender v-show="obj.valueType == 'date'" @update="setDate($event,index)"></calender>
-        <v-select :items="tableObj.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-          item-text="name" clearable item-value="colAlies" :filter="customFilter" autocomplete></v-select>
-      </v-flex>
-      <v-flex xs2>
-        <v-select :items="closebrsisArray" item-text="name" clearable single-line label="Select Parenthisis"
-           v-model="obj.closebrsis" return-object autocomplete>
-        </v-select>
-      </v-flex>
-      <v-flex xs1>
-        <toggle-button v-show="obj.showLogicalOperator" :width=80 :height=30 :value="obj.logOperator" v-model="obj.logOperator" :labels="{checked: 'AND', unchecked: 'OR'}"
-          style="margin-top:12%" :sync="true" />
-        <div v-show="!obj.showLogicalOperator">
-          <i class="fa fa-plus criteria-opr" @click.stop="addCriteria()" aria-hidden="true"></i>
-          <span class="ft-30">|</span>
-          <i class="fa fa-trash criteria-opr" @click.stop="deleteCriteria(index)" aria-hidden="true"></i>
-        </div>
-      </v-flex>
-    </v-layout>
-     <v-layout row wrap>
-        <v-flex xs1>
         <v-btn class="next" @click.stop="switchScreen(1)" color="primary">Previous</v-btn>
-        </v-flex>
-        <v-flex xs9></v-flex>
-        <v-flex xs2>
+      </v-flex>
+      <v-flex xs9></v-flex>
+      <v-flex xs2>
         <v-btn class="next" @click.stop="switchScreen(3)" color="primary">Next</v-btn>
-        </v-flex>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -85,13 +98,14 @@ export default {
                   "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH",
                   "LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
       valueTypeArray:['value','date','field'],               
+      dateTypeArray:['date','julien'],
     }},
     props: ['tableObj'],
    methods: {
      setDate(dateParam, index){
        let _this = this;
       //  alert("Date "+dateParam);
-       _this.tableObj.criteriaArray[index].date = dateParam;
+       _this.tableObj.criteriaArray[index].value = dateParam;
        console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
      },
     deleteCriteria(index){
@@ -123,7 +137,7 @@ export default {
       position: relative;
       margin: auto;
       padding: auto;
-      margin-top: 24%;
+      margin-top: 8%;
     }
     .next{
     position: absolute;

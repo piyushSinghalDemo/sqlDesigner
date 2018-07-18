@@ -44,6 +44,8 @@ export default function getMergeStepData(_this, tableObj) {
         "column_name": "",
         "operator": "",
         "value": "",
+        "date_type": "",
+        "formatType": "",
         "pre_braces": "",
         "operand": "",
         "is_col_compare": "",
@@ -121,6 +123,9 @@ export default function getMergeStepData(_this, tableObj) {
                 whereObject.alias = whereObj.column.tblAlies; //table alies
                 whereObject.column_name = whereObj.column.name; //column alies
                 whereObject.operator = getjoinOperator(whereObj.relOperator); //relational operator
+                whereObject.date_type = whereObj.dateType;
+                whereObject.formatType = whereObj.formatType;
+                whereObject.valueType = whereObj.valueType;
                 whereObject.value = whereObj.value; //may be value date or column
                 whereObject.pre_braces = whereObj.openbrsis;
                 whereObject.operand = whereObj.logOperator ? 'AND' : 'OR';
