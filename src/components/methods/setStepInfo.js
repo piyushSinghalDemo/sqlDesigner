@@ -262,7 +262,28 @@ export async function setStepInfo(_this, processData) {
                 }
                 tableObj.relationship.selectedTableArray.push(obj);
             }
-
+            if (stpObj.drv_table[0].where && stpObj.drv_table[0].where.length) {
+                tableObj.archive.where = [];
+                stpObj.drv_table[0].where.map((whrObj, whrIndex) => {
+                    let criteriaObject = cloneDeep(stepObject.parenthasisobject);
+                    criteriaObject.openbrsis = whrObj.pre_braces;
+                    criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
+                    criteriaObject.column.name = whrObj.column_name;
+                    criteriaObject.column.value = whrObj.table_name + '-' + whrObj.column_name;
+                    criteriaObject.column.group = whrObj.table_name;
+                    criteriaObject.column.fixed = false;
+                    criteriaObject.column.tblAlies = whrObj.alias;
+                    criteriaObject.column.colAlies = whrObj.colAlies;
+                    criteriaObject.relOperator = getjoinOperator(whrObj.operator)
+                    criteriaObject.valueType = whrObj.valueType;
+                    criteriaObject.dateType = whrObj.date_type;
+                    criteriaObject.formatType = whrObj.formatType;
+                    criteriaObject.value = whrObj.value;
+                    criteriaObject.closebrsis = whrObj.post_braces;
+                    criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
+                    tableObj.archive.where.push(cloneDeep(criteriaObject));
+                });
+            }
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
@@ -375,9 +396,9 @@ export async function setStepInfo(_this, processData) {
             // tableObj.storedProcedure.params = stpObj.params;
         }
         // 
+        console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
-        // console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
     });
 
 };
