@@ -9,6 +9,7 @@ import flowchartLink from './getOperatorLink';
 export function getStepData(_this, tableObj) {
     // let _this = this;
     // console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
+    // debugger;
     let $flowchart = $("#droppable");
     var flowchartData = $flowchart.flowchart('getData');
     let objectLength = Object.keys(flowchartData.links).length;
@@ -45,6 +46,7 @@ export function getStepData(_this, tableObj) {
         "table_name": "",
         "operator": "",
         "date_type": "",
+        'formatType': "",
         "valueType": "",
         "value": "",
         "pre_braces": "",
@@ -61,6 +63,7 @@ export function getStepData(_this, tableObj) {
             temp.colAlies = obj.column.colAlies; //column alies
             temp.operator = getjoinOperator(obj.relOperator); //relational operator
             temp.date_type = obj.dateType;
+            temp.formatType = obj.formatType;
             temp.valueType = obj.valueType;
             temp.value = obj.value; //may be value date or column
             temp.pre_braces = obj.openbrsis;
@@ -159,6 +162,7 @@ export function getStepData(_this, tableObj) {
                 whereObject.colAlies = whereObj.column.colAlies; //column alies
                 whereObject.operator = getjoinOperator(whereObj.relOperator); //relational operator
                 whereObject.date_type = whereObj.dateType;
+                whereObject.formatType = whereObject.formatType;
                 whereObject.valueType = whereObj.valueType;
                 whereObject.value = whereObj.value; //may be value date or column
                 whereObject.pre_braces = whereObj.openbrsis;
@@ -190,11 +194,12 @@ export function getStepData(_this, tableObj) {
             archiveStepInput.links.push(cloneDeep(link));
         }
         // archiveStepInput.links = flowchartLink(_this, flowchartData);
+        // debugger;
         archiveStepInput.list_of_relations.push(relationObject);
-        archiveStepInput.client_id = userData.client_id,
-            archiveStepInput.user_id = userData.user_id,
-            archiveStepInput.id = tableObj.stepId
     });
+    archiveStepInput.client_id = userData.client_id,
+        archiveStepInput.user_id = userData.user_id,
+        archiveStepInput.id = tableObj.stepId
     return archiveStepInput;
 };
 

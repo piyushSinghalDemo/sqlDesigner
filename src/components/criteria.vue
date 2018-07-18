@@ -34,8 +34,14 @@
             <v-select :items="dateTypeArray" style="padding-top: 10px;" clearable single-line label="Select Date Type" v-model="obj.dateType">
             </v-select>
           </v-flex>
+          <v-flex xs3 v-if="obj.dateType == 'date'">
+            <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" style="padding-top: 10px;" clearable 
+              label="Date Format" v-model="obj.formatType" @change="obj.value=''">
+            </v-select>
+          </v-flex>
           <v-flex xs3>
-            <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value" @update="setDate($event,index)"></calender>
+            <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :format="obj.formatType" 
+              :input="obj.value" @update="setDate($event,index)"></calender>
 
             <v-select v-else-if="obj.valueType == 'field'" label="Select Column" clearable :items="tableObj.optionColumn" 
               item-text="name"  v-model="obj.field" return-object autocomplete style="padding-top: 10px;">

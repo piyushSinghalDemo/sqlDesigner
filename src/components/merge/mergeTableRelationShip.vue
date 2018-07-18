@@ -35,7 +35,7 @@
           <div class="panel-body">
             <v-layout row wrap>
               <v-flex style="margin-right:5px;" v-for="(object, index) in tableObj.relationship.selectedTableArray" :key="index">
-                <span style="cursor:pointer" class="badge" @click.stop="updateJoin(object)">{{object.tableName}}</span>
+                <span style="cursor:pointer" class="badge" @click="updateJoin(object)">{{object.tableName}}</span>
               </v-flex>
             </v-layout>
           </div>
@@ -57,9 +57,9 @@
       <v-expansion-panel-content v-if="item.relationship.selectedFilter"  v-for="(item,i) in tableObj.relationshipArray" :key="i">
         <div slot="header">
           <v-layout row wrap>
-            <v-flex>{{item.relationship.fromTable.tableName}}</v-flex>
-            <v-flex>{{item.relationship.selectedFilter}}</v-flex>
-            <v-flex>{{item.relationship.toTable.tableName}}</v-flex>
+            <v-flex>{{item.relationship && item.relationship.fromTable ? item.relationship.fromTable.tableName:""}}</v-flex>
+            <v-flex>{{item.relationship ? item.relationship.selectedFilter:""}}</v-flex>
+            <v-flex>{{item.relationship && item.relationship.toTable ? item.relationship.toTable.tableName:""}}</v-flex>
           </v-layout>
         </div>
         <v-card>

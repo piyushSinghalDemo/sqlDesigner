@@ -174,6 +174,7 @@ export async function setStepInfo(_this, processData) {
                 criteriaObject.relOperator = getjoinOperator(whrObject.operator)
                 criteriaObject.valueType = whrObject.valueType;
                 criteriaObject.dateType = whrObject.date_type;
+                criteriaObject.formatType = whrObject.formatType;
                 criteriaObject.value = whrObject.value;
                 criteriaObject.closebrsis = whrObject.post_braces;
                 criteriaObject.logOperator = setOperand(whrObject.operand); // ? true : false;
@@ -252,6 +253,16 @@ export async function setStepInfo(_this, processData) {
                         // this.ErrorMessage = 'Something went wrong.'
                 })
             }
+            if (!stpObj.list_of_relations.length) {
+                let obj = {
+                    'tableName': stpObj.drv_table[0].select_table.name,
+                    'aliesTableName': stpObj.drv_table[0].select_table.alias,
+                    'group': 'Driver Table',
+                    'stepId': stpObj.drv_table[0].select_table.is_drv_table
+                }
+                tableObj.relationship.selectedTableArray.push(obj);
+            }
+
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
@@ -268,6 +279,7 @@ export async function setStepInfo(_this, processData) {
             criteriaObject.relOperator = getjoinOperator(whrObj.operator)
             criteriaObject.valueType = whrObj.valueType;
             criteriaObject.dateType = whrObj.date_type;
+            criteriaObject.formatType = whrObj.formatType;
             criteriaObject.value = whrObj.value;
             criteriaObject.closebrsis = whrObj.post_braces;
             criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
@@ -288,7 +300,6 @@ export async function setStepInfo(_this, processData) {
         tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
         tableObj.relationship.selectedTableArray.map(async(tblObj, tblindx) => {
             if (tblObj.stepId == 'Previous Steps') {
-
                 if (tableObj.optionColumn.length) {
                     tableObj.optionColumn.push({ divider: true });
                 }

@@ -106,8 +106,13 @@
                       <v-select :items="dateTypeArray" clearable  label="Select Date Type" v-model="obj.dateType">
                       </v-select>
                     </v-flex>
+                    <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
+                      <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" style="padding-top: 10px;" clearable 
+                        label="Date Format" v-model="obj.formatType" @change="obj.value=''">
+                      </v-select>
+                    </v-flex>
                     <v-flex xs3>
-                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" v-model="obj.value" @update="setDate($event,index)"></calender>
+                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value" @update="setDate($event,index)"></calender>
 
                       <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-else-if="obj.valueType == 'field'" v-model="obj.field"
                         item-text="name" return-object></v-select>
@@ -263,6 +268,12 @@ export default {
     },
   },
   methods: {
+    setDate(dateParam, index){
+       let _this = this;
+      //  alert("Date "+dateParam);
+       _this.tableObj.criteriaArray[index].value = dateParam;
+      //  console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
+    },
     saveColumnAlies(columnObj) {
       let _this = this;
       let index = findIndex(_this.tableObj.merge.selectedColumns, {

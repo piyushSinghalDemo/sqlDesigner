@@ -60,8 +60,9 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
             criteriaObject.column.name = whrObj.column_name;
             criteriaObject.column.fixed = false;
             criteriaObject.column.tblAlies = whrObj.alias;
-            criteriaObject.relOperator = getjoinOperator(whrObj.operator)
-            criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
+            criteriaObject.relOperator = getjoinOperator(whrObj.operator);
+            criteriaObject.valueType = whrObj.valueType;
+            criteriaObject.dateType = whrObj.date_type;
             criteriaObject.value = whrObj.value;
             criteriaObject.closebrsis = whrObj.post_braces;
             criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;

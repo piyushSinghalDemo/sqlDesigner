@@ -105,26 +105,24 @@
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.valueType == 'date'">
-                      <v-select :items="dateTypeArray" clearable  label="Select Date Type" v-model="obj.dateType">
+                      <v-select :items="dateTypeArray" clearable  label="Select Date Type" style="padding-top: 14px;" v-model="obj.dateType">
+                      </v-select>
+                    </v-flex>
+                    <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
+                      <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" style="padding-top: 14px;" clearable 
+                        label="Date Format" v-model="obj.formatType" @change="obj.value=''">
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <!-- <v-menu ref="menu" lazy :close-on-content-click="false" v-show="obj.valueType == 'date'" v-model="obj.menu" transition="scale-transition"
-                        offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="obj.date">
-                        <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly></v-text-field>
-                        <v-date-picker v-model="obj.date" no-title scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu> -->
                       <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value"  @update="setDate($event,index)"></calender>
                       <v-select :items="tableObj.archive.optionColumn" item-text="name" single-line label="Select Column" v-else-if="obj.valueType == 'field'" v-model="obj.field"
                          clearable return-object></v-select>
                       
-                      <v-text-field name="input-1" v-else single-line label="Label Text" v-model="obj.value"></v-text-field>
+                      <v-text-field name="input-1" v-else single-line label="Label Text" style="padding-top:14px" v-model="obj.value"></v-text-field>
                     </v-flex>
                     <v-flex xs3>
-                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
+                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" style="padding-top:14px" 
+                        v-model="obj.closebrsis">
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
