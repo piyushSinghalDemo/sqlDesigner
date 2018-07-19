@@ -224,6 +224,7 @@ import findIndex from 'lodash/findIndex';
 import draggable from 'vuedraggable'
 import filter from 'lodash/filter';
 import columnAlies from '../columnAlies.vue';
+import {JOIN_TYPE,FILTER_ARRAY, OPEN_BRASIS_ARRAY, CLOSE_BRASIS_ARRAY, FUNCTION_ARRAY, VALUE_TYPE_ARRAY, PREVIOUS_STEPS} from '../constant.js'
 export default {
     //  components: {
     //       'column-alies':columnAlies
@@ -232,13 +233,12 @@ export default {
     return {
           aliesPanel:false,
           column:{},
-          joinType:["inner join","left join","right join","full join"],
-          filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
-                  "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
-           openbrsisArray:['(','((','((('],
-      closebrsisArray:[')','))',')))'],
-      functionArray:['count','sum'],
-      valueTypeArray:['value','date','field'],
+          joinType:JOIN_TYPE,
+          filterArray:FILTER_ARRAY,
+           openbrsisArray:OPEN_BRASIS_ARRAY,
+      closebrsisArray:CLOSE_BRASIS_ARRAY,
+      functionArray:FUNCTION_ARRAY,
+      valueTypeArray:VALUE_TYPE_ARRAY,
       SearchTable:"",
         isDragging: false,
         selectedSearch:"",
@@ -294,12 +294,12 @@ export default {
           }
         });
       }
-      if(_this.tableObj.relationship.fromTable && _this.tableObj.relationship.fromTable.stepId == "Previous Steps"){
+      if(_this.tableObj.relationship.fromTable && _this.tableObj.relationship.fromTable.stepId == PREVIOUS_STEPS){
         _this.tableObj.relationship.jfrom_drv_table = true;
       }else{
         _this.tableObj.relationship.jfrom_drv_table = false;
       }
-      if(_this.tableObj.relationship.toTable && _this.tableObj.relationship.toTable.stepId == "Previous Steps"){
+      if(_this.tableObj.relationship.toTable && _this.tableObj.relationship.toTable.stepId == PREVIOUS_STEPS){
         _this.tableObj.relationship.jto_drv_table = true;  
       }else{
         _this.tableObj.relationship.jto_drv_table = false;  

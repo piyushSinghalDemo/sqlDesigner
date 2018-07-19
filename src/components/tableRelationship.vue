@@ -78,6 +78,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import config from '../config.json'
 import union from 'lodash/union';
 import {post as postToServer} from './methods/serverCall.js'
+import {GET_TABLES, GET_ALL_COLUMN} from './constant.js'
 export default {
   data() {
       return {
@@ -146,7 +147,7 @@ export default {
           _this.createCopy = true;
           }
         this.loading = true;
-        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+GET_TABLES//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
         let userData = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -231,7 +232,7 @@ export default {
     getColumn(tableObject){
       let _this = this;
       let userData = JSON.parse(sessionStorage.getItem("userInfo"));
-      let url = config.AGENT_API_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+      let url = config.AGENT_API_URL+GET_ALL_COLUMN; //'http://192.168.1.100:8010/get_all_columns';
       let inputJson = {
                "conn_str": _this.conn_str,
                "env_id":userData.env_id,

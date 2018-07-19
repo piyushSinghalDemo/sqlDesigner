@@ -130,8 +130,6 @@ export default {
             this.worktableColumn = cloneDeep(array);
       },
       filterSelColumn(){
-          // this.selectedColumns = this.filterBy(this.selectedColumns, this.selectedSearch);
-            // debugger;
           let array = this.filterBy(this.tableObj.selectedColumns, this.selectedSearch);
             this.selectedColumns = cloneDeep(array);
       },

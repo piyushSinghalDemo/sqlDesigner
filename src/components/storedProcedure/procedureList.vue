@@ -5,19 +5,14 @@
         <span style="color: red;font-size: 16px;">Procedure List Loading...</span>
     </div>
     <div v-show="!tableObj.loadProcedureList">
-    <!-- <ul>
-      <li @click.stop="switchScreen(1)" :class="{chevron:true, chevron_active:true}">Procedure List</li>
-      <li @click.stop="switchScreen(2)" :class="{chevron:true}">Parameter</li>
-    </ul> -->
+   
     <v-layout row wrap>
       <v-flex xs6  offset-xs3>
-        <!-- <v-select :items="selectTable" v-model="tableObj.storedProcedure.name" :loading="loading"
-          :search-input.sync="search" label="Select Procedure"  cache-items item-text="name" autocomplete></v-select> -->
+   
          <v-select :loading="loading" :items="selectTable" :search-input.sync="search"
           v-model="tableObj.storedProcedure.name" label="Select Procedure" autocomplete cache-items></v-select>  
       </v-flex>
     </v-layout> 
-        <!-- table data : {{tableObj}} -->
     <v-layout justify-end>
       <v-btn class="next" @click.stop="switchScreen(2)" color="primary">Next</v-btn>
     </v-layout>
@@ -29,6 +24,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import config from '../../config.json'
 import {post as postToServer} from "../methods/serverCall"
+import {GET_STORED_PROCEDURE_LIST} from '../constant.js'
 export default {
   data() {
       return {
@@ -76,7 +72,7 @@ export default {
     methods: {
         getProcedureList(val){
             let _this = this;
-            let url = config.AGENT_API_URL+"get_stored_procedure_list";
+            let url = config.AGENT_API_URL+GET_STORED_PROCEDURE_LIST;
             let inputJson = {
                 "procedure_name": val,
                 "procedure_count": _this.userInfo.table_count,
@@ -109,7 +105,7 @@ export default {
         let _this = this;
         this.loading = true;
         // let _this = this;
-        let url = config.AGENT_API_URL+"get_stored_procedure_list";
+        let url = config.AGENT_API_URL+GET_STORED_PROCEDURE_LIST;
         let inputJson = {
             "procedure_name": value,
             "procedure_count": _this.userInfo.table_count,
@@ -131,82 +127,6 @@ export default {
         });
         // await _this.getProcedureList(value);        
       },
-    // addTable(){
-    //   let validFlag=true;
-    //   let _this = this;
-    //   console.log("Demo "+JSON.stringify(_this.demo));
-    //   _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
-    //     if(obj.tableName == _this.tableObj.relationship.selectedTable.name){
-    //       validFlag = false;
-    //       _this.$toaster.error('Table Already Exist')
-    //     }
-    //   });
-    //   if(validFlag){
-    //     let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
-    //     let tableName = tempName.join("");
-    //     let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
-    //                'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
-    //                'stepId':_this.tableObj.relationship.selectedTable.stepId}
-    //     _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-    //     if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){           
-    //        obj.columns = _this.tableObj.relationship.selectedTable.columns;
-    //       _this.getPrevStepCol(cloneDeep(obj));
-    //     }else{
-    //       // obj.is_drv_table = false;
-    //       _this.getColumn(obj);
-    //     }
-    //      _this.$toaster.success('Table Added Successfully'); 
-    //   }
-    // },
-    // getPrevStepCol(object){
-    //   let _this = this;
-    //   if(_this.tableObj.optionColumn.length){
-    //     _this.tableObj.optionColumn.push({ divider: true });
-    //   }
-    //       let headerObj = { header: object.tableName};
-    //       _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-    //       let allColumn = object.columns;
-    //       allColumn.map(function(obj, index){
-    //        let columnObj = { name: obj.colAlies, group: object.tableName, fixed: false, 
-    //                            tblAlies:object.aliesTableName, colAlies: obj.colAlies+_this.$store.state.aliesCounter++}; 
-    //         // obj.group = object.tableName;
-    //         _this.tableObj.is_drv_table = true;
-    //         //  obj.tblAlies = object.aliesTableName;
-    //         _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-    //       });
-    // },
-    // getColumn(tableObject){
-    //   let _this = this;
-    //   let url = config.AGENT_API_URL+'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
-    //   let inputJson = {
-    //            "conn_str": _this.conn_str,
-    //            "schema": _this.schema,
-    //            "dest_queue": "test",
-    //            "table_name": tableObject.tableName
-    //   }
-    //   _this.$http.post(url, inputJson, {
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    //     }).then(response => {
-    //       if(_this.tableObj.optionColumn.length){
-    //         _this.tableObj.optionColumn.push({ divider: true });
-    //       }
-    //       let headerObj = { header: tableObject.tableName};
-    //       _this.tableObj.optionColumn.push(cloneDeep(headerObj));
-    //       let allColumn = JSON.parse(response.bodyText);
-    //       allColumn.map(function(obj, index){
-    //          let columnObj = { name: obj, group: tableObject.tableName, fixed: false, 
-    //                            tblAlies:tableObject.aliesTableName, colAlies: obj+_this.$store.state.aliesCounter++};
-    //         _this.tableObj.optionColumn.push(cloneDeep(columnObj));
-    //       });
-    //       console.log("Response from all tables"+JSON.stringify(response));
-    //     },response => {}).catch(e => {
-    //           console.log(e)
-    //         this.ErrorMessage = 'Something went wrong.'
-    //   })
-    
-    // },
     }
   }
 

@@ -95,6 +95,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
+import {PREVIOUS_STEPS, GET_TABLES, GET_ALL_COLUMN} from '../constant.js'
 import {
   post as postToServer
 } from '../methods/serverCall'
@@ -161,7 +162,7 @@ export default {
       if (!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
       _this.isDriverTable = true;
-      if (_this.tableObj.relationship.driverTable.stepId == 'Previous Steps') {
+      if (_this.tableObj.relationship.driverTable.stepId == PREVIOUS_STEPS) {
         obj.columns = _this.tableObj.relationship.driverTable.columns;
         _this.getPrevStepCol(cloneDeep(obj));
       } else {
@@ -203,7 +204,7 @@ export default {
           _this.createCopy = true;
         }
         this.loading = true;
-        let url = config.AGENT_API_URL + 'get_tables' //'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL + GET_TABLES //'http://192.168.1.100:8010/get_tables';
         let conn_str = _this.$store.state.conn_str;
         let schema = _this.$store.state.schema;
         let userData = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -258,7 +259,7 @@ export default {
           'stepId': _this.tableObj.relationship.selectedTable.stepId
         }
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-        if (_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps') {
+        if (_this.tableObj.relationship.selectedTable.stepId == PREVIOUS_STEPS) {
           obj.columns = _this.tableObj.relationship.selectedTable.columns;
           _this.getPrevStepCol(cloneDeep(obj));
         } else {
@@ -305,7 +306,7 @@ export default {
     },
     getColumn(tableObject) {
       let _this = this;
-      let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+      let url = config.AGENT_API_URL + GET_ALL_COLUMN; //'http://192.168.1.100:8010/get_all_columns';
       let userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let inputJson = {
         "conn_str": _this.conn_str,

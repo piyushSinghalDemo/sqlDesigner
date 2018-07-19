@@ -3,6 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import stepObject from '../data/table-selection';
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
+import { PREVIOUS_STEPS } from '../constant'
 export default function setmergeStepData(_this, relationObj, tableObj) {
     let criteriaArray = [],
         colArray = [],
@@ -21,10 +22,10 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
 
             fromTableObj.tableName = joinObj.jfrom;
             fromTableObj.aliesTableName = joinObj.jfromalias;
-            fromTableObj.stepId = joinObj.jfrom_drv_table ? "Previous Steps" : "Database Table";
+            fromTableObj.stepId = joinObj.jfrom_drv_table ? PREVIOUS_STEPS : "Database Table";
             toTableObj.tableName = joinObj.jto;
             toTableObj.aliesTableName = joinObj.jtoalias;
-            toTableObj.stepId = joinObj.jto_drv_table ? "Previous Steps" : "Database Table";
+            toTableObj.stepId = joinObj.jto_drv_table ? PREVIOUS_STEPS : "Database Table";
             tableObj.relationship.fromTable = fromTableObj;
             tableObj.relationship.toTable = toTableObj;
             tableObj.relationship.selectedFilter = joinObj.type;
@@ -81,7 +82,7 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
         let tableObject = {};
         tableObject.tableName = relationObj.select_table.name;
         tableObject.aliesTableName = workTableObj.table_alias;
-        tableObject.stepId = is_drv_table ? "Previous Steps" : "Database Table";
+        tableObject.stepId = is_drv_table ? PREVIOUS_STEPS : "Database Table";
         tableObj.relationship.selectedTableArray.push(cloneDeep(tableObject));
         tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
 
