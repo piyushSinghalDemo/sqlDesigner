@@ -70,7 +70,9 @@ import tableRelationship from './tableRelationShip.vue';
 import config from '../../config.json'
 import { post as postToServer  } from '../methods/serverCall'
 import {getStepData} from '../methods/stepInputData'
+import {IDE_STEP_DATA} from '../constant.js'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
+
 export default {
   components: {
     'archive-joins': archiveJoins,
@@ -322,7 +324,7 @@ export default {
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.lprocess_definition_name;
       // console.log("inputParam in archive step " +JSON.stringify(inputParam));
-      let url = config.IDE_API_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
+      let url = config.IDE_API_URL+IDE_STEP_DATA; //'http://192.168.1.101:8016/ide_step_data/add';
       postToServer(this, url, inputParam).then(response=>{
         _this.tableObj.stepId = response.id;
         _this.$store.state.process_definition_id = response.process_definition_id;

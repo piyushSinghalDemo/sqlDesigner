@@ -96,6 +96,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
 import { post as postToServer } from '../methods/serverCall'
+import {GET_TABLES, GET_ALL_COLUMN, PREVIOUS_STEPS} from '../constant.js'
 export default {
   data() {
       return {
@@ -156,7 +157,7 @@ export default {
             _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
             _this.isDriverTable = true;
             // _this.tableObj.relationship.driverTable.columns
-            if(_this.tableObj.relationship.driverTable.stepId == 'Previous Steps'){
+            if(_this.tableObj.relationship.driverTable.stepId == PREVIOUS_STEPS){
               obj.columns = _this.tableObj.relationship.driverTable.columns;
               _this.getPrevStepCol(cloneDeep(obj));
             }else{
@@ -199,7 +200,7 @@ export default {
           _this.createCopy = true;
           }
         this.loading = true;
-        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+GET_TABLES//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
         let userData= JSON.parse(sessionStorage.getItem("userInfo"));
@@ -258,7 +259,7 @@ export default {
           _this.createTableCopy = true;
           }
         this.loading = true;
-        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+GET_TABLES//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
         let userData = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -308,7 +309,7 @@ export default {
                    'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
                    'group':'Database Table','stepId':_this.tableObj.relationship.selectedTable.stepId}
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-        if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){
+        if(_this.tableObj.relationship.selectedTable.stepId == PREVIOUS_STEPS){
            obj.columns = _this.tableObj.relationship.selectedTable.columns;
           _this.getPrevStepCol(cloneDeep(obj));
         }else{
@@ -345,7 +346,7 @@ export default {
     },
     getColumn(tableObject){
       let _this = this;
-      let url = config.AGENT_API_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
+      let url = config.AGENT_API_URL+GET_ALL_COLUMN;//'http://192.168.1.100:8010/get_all_columns';
        let userData= JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
                "conn_str": _this.conn_str,

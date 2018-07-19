@@ -123,7 +123,6 @@
     </context-menu>
 
     <v-dialog v-model="addTitle" persistent max-width="25%">
-      <!-- <v-btn color="primary" dark slot="activator">Open Dialog</v-btn> -->
       <v-layout align-center justify-center>
         <v-flex>
           <v-card>
@@ -181,6 +180,8 @@ import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
 import {createStepData} from './methods/createStep'
 import {setStepInfo} from './methods/setStepInfo'
+import {GET_PROCESS_DEFINITION_BY_ID, GET_TABLES, 
+          VALDATE_PROCESS_DEFINITION, ADD_IDE_DATA, IDE_STEP_DATA, GET_STORED_PROCEDURE_LIST} from './constant.js'
 export default {
   components: {
     Simplert,
@@ -339,14 +340,14 @@ export default {
     async createProcessData(){       
       let _this = this;
       let inputJson = _this.userInfo.process_definition_id;
-      let url = config.IDE_API_URL+'get_process_definition_by_id/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
+      let url = config.IDE_API_URL+ GET_PROCESS_DEFINITION_BY_ID+'/'+inputJson //'http://192.168.1.101:8016/add_ide_data';
         getFromServer(this, url).then(response=>{
           if(response && response.steps.length)
           _this.userInfo.env_id = response.steps[0].env_id;
           // console.log("Data for step creation "+JSON.stringify(response));
         let ideInputData = createStepData(_this, response);    
         // debugger;      
-        let tableUrl = config.AGENT_API_URL + 'get_tables'; //'http://192.168.1.100:8010/get_tables';
+        let tableUrl = config.AGENT_API_URL + GET_TABLES; //'http://192.168.1.100:8010/get_tables';
         let inputJson = {
             "table_name": "",
             "table_count": "",
@@ -360,31 +361,24 @@ export default {
                 // _this.$store.state.conn_str = tableResponse.conn_str;
                 _this.set_conn_str(tableResponse.conn_str);
                 setStepInfo(_this, response);
-                // debugger;
-                // console.log("archivalStep"+JSON.stringify(_this.$store.state.archivalStep));   
+                
             }
         }, tableResponse => {}).catch(e => {
             console.log(e)
             this.ErrorMessage = 'Error in getting connection string.'
         });
           
-          // console.log("archivalStep step information " +JSON.stringify(_this.$store.state.archivalStep));
           _this.loadData(ideInputData);
         });  
     },
-    // setProcessName(ev){
-    //   this.$store.state.process_definition_name = ev.target.textContent;
-    // },
+
     updateHeadline (content) {
       // this.$store.state.process_definition_name = content;
       this.set_process_definition_name(content);
-      // console.log("process-definition-name"+JSON.stringify(this.$store.state.process_definition_name));
     },
     saveName(name){
       let _this = this;
       _this.saveProcessData(name);
-      // _this.dialog2 = false;
-      // console.log("Name: "+name);
     },
     executeProcess(){
       this.saveProcessData();
@@ -393,7 +387,7 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-        let url = config.VALIDATE+'validate_process_definition/true' //'http://192.168.1.101:8016/add_ide_data';
+        let url = config.VALIDATE + VALDATE_PROCESS_DEFINITION //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         postToServer(this, url, ideInputData).then(response=>{
           if(response.status == "SUCCESS"){
@@ -434,7 +428,7 @@ export default {
       let _this = this;
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
-        let url = config.IDE_API_URL+'add_ide_data' //'http://192.168.1.101:8016/add_ide_data';
+        let url = config.IDE_API_URL + ADD_IDE_DATA //'http://192.168.1.101:8016/add_ide_data';
         let ideInputData = getProcessData(_this, flowchartData);
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
@@ -447,7 +441,6 @@ export default {
               console.log(e)
             _this.$toaster.error('Something went wrong...')
       })    
-      // console.log("ideInputData " +JSON.stringify(ideInputData));
     },
     getStepDetails(){ // take step name and description from user
       let _this = this;
@@ -457,7 +450,7 @@ export default {
       let _this = this;
        if (this.$refs.form.validate()) {
          _this.addTitle = false;
-         let url = config.IDE_API_URL+'ide_step_data/add';
+         let url = config.IDE_API_URL + IDE_STEP_DATA;
          let stepType = "";
          if(_this.type == "db"){
            stepType = 'select'
@@ -472,9 +465,6 @@ export default {
          }else{
            return ;
          }
-        //  let stringArray = _this.stepName.split(" ");
-        //  let joinString = stringArray.join("");
-        //  console.log("joinString " +joinString);
          let inputJson = {
            process_definition_id : _this.process_definition_id,
            name:_this.stepName,
@@ -482,8 +472,6 @@ export default {
            type:stepType
          }
          postToServer(this, url, inputJson).then(response=>{
-          //  console.log("Response from step save:"+JSON.stringify(response));
-            //  _this.$store.state.process_definition_id = response.process_definition_id;
             _this.set_process_definition_id(response.process_definition_id);
              tableData.title = cloneDeep(_this.stepName); 
              tableData.description = cloneDeep(_this.stepDetail);
@@ -522,10 +510,8 @@ export default {
       },
       getProcedureList(){
           let _this = this;
-          // debugger;
-          // _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=true;
           _this.enable_loadProcedureList(_this.currentStep);
-          let url = config.AGENT_API_URL+"get_stored_procedure_list";
+          let url = config.AGENT_API_URL + GET_STORED_PROCEDURE_LIST;
           let inputJson = {
               "procedure_name": "",
               "procedure_count": _this.userInfo.table_count,
@@ -539,13 +525,7 @@ export default {
           postToServer(this, url, inputJson).then(listResponse => {
             if(_this.$store.state.archivalStep[_this.currentStep])
                 _this.disable_loadProcedureList(_this.currentStep);
-            // _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
-                // console.log("listResponse"+JSON.stringify(listResponse));
                 this.loading = false;
-              // _this.$store.state.database_name = listResponse.database_name;
-              // _this.$store.state.database_type = listResponse.database_type;
-              // _this.$store.state.schema = listResponse.schema;
-              // _this.$store.state.conn_str = listResponse.connstr;
               _this.set_database_name(listResponse.database_name);
               _this.set_database_type(listResponse.database_type);
               _this.set_schema(listResponse.schema);
@@ -553,7 +533,6 @@ export default {
               _this.$store.state.archivalStep[_this.currentStep].storedProcedure.procedureList = listResponse.result;
           },listResponse => {
                 _this.disable_loadProcedureList(_this.currentStep);
-            // _this.$store.state.archivalStep[_this.currentStep].loadProcedureList=false;
             if(listResponse && listResponse.message)
                 _this.$toaster.error(listResponse.message);
             else    
@@ -562,7 +541,7 @@ export default {
       },
       gettables(){
         let _this = this;
-        let url = config.AGENT_API_URL+'get_tables';//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL + GET_TABLES;//'http://192.168.1.100:8010/get_tables';
         if(_this.$store.state.archivalStep[_this.currentStep])
         _this.$store.state.archivalStep[_this.currentStep].loadTable=true;
         let inputJson = {
@@ -575,10 +554,8 @@ export default {
           _this.$store.state.archivalStep[_this.currentStep].loadTable=false;
           if(response && response.table_name_list){
               let allDbTables = response;//JSON.parse(response.bodyText);
-              // _this.$store.state.schema = allDbTables.schema;
               _this.set_schema(allDbTables.schema);
               _this.set_conn_str(allDbTables.conn_str);
-              // _this.$store.state.conn_str = allDbTables.conn_str;
               _this.$store.state.archivalStep[_this.currentStep].allArchiveTables=[];
               _this.$store.state.archivalStep[_this.currentStep].allDbTables=[];             
               allDbTables.table_name_list.map(function(obj, index){
@@ -730,11 +707,6 @@ export default {
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
       _this.$refs.form.reset();
-      // tableData.title = cloneDeep(_this.stepName); 
-      // tableData.description = cloneDeep(_this.stepDetail);
-      // tableData.type = className;
-      // _this.$refs.form.reset()
-      // _this.$store.state.archivalStep[operatorId]=cloneDeep(tableData);
       _this.dataStr.workflow[operatorId] = {};
       var data = $('#droppable').flowchart('getData')
       _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
@@ -800,10 +772,8 @@ export default {
       this.operatorI += 1;
       $('#droppable').flowchart('createOperator', operatorId, operatorData);
       var data = $('#droppable').flowchart('getData')
-      // this.dataStr.workflow[this.dbOperatorId]['dbData'] = data
       this.dataStr.workflow[this.dbOperatorId] = JSON.parse(JSON.stringify(data))
       this.worflowData[this.dbOperatorId] = JSON.parse(JSON.stringify(data))
-      // console.log(JSON.stringify(this.dataStr));
     },
     getOperatorData(operatorId) {
       this.blockData = $('#droppable').flowchart('getOperatorData', operatorId);
@@ -814,7 +784,6 @@ export default {
     },
     deleteOperator() {
       $('#droppable').flowchart('deleteSelected');
-      // $('#droppable').flowchart('deleteOperator', this.operatorId);
     },
     setData() {
       $('#droppable').flowchart('setData', {});
@@ -823,18 +792,14 @@ export default {
       this.SPData = []
     },
     saveModalForm(formData, modal) {
-      // console.log("sff", this.operatorId);
       if (this.dragType == 'table') {
       } else {
       }
       var IDEData = $('#droppable').flowchart('getData');
       console.log(JSON.stringify(IDEData));
       IDEData.operators[this.operatorId]["data"] = formData
-      // console.log(IDEData.operators[this.operatorId]);
       setTimeout(function () {
         $('#droppable').flowchart('setData', IDEData);
-        // console.log(JSON.stringify(IDEData));
-        // _this.loadData(this.dataStr.dbData)
       }.bind(this), 10)
       $("#" + modal).modal('hide')
     },
@@ -844,8 +809,6 @@ export default {
       this.dragType = 'db'
       setTimeout(function () {
         $('#droppable').flowchart('setData', _this.dataStr.dbData);
-        // console.log(JSON.stringify(_this.dbData));
-        // _this.loadData(this.dataStr.dbData)
       }.bind(this), 200)
     },
     loadData(data) {
@@ -859,18 +822,9 @@ export default {
           var type = operator.className
           var op = _this.operatorOptions[type]
           _this.operatorId = operatorId;
-          // _this.$store.state.currentStep = operatorId;
-          //  _this.$store.commit('setCurrentStep', operatorId);
           _this.setCurrentStep(operatorId);
-          // console.log(op);
-          // if (op['dblClick'] && op["modal"]) {
-          //   $("#" + op["modalName"]).modal()
-          // }
-          // if (operator.className != 'db')
-          //   return
            if(operator.className == 'db'){
               _this.gettables();
-            //  _this.$store.state.dialog = true;
             _this.set_dialog(true);
            }
            else if(operator.className == 'archive'){
@@ -942,12 +896,6 @@ export default {
       });
     }
   },
-//   watch: {
-//   processDocName(newValue) {  
-//     
-//     this.$store.state.process_definition_name = newValue;
-//   },
-// }
 }
 
 </script>
@@ -1027,8 +975,6 @@ body {
 .minimap-viewport {
   position: absolute;
   box-sizing: border-box;
-  /* //background-color: rgba(79, 111, 126, 0.4); */
-  /* background-color: indianred; */
   z-index: 1;
   cursor: move;
 }
@@ -1070,11 +1016,6 @@ body {
   transform: rotate(-45deg);
   transition: transform .25s linear;
 }
-
-/* .card__text {
-  background: white;
-  height: 600px;
-} */
 
 .navigation-drawer--open {
   background: white;

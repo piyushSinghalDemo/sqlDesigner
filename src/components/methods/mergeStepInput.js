@@ -138,22 +138,13 @@ export default function getMergeStepData(_this, tableObj) {
         relationObject.where.length ? relationObject.where[relationObject.where.length - 1].operand = '' : '';
 
         let link = {
-                source: '',
-                target: '',
-                sourceName: '',
-                targetName: '',
-                fromSubConnector: '',
-                toSubConnector: ''
-            }
-            // for (var i = 0; i < objectLength; i++) {
-            //     link.source = flowchartData.links[i].fromOperator;
-            //     link.target = flowchartData.links[i].toOperator;
-            //     link.sourceName = flowchartData.links[i].fromTable;
-            //     link.targetName = flowchartData.links[i].toTable;
-            //     link.fromSubConnector = flowchartData.links[i].fromSubConnector;
-            //     link.toSubConnector = flowchartData.links[i].toSubConnector;
-            //     mergeStepInput.links.push(cloneDeep(link));
-            // }
+            source: '',
+            target: '',
+            sourceName: '',
+            targetName: '',
+            fromSubConnector: '',
+            toSubConnector: ''
+        }
         mergeStepInput.links = flowchartLink(_this, flowchartData);
         mergeStepInput.list_of_merge.push(relationObject);
         mergeStepInput.client_id = userData.client_id;

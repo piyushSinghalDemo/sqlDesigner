@@ -81,6 +81,7 @@ import parameter from './parameter.vue';
 import getStepData from '../methods/storedProcedureInput'
 import processName from '../processName.vue'
 import { post as postToServer  } from '../methods/serverCall'
+import {IDE_STEP_DATA, PREVIOUS_STEPS, GET_STORED_PROCEDURE_PARAM} from '../constant.js'
 export default {
   components: {
     'procedure-list':procedureList,
@@ -126,7 +127,7 @@ export default {
         _this.userData = JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = getStepData(_this, _this.tableObj);
         // console.log("inputJson in stored procedure"+JSON.stringify(inputJson));
-        let url = config.IDE_API_URL+'ide_step_data/add';
+        let url = config.IDE_API_URL+IDE_STEP_DATA;
          postToServer(this, url, inputJson).then(response=>{
            if(response.message){
             _this.$toaster.error(response.message);
@@ -164,7 +165,7 @@ export default {
          let obj = {
                 'name': _this.tableObj.title,
                 'columns': _this.tableObj.selectedColumns,
-                'stepId': 'Previous Steps'
+                'stepId': PREVIOUS_STEPS
               }
         addData.map(linkObj=>{
           _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
@@ -204,7 +205,7 @@ export default {
                 "connstr":_this.$store.state.conn_str,
                 "client_id":userInfo.client_id
         };
-        let url = config.AGENT_API_URL+"get_stored_procedure_param";
+        let url = config.AGENT_API_URL+GET_STORED_PROCEDURE_PARAM;
         postToServer(this, url, inputJson).then(paramResponse => {
           _this.tableObj.loadParamater = false;
           _this.tableObj.storedProcedure.params = paramResponse.result;
