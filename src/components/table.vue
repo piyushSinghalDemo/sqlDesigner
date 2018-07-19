@@ -141,10 +141,6 @@ export default {
     nextScreen(number) {
       this.progressbar = number;
     },
-    // deleteRowIndex(object){
-    //   this.$store.state.dataSelectionIndex=object.index;
-    //   this.dialog3 = true;
-    // },
     closeDialog() {
       this.$store.state.dialog = false
     },
@@ -154,11 +150,9 @@ export default {
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
       let objectLength = Object.keys(flowchartData.links).length;
-        // for (var i = 0; i < objectLength; i++) {
-      // console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
+
       let workTablecolumns = [];
       dbStepInput.distinct = _this.tableObj.distinct;
-      // dbStepInput.output_table = _this.tableObj.relationship.selectedTableArray[0].tableName;
       dbStepInput.select_table.name = _this.tableObj.relationship.selectedTableArray[0].tableName;
       dbStepInput.select_table.alias = _this.tableObj.relationship.selectedTableArray[0].aliesTableName;
       dbStepInput.select_table.is_drv_table = _this.tableObj.is_drv_table;
@@ -299,12 +293,6 @@ export default {
       // inputParam.env_id = _this.userData.env_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       let url = config.IDE_API_URL+'ide_step_data/add';//'http://192.168.1.101:8016/ide_step_data/add';
-      // _this.$http.post(url, inputParam, {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization':_this.userData.accessToken
-      //   }
-      // }).then(response => {
       postToServer(this, url, inputParam).then(response=>{  
         _this.tableObj.stepId = response.id;        
         _this.$store.state.process_definition_id = response.process_definition_id;
@@ -313,17 +301,6 @@ export default {
         _this.$store.state.processArray.push(cloneDeep(inputParam));
         
         let objectLength = Object.keys(flowchartData.links).length;
-        // for (var i = 0; i < objectLength; i++) {
-        //   if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
-        //     let obj = {
-        //       'name': _this.tableObj.title,
-        //       'columns': _this.tableObj.selectedColumns,
-        //       'stepId': 'Previous Steps'
-        //     }
-        //     _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
-        //   }
-        // }
-        // let i = 0,
         let findLink=[],
         addData = [];
         let currentStep = _this.$store.state.currentStep;
