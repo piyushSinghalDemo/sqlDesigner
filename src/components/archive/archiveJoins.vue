@@ -88,9 +88,9 @@
                     <v-flex xs3>
                       <v-select clearable :items="openbrsisArray" single-line label="Select Parenthisis" v-model="obj.openbrsis"></v-select>
                     </v-flex>
-                    <v-flex xs3>
+                    <!-- <v-flex xs3>
                       <v-select clearable :items="functionArray" single-line label="Select Function" v-model="obj.function"></v-select>
-                    </v-flex>
+                    </v-flex> -->
                     <v-flex xs3>
                       <!-- {{obj.column}} -->
                       <v-select label="Select Column" :items="tableObj.archive.optionColumn" item-text="name" v-model="obj.column" single-line
@@ -104,21 +104,25 @@
                       <v-select clearable :items="valueTypeArray" single-line label="Select ValueType" v-model="obj.valueType">
                       </v-select>
                     </v-flex>
-                    <v-flex xs3>
-                      <v-text-field name="input-1" v-show="obj.valueType == 'value' || obj.valueType == ''" single-line label="Label Text" v-model="obj.value"></v-text-field>
-                      <v-menu ref="menu" lazy :close-on-content-click="false" v-show="obj.valueType == 'date'" v-model="obj.menu" transition="scale-transition"
-                        offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="obj.date">
-                        <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly></v-text-field>
-                        <v-date-picker v-model="obj.date" no-title scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                      <v-select :items="tableObj.archive.optionColumn" item-text="name" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-                         clearable return-object></v-select>
+                    <v-flex xs3 v-if="obj.valueType == 'date'">
+                      <v-select :items="dateTypeArray" clearable  label="Select Date Type" style="padding-top: 14px;" v-model="obj.dateType">
+                      </v-select>
+                    </v-flex>
+                    <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
+                      <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" style="padding-top: 14px;" clearable 
+                        label="Date Format" v-model="obj.formatType" @change="obj.value=''">
+                      </v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
+                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value"  @update="setDate($event,index)"></calender>
+                      <v-select :items="tableObj.archive.optionColumn" item-text="name" single-line label="Select Column" v-else-if="obj.valueType == 'field'" v-model="obj.field"
+                         clearable return-object></v-select>
+                      
+                      <v-text-field name="input-1" v-else single-line label="Label Text" style="padding-top:14px" v-model="obj.value"></v-text-field>
+                    </v-flex>
+                    <v-flex xs3>
+                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" style="padding-top:14px" 
+                        v-model="obj.closebrsis">
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
@@ -222,8 +226,9 @@ import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
 import {JOIN_TYPE, FILTER_ARRAY, OPEN_BRASIS_ARRAY, CLOSE_BRASIS_ARRAY, 
           FUNCTION_ARRAY, VALUE_TYPE_ARRAY, PREVIOUS_STEPS} from '../constant.js'
+import calender from '../element/calender.vue'
 export default {
-     data() {
+  data() {
     return {
           customFilter (item, queryText, itemText) {
           const hasValue = val => val != null ? val : ''
@@ -266,18 +271,64 @@ export default {
         }
         // this.orderselectedColumns();
       },
-      onMove ({relatedContext, draggedContext}) {
-        const relatedElement = relatedContext.element;
-        const draggedElement = draggedContext.element;
-        return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
-      },
-      addColumn(){
-        let _this = this;
-        // debugger;
-        // alert("In add Column");
-        _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
-      },
-    saveArchiveData(){
+      joinType: ["inner join", "left join", "right join", "full join"],
+      filterArray: ["EQUALS_TO", "NOT_EQUALS_TO", "LESS_THAN", "GREATER_THAN", "BETWEEN", "IN",
+        "LESS_THAN_EQUALS_TO", "GREATER_THAN_EQUALS_TO", "IS_NULL", "IS_NOT_NULL", "LIKE_STARTS_WITH", "LIKE_ENDS_WITH", "LIKE_CONTAINS_WITH"
+      ],
+      openbrsisArray: ['(', '((', '((('],
+      closebrsisArray: [')', '))', ')))'],
+      functionArray: ['count', 'sum'],
+      valueTypeArray: ['value', 'date', 'field'],
+      dateTypeArray: ['date', 'julien'],
+      selectedSearch: "",
+      SearchTable: ""
+  },
+  props: ['tableObj', 'isDrivar'],
+  components: {
+    draggable,
+    calender
+  },
+  computed: {
+    dragOptions() {
+      return {
+        animation: 0,
+        group: 'description',
+        ghostClass: 'ghost'
+      };
+    },
+  },
+  methods: {
+    setDate(dateParam, index){
+       let _this = this;
+      //  alert("Date "+dateParam);
+       _this.tableObj.criteriaArray[index].value = dateParam;
+       console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
+     },
+    updateGroup(event) {
+      // this.orderList();
+    },
+    updateGroup2(event) {
+      if (event.added) {
+        this.column = event.added.element;
+        this.aliesPanel = true;
+      }
+      // this.orderselectedColumns();
+    },
+    onMove({
+      relatedContext,
+      draggedContext
+    }) {
+      const relatedElement = relatedContext.element;
+      const draggedElement = draggedContext.element;
+      return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
+    },
+    addColumn() {
+      let _this = this;
+      // debugger;
+      // alert("In add Column");
+      _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
+    },
+    saveArchiveData() {
       let arrayIndex = -1;
       let _this = this;
       if(_this.isDrivar){
@@ -309,15 +360,19 @@ export default {
             _this.tableObj.relationshipArray.push(cloneDeep(object));
             _this.$toaster.success('Relationship added successfully');
           }
-       }//end of else(not driver table)
+      } //end of else(not driver table)
       this.resetForm();
       this.$emit('save-data', _this.tableObj)
     },
-    resetForm(){
+    resetForm() {
       this.tableObj.relationship.fromTable = '';
       this.tableObj.relationship.selectedFilter = '';
       this.tableObj.relationship.toTable = '';
-      this.tableObj.colArray = [{ "fromColumn": '', 'toColumn': '', 'operator': '' }];
+      this.tableObj.colArray = [{
+        "fromColumn": '',
+        'toColumn': '',
+        'operator': ''
+      }];
       this.tableObj.criteriaArray = [{
         openbrsis: '',
         function: '',
@@ -331,24 +386,24 @@ export default {
         menu: false,
         modal: false,
         field: '',
-    }];
-    },  
-    deleteCriteria(index){
+      }];
+    },
+    deleteCriteria(index) {
       let _this = this;
-      if(!index){
+      if (!index) {
         return;
       }
-      _this.tableObj.criteriaArray.splice(index,1);
+      _this.tableObj.criteriaArray.splice(index, 1);
       let length = _this.tableObj.criteriaArray.length;
-      _this.tableObj.criteriaArray[length-1].showLogicalOperator = false; 
+      _this.tableObj.criteriaArray[length - 1].showLogicalOperator = false;
     },
-    addCriteria(){
+    addCriteria() {
       let _this = this;
       let length = _this.tableObj.criteriaArray.length;
-      _this.tableObj.criteriaArray[length-1].showLogicalOperator = true;
-      _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject)); 
+      _this.tableObj.criteriaArray[length - 1].showLogicalOperator = true;
+      _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject));
     },
-   }
+  }
 }
 </script>
 <style scoped>

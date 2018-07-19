@@ -173,7 +173,9 @@ export async function setStepInfo(_this, processData) {
                 criteriaObject.column.tblAlies = whrObject.alias;
                 criteriaObject.column.colAlies = whrObject.colAlies;
                 criteriaObject.relOperator = getjoinOperator(whrObject.operator)
-                criteriaObject.valueType = whrObject.is_col_compare ? 'field' : 'value';
+                criteriaObject.valueType = whrObject.valueType;
+                criteriaObject.dateType = whrObject.date_type;
+                criteriaObject.formatType = whrObject.formatType;
                 criteriaObject.value = whrObject.value;
                 criteriaObject.closebrsis = whrObject.post_braces;
                 criteriaObject.logOperator = setOperand(whrObject.operand); // ? true : false;
@@ -252,10 +254,40 @@ export async function setStepInfo(_this, processData) {
                         // this.ErrorMessage = 'Something went wrong.'
                 })
             }
+            if (!stpObj.list_of_relations.length) {
+                let obj = {
+                    'tableName': stpObj.drv_table[0].select_table.name,
+                    'aliesTableName': stpObj.drv_table[0].select_table.alias,
+                    'group': 'Driver Table',
+                    'stepId': stpObj.drv_table[0].select_table.is_drv_table
+                }
+                tableObj.relationship.selectedTableArray.push(obj);
+            }
+            if (stpObj.drv_table[0].where && stpObj.drv_table[0].where.length) {
+                tableObj.archive.where = [];
+                stpObj.drv_table[0].where.map((whrObj, whrIndex) => {
+                    let criteriaObject = cloneDeep(stepObject.parenthasisobject);
+                    criteriaObject.openbrsis = whrObj.pre_braces;
+                    criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
+                    criteriaObject.column.name = whrObj.column_name;
+                    criteriaObject.column.value = whrObj.table_name + '-' + whrObj.column_name;
+                    criteriaObject.column.group = whrObj.table_name;
+                    criteriaObject.column.fixed = false;
+                    criteriaObject.column.tblAlies = whrObj.alias;
+                    criteriaObject.column.colAlies = whrObj.colAlies;
+                    criteriaObject.relOperator = getjoinOperator(whrObj.operator)
+                    criteriaObject.valueType = whrObj.valueType;
+                    criteriaObject.dateType = whrObj.date_type;
+                    criteriaObject.formatType = whrObj.formatType;
+                    criteriaObject.value = whrObj.value;
+                    criteriaObject.closebrsis = whrObj.post_braces;
+                    criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
+                    tableObj.archive.where.push(cloneDeep(criteriaObject));
+                });
+            }
         }
         if (stpObj.where && stpObj.where.length)
             tableObj.criteriaArray = [];
-
         stpObj.where && stpObj.where.map((whrObj, whrIndex) => {
             let criteriaObject = cloneDeep(stepObject.parenthasisobject);
             criteriaObject.openbrsis = whrObj.pre_braces;
@@ -267,7 +299,9 @@ export async function setStepInfo(_this, processData) {
             criteriaObject.column.tblAlies = whrObj.alias;
             criteriaObject.column.colAlies = whrObj.colAlies;
             criteriaObject.relOperator = getjoinOperator(whrObj.operator)
-            criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
+            criteriaObject.valueType = whrObj.valueType;
+            criteriaObject.dateType = whrObj.date_type;
+            criteriaObject.formatType = whrObj.formatType;
             criteriaObject.value = whrObj.value;
             criteriaObject.closebrsis = whrObj.post_braces;
             criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
@@ -364,9 +398,9 @@ export async function setStepInfo(_this, processData) {
             // tableObj.storedProcedure.params = stpObj.params;
         }
         // 
+        console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
-        // console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
     });
 
 };

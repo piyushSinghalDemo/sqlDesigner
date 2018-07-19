@@ -9,9 +9,9 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
         colArray = [],
         workTableArray = [],
         reletionData = {},
+        selectedTable = {},
         is_drv_table = false;
     relationObj.joins && relationObj.joins.length && relationObj.joins.map(async(joinObj, rlnIndex) => {
-            // debugger
             let fromTableObj = {},
                 toTableObj = {},
                 colObj = {
@@ -48,27 +48,24 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
             tableObj.relationship.selectedTableArray.push(cloneDeep(toTableObj));
             tableObj.relationship.selectedTableArray.push(cloneDeep(fromTableObj));
             tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
-            // tableObj.relationship.colArray = colArray;
-            // let tempObj = { 'relationship': tableObj.relationship, 'colArray': colArray };
-            // tableObj.relationshipArray.push(cloneDeep(tempObj));
         }) //End of list of relotion Object array
 
     relationObj.where && relationObj.where.length && relationObj.where.map((whrObj, whrIndex) => {
         let criteriaObject = cloneDeep(tableObj.parenthasisobject);
-        if (criteriaObject.column && criteriaObject.column.name) {
-            criteriaObject.openbrsis = whrObj.pre_braces;
-            criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
-            criteriaObject.column.name = whrObj.column_name;
-            criteriaObject.column.fixed = false;
-            criteriaObject.column.tblAlies = whrObj.alias;
-            criteriaObject.relOperator = getjoinOperator(whrObj.operator)
-            criteriaObject.valueType = whrObj.is_col_compare ? 'field' : 'value';
-            criteriaObject.value = whrObj.value;
-            criteriaObject.closebrsis = whrObj.post_braces;
-            criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
-            criteriaArray.push(cloneDeep(criteriaObject));
-        }
+        criteriaObject.openbrsis = whrObj.pre_braces;
+        criteriaObject.showLogicalOperator = whrObj.operand ? true : false;
+        criteriaObject.column.name = whrObj.column_name;
+        criteriaObject.column.fixed = false;
+        criteriaObject.column.tblAlies = whrObj.alias;
+        criteriaObject.relOperator = getjoinOperator(whrObj.operator);
+        criteriaObject.valueType = whrObj.valueType;
+        criteriaObject.dateType = whrObj.date_type;
+        criteriaObject.value = whrObj.value;
+        criteriaObject.closebrsis = whrObj.post_braces;
+        criteriaObject.logOperator = setOperand(whrObj.operand); // ? true : false;
+        criteriaArray.push(cloneDeep(criteriaObject));
     });
+    criteriaArray = criteriaArray.length ? criteriaArray : cloneDeep(tableObj.parenthasisobject);
     relationObj.select_table.cols && relationObj.select_table.cols.length && relationObj.select_table.cols.map((workTableObj, workIndex) => {
         let tempObject = {
             name: workTableObj.col_name,
@@ -85,15 +82,22 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
         tableObject.stepId = is_drv_table ? PREVIOUS_STEPS : "Database Table";
         tableObj.relationship.selectedTableArray.push(cloneDeep(tableObject));
         tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
-
         workTableArray.push(cloneDeep(tempObject));
     });
+    selectedTable.tableName = relationObj.select_table.name;
+    selectedTable.aliesTableName = relationObj.select_table.alias;
+    selectedTable.group = relationObj.select_table.is_drv_table ? '' : 'Database Table';
+    selectedTable.stepId = relationObj.select_table.is_drv_table ? 'Previous Steps' : 'Database Table';
+
     reletionData = {
         "relationship": tableObj.relationship,
         is_drv_table: is_drv_table,
         colArray: colArray,
         where: criteriaArray,
-        workTableOutput: workTableArray
+        workTableOutput: workTableArray,
+        selectedTable: selectedTable,
+        distinct: relationObj.distinct,
+        //'selectAll':'',
     }
     return reletionData;
 };

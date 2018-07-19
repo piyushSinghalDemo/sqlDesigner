@@ -13,8 +13,8 @@
           </v-flex>
           <v-flex xs6>
             <v-select :items="selectDriverTable" v-model="tableObj.relationship.driverTable" :search-input.sync="searchDriver"
-           label="Select Driver Table" item-text="name" item-value="name" return-object autocomplete></v-select>
-          <a class="addTable" @click.stop="addDriverTable">Add</a>
+              label="Select Driver Table" item-text="name" item-value="name" return-object autocomplete></v-select>
+            <a class="addTable" @click.stop="addDriverTable">Add</a>
           </v-flex>
           <v-flex xs6>
              <v-checkbox v-model="tableObj.isSingleTableArchival" label="Single Table Archival" style="margin-top:8%">
@@ -53,12 +53,13 @@
       </v-flex>
     </v-layout>
     <v-expansion-panel expand>
+      <!-- tableObj.relationshipArray : {{tableObj.relationshipArray}} -->
       <v-expansion-panel-content v-for="(item,i) in tableObj.relationshipArray" :key="i">
         <div slot="header">
           <v-layout row wrap>
-            <v-flex>{{item.relationship.fromTable.tableName}}</v-flex>
-            <v-flex>{{item.relationship.selectedFilter}}</v-flex>
-            <v-flex>{{item.relationship.toTable.tableName}}</v-flex>
+            <v-flex>{{item.relationship ? item.relationship.fromTable.tableName : ""}}</v-flex>
+            <v-flex>{{item.relationship ? item.relationship.selectedFilter : ""}}</v-flex>
+            <v-flex>{{item.relationship ? item.relationship.toTable.tableName : ""}}</v-flex>
           </v-layout>
         </div>
         <v-card>

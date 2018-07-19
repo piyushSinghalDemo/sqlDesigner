@@ -87,9 +87,9 @@
                     <v-flex xs3>
                       <v-select clearable :items="openbrsisArray" single-line label="Select Parenthisis" v-model="obj.openbrsis"></v-select>
                     </v-flex>
-                    <v-flex xs3>
+                    <!-- <v-flex xs3>
                       <v-select clearable :items="functionArray" single-line label="Select Function" v-model="obj.function"></v-select>
-                    </v-flex>
+                    </v-flex> -->
                     <v-flex xs3>
                       <v-select label="Select Column" :items="tableObj.merge.optionColumn" v-model="obj.column" 
                           item-text="name" return-object single-line></v-select>
@@ -102,21 +102,26 @@
                       <v-select clearable :items="valueTypeArray" single-line label="Select ValueType" v-model="obj.valueType">
                       </v-select>
                     </v-flex>
-                    <v-flex xs3>
-                      <v-text-field name="input-1" v-show="obj.valueType == 'value' || obj.valueType == ''" single-line label="Label Text" v-model="obj.value"></v-text-field>
-                      <v-menu ref="menu" lazy :close-on-content-click="false" v-show="obj.valueType == 'date'" v-model="obj.menu" transition="scale-transition"
-                        offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="obj.date">
-                        <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly></v-text-field>
-                        <v-date-picker v-model="obj.date" no-title scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                      <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-show="obj.valueType == 'field'" v-model="obj.field"
-                        item-text="name" return-object></v-select>
+                    <v-flex xs3 v-if="obj.valueType == 'date'">
+                      <v-select :items="dateTypeArray" clearable label="Select Date Type" v-model="obj.dateType" style="padding-top: 14px;">
+                      </v-select>
+                    </v-flex>
+                    <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
+                      <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" clearable 
+                        label="Date Format" v-model="obj.formatType" @change="obj.value=''" style="padding-top: 14px;">
+                      </v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis">
+                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value" @update="setDate($event,index)" ></calender>
+
+                      <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-else-if="obj.valueType == 'field'" v-model="obj.field"
+                        item-text="name" return-object style="padding-top: 14px;"></v-select>
+
+                      <v-text-field name="input-1" v-else single-line label="Label Text" v-model="obj.value" style="padding-top: 14px;"></v-text-field>
+                      
+                    </v-flex>
+                    <v-flex xs3>
+                      <v-select clearable :items="closebrsisArray" single-line label="Select Parenthisis" v-model="obj.closebrsis" style="padding-top: 14px;">
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
@@ -225,11 +230,9 @@ import draggable from 'vuedraggable'
 import filter from 'lodash/filter';
 import columnAlies from '../columnAlies.vue';
 import {JOIN_TYPE,FILTER_ARRAY, OPEN_BRASIS_ARRAY, CLOSE_BRASIS_ARRAY, FUNCTION_ARRAY, VALUE_TYPE_ARRAY, PREVIOUS_STEPS} from '../constant.js'
+import calender from '../element/calender.vue'
 export default {
-    //  components: {
-    //       'column-alies':columnAlies
-    //  }, 
-     data() {
+  data() {
     return {
           aliesPanel:false,
           column:{},
@@ -260,43 +263,54 @@ export default {
          };
         },
      },
-   methods: {
-     saveColumnAlies(columnObj){
-        let _this = this;
-        let index = findIndex(_this.tableObj.merge.selectedColumns,{'group':columnObj, 'name':columnObj.name});
-        _this.tableObj.merge.selectedColumns[index] = columnObj; 
-        _this.aliesPanel = false;
-        // console.log("Selected Index "+JSON.stringify(_this.tableObj.selectedColumns));
-      },
-     getColumn(value){
+  methods: {
+    setDate(dateParam, index){
        let _this = this;
-       this.availableColumn = filter(_this.tableObj.optionColumn, function(o){return o.group == value.tableName});
-     },
-    addColumn(){
+      //  alert("Date "+dateParam);
+       _this.tableObj.criteriaArray[index].value = dateParam;
+      //  console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
+    },
+    saveColumnAlies(columnObj) {
+      let _this = this;
+      let index = findIndex(_this.tableObj.merge.selectedColumns, {
+        'group': columnObj,
+        'name': columnObj.name
+      });
+      _this.tableObj.merge.selectedColumns[index] = columnObj;
+      _this.aliesPanel = false;
+      // console.log("Selected Index "+JSON.stringify(_this.tableObj.selectedColumns));
+    },
+    getColumn(value) {
+      let _this = this;
+      this.availableColumn = filter(_this.tableObj.optionColumn, function (o) {
+        return o.group == value.tableName
+      });
+    },
+    addColumn() {
       let _this = this;
       _this.tableObj.colArray.push(cloneDeep(_this.tableObj.colObj));
     },
-    savedata(){
+    savedata() {
       let arrayIndex = -1;
       let _this = this;
-      _this.tableObj.relationshipArray.map(function(obj, index){
-                  if(_this.tableObj.relationship.fromTable.tableName && 
-                      _this.tableObj.relationship.toTable.tableName &&
-                    obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
-                 obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
-               arrayIndex = index;
-             }
+      _this.tableObj.relationshipArray.map(function (obj, index) {
+        if (_this.tableObj.relationship.fromTable.tableName &&
+          _this.tableObj.relationship.toTable.tableName &&
+          obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName &&
+          obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName) {
+          arrayIndex = index;
+        }
       });
-      if(!_this.tableObj.relationship.fromTable && !_this.tableObj.relationship.toTable){
-        _this.tableObj.relationshipArray.map(function(obj, index){
-          if(obj.selectedTable.tableName == _this.tableObj.merge.selectedTable.tableName){
+      if (!_this.tableObj.relationship.fromTable && !_this.tableObj.relationship.toTable) {
+        _this.tableObj.relationshipArray.map(function (obj, index) {
+          if (obj.selectedTable.tableName == _this.tableObj.merge.selectedTable.tableName) {
             arrayIndex = index;
           }
         });
       }
       if(_this.tableObj.relationship.fromTable && _this.tableObj.relationship.fromTable.stepId == PREVIOUS_STEPS){
         _this.tableObj.relationship.jfrom_drv_table = true;
-      }else{
+      } else {
         _this.tableObj.relationship.jfrom_drv_table = false;
       }
       if(_this.tableObj.relationship.toTable && _this.tableObj.relationship.toTable.stepId == PREVIOUS_STEPS){
@@ -304,34 +318,40 @@ export default {
       }else{
         _this.tableObj.relationship.jto_drv_table = false;  
       }
-        // debugger;
-        if(!_this.tableObj.selectedColumns.length && _this.tableObj.merge.selectedColumns.length)
-          _this.tableObj.selectedColumns = _this.tableObj.merge.selectedColumns
-          
-      let object = {'relationship':_this.tableObj.relationship,
-                    'is_drv_table':_this.tableObj.merge.selectedTable.stepId=="Database Table"?false:true,
-                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 
-                    'workTableOutput':_this.tableObj.merge.selectedColumns,'distinct':_this.tableObj.merge.distinct,
-                    'selectAll':_this.tableObj.merge.selectAll,
-                    'selectedTable':_this.tableObj.merge.selectedTable,
-                    };
-        // _this.tableObj.relationshipArray.push(cloneDeep(object));
-        // _this.$toaster.success('Relationship added successfully');              
-      if(arrayIndex >= 0){
+      // debugger;
+      if (!_this.tableObj.selectedColumns.length && _this.tableObj.merge.selectedColumns.length)
+        _this.tableObj.selectedColumns = _this.tableObj.merge.selectedColumns
+      let object = {
+        'relationship': _this.tableObj.relationship,
+        'is_drv_table': _this.tableObj.merge.selectedTable.stepId == "Database Table" ? false : true,
+        'colArray': _this.tableObj.colArray,
+        'where': _this.tableObj.criteriaArray,
+        'workTableOutput': _this.tableObj.merge.selectedColumns,
+        'distinct': _this.tableObj.merge.distinct,
+        'selectAll': _this.tableObj.merge.selectAll,
+        'selectedTable': _this.tableObj.merge.selectedTable,
+      };
+      // _this.tableObj.relationshipArray.push(cloneDeep(object));
+      // _this.$toaster.success('Relationship added successfully');              
+      if (arrayIndex >= 0) {
         _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
         _this.$toaster.info('Relationship Updated successfully');
-      }else{
+      } else {
         _this.tableObj.relationshipArray.push(cloneDeep(object));
         _this.$toaster.success('Relationship added successfully');
       }
       this.resetForm();
       this.$emit('save-data', _this.tableObj)
     },
-    resetForm(){
+    resetForm() {
       this.tableObj.relationship.fromTable = '';
       this.tableObj.relationship.selectedFilter = '';
       this.tableObj.relationship.toTable = '';
-      this.tableObj.colArray = [{ "fromColumn": '', 'toColumn': '', 'operator': '' }];
+      this.tableObj.colArray = [{
+        "fromColumn": '',
+        'toColumn': '',
+        'operator': ''
+      }];
       this.tableObj.criteriaArray = [{
         openbrsis: '',
         function: '',
@@ -345,40 +365,43 @@ export default {
         menu: false,
         modal: false,
         field: '',
-    }];
-    },  
-    deleteCriteria(index){
+      }];
+    },
+    deleteCriteria(index) {
       let _this = this;
-      if(!index){
+      if (!index) {
         return;
       }
-      _this.tableObj.criteriaArray.splice(index,1);
+      _this.tableObj.criteriaArray.splice(index, 1);
       let length = _this.tableObj.criteriaArray.length;
-      _this.tableObj.criteriaArray[length-1].showLogicalOperator = false; 
+      _this.tableObj.criteriaArray[length - 1].showLogicalOperator = false;
     },
-    addCriteria(){
+    addCriteria() {
       let _this = this;
       let length = _this.tableObj.criteriaArray.length;
-      _this.tableObj.criteriaArray[length-1].showLogicalOperator = true;
-      _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject)); 
+      _this.tableObj.criteriaArray[length - 1].showLogicalOperator = true;
+      _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject));
     },
-    onMove ({relatedContext, draggedContext}) {
+    onMove({
+      relatedContext,
+      draggedContext
+    }) {
       const relatedElement = relatedContext.element;
       const draggedElement = draggedContext.element;
       return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
-    }, 
-     updateGroup(event){
+    },
+    updateGroup(event) {
       // this.orderList();
     },
-    updateGroup2(event){
-      if(event.added){
+    updateGroup2(event) {
+      if (event.added) {
         this.column = event.added.element;
         this.aliesPanel = true;
       }
       // this.orderselectedColumns();
     }
 
-   }
+  }
 }
 </script>
 <style scoped>
