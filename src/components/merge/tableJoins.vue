@@ -247,12 +247,14 @@ export default {
         selectedSearch:"",
         selectedTable:"",
         availableColumn:[],
-        selectedColumns:[],             
+        selectedColumns:[],        
+        dateTypeArray: ['date', 'julien'],     
     }},
    props: ['tableObj'],
    components: {
           draggable,
-          'column-alies':columnAlies
+          'column-alies':columnAlies,
+          calender
      },
      computed: {
         dragOptions () {
