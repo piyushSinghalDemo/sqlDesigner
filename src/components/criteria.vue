@@ -32,7 +32,7 @@
             </v-select>
           </v-flex>
           <v-flex xs3>
-            <calender v-if="obj.valueType == 'Database Date' && obj.dateType == 'Database Date'" :format="obj.formatType" 
+            <calender v-if="obj.valueType == 'date' && obj.dateType == 'Database Date'" :format="obj.formatType" 
               :input="obj.value" @update="setDate($event,index)"></calender>
 
             <v-select v-else-if="obj.valueType == 'field'" label="Select Column" clearable :items="tableObj.optionColumn" 

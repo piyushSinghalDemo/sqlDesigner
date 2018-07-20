@@ -112,7 +112,7 @@
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value" @update="setDate($event,index)" ></calender>
+                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'Database Date'" :input="obj.value" @update="setDate($event,index)" ></calender>
 
                       <v-select :items="tableObj.merge.optionColumn" single-line label="Select Column" v-else-if="obj.valueType == 'field'" v-model="obj.field"
                         item-text="name" return-object style="padding-top: 14px;"></v-select>

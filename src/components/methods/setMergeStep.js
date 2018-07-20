@@ -3,7 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import stepObject from '../data/table-selection';
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
-import { PREVIOUS_STEPS } from '../constant'
+import { PREVIOUS_STEPS, OPERATOR_ARRAY, DATABASE_TABLE } from '../constant'
 export default function setmergeStepData(_this, relationObj, tableObj) {
     let criteriaArray = [],
         colArray = [],
@@ -22,10 +22,10 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
 
             fromTableObj.tableName = joinObj.jfrom;
             fromTableObj.aliesTableName = joinObj.jfromalias;
-            fromTableObj.stepId = joinObj.jfrom_drv_table ? PREVIOUS_STEPS : "Database Table";
+            fromTableObj.stepId = joinObj.jfrom_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
             toTableObj.tableName = joinObj.jto;
             toTableObj.aliesTableName = joinObj.jtoalias;
-            toTableObj.stepId = joinObj.jto_drv_table ? PREVIOUS_STEPS : "Database Table";
+            toTableObj.stepId = joinObj.jto_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
             tableObj.relationship.fromTable = fromTableObj;
             tableObj.relationship.toTable = toTableObj;
             tableObj.relationship.selectedFilter = joinObj.type;
@@ -79,15 +79,15 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
         let tableObject = {};
         tableObject.tableName = relationObj.select_table.name;
         tableObject.aliesTableName = workTableObj.table_alias;
-        tableObject.stepId = is_drv_table ? PREVIOUS_STEPS : "Database Table";
+        tableObject.stepId = is_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
         tableObj.relationship.selectedTableArray.push(cloneDeep(tableObject));
         tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
         workTableArray.push(cloneDeep(tempObject));
     });
     selectedTable.tableName = relationObj.select_table.name;
     selectedTable.aliesTableName = relationObj.select_table.alias;
-    selectedTable.group = relationObj.select_table.is_drv_table ? '' : 'Database Table';
-    selectedTable.stepId = relationObj.select_table.is_drv_table ? 'Previous Steps' : 'Database Table';
+    selectedTable.group = relationObj.select_table.is_drv_table ? '' : DATABASE_TABLE;
+    selectedTable.stepId = relationObj.select_table.is_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
 
     reletionData = {
         "relationship": tableObj.relationship,
@@ -103,21 +103,7 @@ export default function setmergeStepData(_this, relationObj, tableObj) {
 };
 
 function getjoinOperator(sign) {
-    let operatorArray = {
-        '_eq_': "EQUALS_TO",
-        '_not_eq_': "NOT_EQUALS_TO",
-        '_lt_': "LESS_THAN",
-        '_gt_': "GREATER_THAN",
-        '_lt_eq_': "LESS_THAN_EQUALS_TO",
-        '_gt_eq_': "GREATER_THAN_EQUALS_TO",
-        '_is_n_': "IS_NULL",
-        '_is_nt_n_': "IS_NOT_NULL",
-        '_sl_': "LIKE_STARTS_WITH",
-        '_el_': "LIKE_ENDS_WITH",
-        '_cl_': "LIKE_CONTAINS_WITH",
-        '_bet_': "BETWEEN",
-        '_in_': "IN"
-    };
+    let operatorArray = OPERATOR_ARRAY;
     return operatorArray[sign];
 }
 

@@ -41,19 +41,6 @@
                 </v-stepper-content>
                 </v-stepper-items>
               </v-stepper>
-                <!-- <v-flex d-flex xs12>
-                  <div class="form-views" v-show="progressbar == 1" style="width:100%;margin-left:3%;height:500px">
-
-                    <procedure-list @update-object='updateTableObj' :tableObj="tableObj">                      
-                    </procedure-list>
-
-                  </div>
-                  <div class="form-views" v-show="progressbar == 2" style="width:100%;margin-left:3%;height:500px">
-
-                    <parameter-list @update-object='updateTableObj' @update-step='saveDialog' :tableObj="tableObj"></parameter-list>
-
-                  </div>
-                </v-flex> -->
                 <!-- **************************************************************************** -->
               </v-layout>
             </v-container>

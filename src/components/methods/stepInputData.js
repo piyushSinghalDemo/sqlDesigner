@@ -6,6 +6,7 @@
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
 import flowchartLink from './getOperatorLink';
+import { OPERATOR_ARRAY } from '../constant'
 export function getStepData(_this, tableObj) {
     // let _this = this;
     // console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
@@ -204,20 +205,6 @@ export function getStepData(_this, tableObj) {
 };
 
 function getjoinOperator(sign) {
-    let operatorArray = {
-        EQUALS_TO: '_eq_',
-        NOT_EQUALS_TO: '_not_eq_',
-        LESS_THAN: '_lt_',
-        GREATER_THAN: '_gt_',
-        LESS_THAN_EQUALS_TO: '_lt_eq_',
-        GREATER_THAN_EQUALS_TO: '_gt_eq_',
-        IS_NULL: '_is_n_',
-        IS_NOT_NULL: '_is_nt_n_',
-        LIKE_STARTS_WITH: '_sl_',
-        LIKE_ENDS_WITH: '_el_',
-        LIKE_CONTAINS_WITH: '_cl_',
-        BETWEEN: '_bet_',
-        IN: '_in_'
-    };
+    let operatorArray = OPERATOR_ARRAY;
     return operatorArray[sign];
 }
