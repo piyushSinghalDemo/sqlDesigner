@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/Hello'
-import sqldata from '@/components/sqldesignerList'
-import SqlDesigner from '@/components/SqlDesigner'
+// import sqldata from '@/components/sqldesignerList'
+// import SqlDesigner from '@/components/SqlDesigner'
 // import GoJsSqlDesigner from '@/components/GoJsSqlDesigner'
 // import JsPlumbSqlDesigner from '@/components/JsPlumbSqlDesigner'
 import FlowchartSqlDesigner from '@/components/flowchartSqlDesigner'
@@ -10,16 +10,17 @@ Vue.use(Router)
 
 export default new Router({
     mode: 'history',
-    routes: [{
-            path: '/',
-            name: 'Hello',
-            component: sqldata
-        },
-        {
-            path: '/sqldata',
-            name: 'sqldata',
-            component: sqldata
-        },
+    routes: [
+        // {
+        //     path: '/',
+        //     name: 'Hello',
+        //     component: sqldata
+        // },
+        // {
+        //     path: '/sqldata',
+        //     name: 'sqldata',
+        //     component: sqldata
+        // },
         //
         // {
         //   path: '/collection/:collectionId/edit',
