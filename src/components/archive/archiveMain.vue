@@ -171,127 +171,127 @@ export default {
     closeDialog() {
       this.$store.state.openArchivePanel = false
     },
-    getSelectionData() {
-          let _this = this;
-          // console.log("selectedTableArray" + JSON.stringify(_this.tableObj.relationshipArray));
-           let archiveStepInput = cloneDeep(_this.$store.state.archiveStepObject);
-           archiveStepInput.name = _this.tableObj.title;
-           archiveStepInput.desc = _this.tableObj.description;
-           archiveStepInput.limit = _this.tableObj.limit;
-           let DrvTableObj = {
-            "select_table": {
-                "alias": _this.tableObj.relationship.driverTable.aliesTableName,
-                "name": _this.tableObj.relationship.driverTable.name,
-                "is_drv_table": _this.tableObj.is_drv_table,
-                "cols": [{
-                    "table_alias": _this.tableObj.relationship.driverTable.aliesTableName,
-                    "col_alias": "",
-                    "col_name": "_*_"
-                }]
-            }
-        }
-        archiveStepInput.drv_table.push(DrvTableObj);
-        let colsObject = { // all column dont have work table o/p as data selection
-                    "table_alias": "",
-                    "func": "",
-                    "col_alias": "",
-                    "col_name": "_*_"
-                }
-        let joinObject = {
-                "condition": [],
-                "jfrom": "",
-                "jto": "",
-                "type": "",
-                "jfromalias": "",
-                "jtoalias": "",
-                "jto_drv_table": false,
-                "jfrom_drv_table": false
-            }
-         let conditionObject = {
-                    "from_column": "",
-                    "to_column": "",
-                    "from_alias": "",
-                    "to_alias": "",
-                    "operator": ""
-                }   
-         let whereObject ={
-                "post_braces": "",
-                "alias": "",
-                "column_name": "",
-                "operator": "",
-                "value": "",
-                "pre_braces": "",
-                "operand":"",
-                "is_col_compare":"",
-            }
-          let relationObject ={
-            "output_table": "", //From table
-            "select_table": {
-                "alias": "", //From Table alies
-                "name": "", //From Table
-                "cols": []
-            },
-            "joins": [],
-            "where": []
-        }
-        _this.tableObj.relationshipArray.map(function (obj, index) {
-          let relationObject ={
-            "output_table": "", //From table
-            "select_table": {
-                "alias": "", //From Table alies
-                "name": "", //From Table
-                "cols": []
-            },
-            "joins": [],
-            "where": []
-        }
-        relationObject.output_table = obj.relationship.toTable.tableName;
-        relationObject.select_table.alias = obj.relationship.toTable.aliesTableName;
-        relationObject.select_table.name = obj.relationship.toTable.tableName;
-        colsObject.table_alias = obj.relationship.toTable.aliesTableName;
-        relationObject.select_table.cols.push(cloneDeep(colsObject));
+    // getSelectionData() {
+    //       let _this = this;
+    //       // console.log("selectedTableArray" + JSON.stringify(_this.tableObj.relationshipArray));
+    //        let archiveStepInput = cloneDeep(_this.$store.state.archiveStepObject);
+    //        archiveStepInput.name = _this.tableObj.title;
+    //        archiveStepInput.desc = _this.tableObj.description;
+    //        archiveStepInput.limit = _this.tableObj.limit;
+    //        let DrvTableObj = {
+    //         "select_table": {
+    //             "alias": _this.tableObj.relationship.driverTable.aliesTableName,
+    //             "name": _this.tableObj.relationship.driverTable.name,
+    //             "is_drv_table": _this.tableObj.is_drv_table,
+    //             "cols": [{
+    //                 "table_alias": _this.tableObj.relationship.driverTable.aliesTableName,
+    //                 "col_alias": "",
+    //                 "col_name": "_*_"
+    //             }]
+    //         }
+    //     }
+    //     archiveStepInput.drv_table.push(DrvTableObj);
+    //     let colsObject = { // all column dont have work table o/p as data selection
+    //                 "table_alias": "",
+    //                 "func": "",
+    //                 "col_alias": "",
+    //                 "col_name": "_*_"
+    //             }
+    //     let joinObject = {
+    //             "condition": [],
+    //             "jfrom": "",
+    //             "jto": "",
+    //             "type": "",
+    //             "jfromalias": "",
+    //             "jtoalias": "",
+    //             "jto_drv_table": false,
+    //             "jfrom_drv_table": false
+    //         }
+    //      let conditionObject = {
+    //                 "from_column": "",
+    //                 "to_column": "",
+    //                 "from_alias": "",
+    //                 "to_alias": "",
+    //                 "operator": ""
+    //             }   
+    //      let whereObject ={
+    //             "post_braces": "",
+    //             "alias": "",
+    //             "column_name": "",
+    //             "operator": "",
+    //             "value": "",
+    //             "pre_braces": "",
+    //             "operand":"",
+    //             "is_col_compare":"",
+    //         }
+    //       let relationObject ={
+    //         "output_table": "", //From table
+    //         "select_table": {
+    //             "alias": "", //From Table alies
+    //             "name": "", //From Table
+    //             "cols": []
+    //         },
+    //         "joins": [],
+    //         "where": []
+    //     }
+    //     _this.tableObj.relationshipArray.map(function (obj, index) {
+    //       let relationObject ={
+    //         "output_table": "", //From table
+    //         "select_table": {
+    //             "alias": "", //From Table alies
+    //             "name": "", //From Table
+    //             "cols": []
+    //         },
+    //         "joins": [],
+    //         "where": []
+    //     }
+    //     relationObject.output_table = obj.relationship.toTable.tableName;
+    //     relationObject.select_table.alias = obj.relationship.toTable.aliesTableName;
+    //     relationObject.select_table.name = obj.relationship.toTable.tableName;
+    //     colsObject.table_alias = obj.relationship.toTable.aliesTableName;
+    //     relationObject.select_table.cols.push(cloneDeep(colsObject));
 
-        joinObject.jto = obj.relationship.toTable.tableName;
-        joinObject.jfrom = obj.relationship.fromTable.tableName;
-        joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
-        joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
-        joinObject.type = obj.relationship.selectedFilter;
-        joinObject.jto_drv_table =  obj.relationship.jto_drv_table;
-        joinObject.jfrom_drv_table =  obj.relationship.jfrom_drv_table;
-        joinObject.condition = [];
-        obj.colArray.map(function (colObj, colIndex) {
-          if(colObj.fromColumn.name){
-            conditionObject.from_column = colObj.fromColumn.name;
-            conditionObject.to_column = colObj.toColumn.name;
-            conditionObject.from_alias = colObj.fromColumn.tblAlies;
-            conditionObject.to_alias = colObj.toColumn.tblAlies;
-            conditionObject.operator = _this.getjoinOperator(colObj.operator);
-            joinObject.condition.push(cloneDeep(conditionObject));  
-          }
-        });
-        relationObject.joins.push(cloneDeep(joinObject));
-        obj.where.map(function(whereObj, whereIndex){
-          if(whereObj.column){
-            whereObject.post_braces = whereObj.closebrsis;
-            whereObject.alias = whereObj.column.tblAlies; //table alies
-            whereObject.column_name = whereObj.column.name; //column alies
-            whereObject.operator = _this.getjoinOperator(whereObj.relOperator); //relational operator
-            whereObject.value = whereObj.value; //may be value date or column
-            whereObject.pre_braces = whereObj.openbrsis;
-            whereObject.operand = whereObj.logOperator ? 'AND' : 'OR';
-            whereObject.is_col_compare = whereObj.valueType == 'field' ? true : false;
-            whereObject.with_alias =whereObj.field.colAlies;
-            whereObject.with_col =  whereObj.field.name;
-            relationObject.where.push(whereObject);
-          }
-        });
-        archiveStepInput.list_of_relations.push(relationObject);   
-        archiveStepInput.client_id=_this.userData.client_id,
-        archiveStepInput.user_id=_this.userData.user_id,
-        archiveStepInput.id = _this.tableObj.stepId             
-      });
-      return archiveStepInput;
-    },
+    //     joinObject.jto = obj.relationship.toTable.tableName;
+    //     joinObject.jfrom = obj.relationship.fromTable.tableName;
+    //     joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
+    //     joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
+    //     joinObject.type = obj.relationship.selectedFilter;
+    //     joinObject.jto_drv_table =  obj.relationship.jto_drv_table;
+    //     joinObject.jfrom_drv_table =  obj.relationship.jfrom_drv_table;
+    //     joinObject.condition = [];
+    //     obj.colArray.map(function (colObj, colIndex) {
+    //       if(colObj.fromColumn.name){
+    //         conditionObject.from_column = colObj.fromColumn.name;
+    //         conditionObject.to_column = colObj.toColumn.name;
+    //         conditionObject.from_alias = colObj.fromColumn.tblAlies;
+    //         conditionObject.to_alias = colObj.toColumn.tblAlies;
+    //         conditionObject.operator = _this.getjoinOperator(colObj.operator);
+    //         joinObject.condition.push(cloneDeep(conditionObject));  
+    //       }
+    //     });
+    //     relationObject.joins.push(cloneDeep(joinObject));
+    //     obj.where.map(function(whereObj, whereIndex){
+    //       if(whereObj.column){
+    //         whereObject.post_braces = whereObj.closebrsis;
+    //         whereObject.alias = whereObj.column.tblAlies; //table alies
+    //         whereObject.column_name = whereObj.column.name; //column alies
+    //         whereObject.operator = _this.getjoinOperator(whereObj.relOperator); //relational operator
+    //         whereObject.value = whereObj.value; //may be value date or column
+    //         whereObject.pre_braces = whereObj.openbrsis;
+    //         whereObject.operand = whereObj.logOperator ? 'AND' : 'OR';
+    //         whereObject.is_col_compare = whereObj.valueType == 'field' ? true : false;
+    //         whereObject.with_alias =whereObj.field.colAlies;
+    //         whereObject.with_col =  whereObj.field.name;
+    //         relationObject.where.push(whereObject);
+    //       }
+    //     });
+    //     archiveStepInput.list_of_relations.push(relationObject);   
+    //     archiveStepInput.client_id=_this.userData.client_id,
+    //     archiveStepInput.user_id=_this.userData.user_id,
+    //     archiveStepInput.id = _this.tableObj.stepId             
+    //   });
+    //   return archiveStepInput;
+    // },
     getjoinOperator(sign) {
       let operatorArray = OPERATOR_ARRAY;
       return operatorArray[sign];
@@ -351,13 +351,14 @@ export default {
         })
         _this.$toaster.success('Data save successfully');
         this.$store.state.openArchivePanel = false;
-      },response=>{
-           if(response && response.message){
-             _this.$toaster.error(response.message);
-             _this.processDoc = true;  
+      }
+      ,response=>{
+        if(response && response.message){
+           _this.processDoc = true;  
+            //  _this.$toaster.error(response.message);
            }
-            else    
-             _this.$toaster.error('Due to some internal error, Data got rejected');
+            // else    
+            //  _this.$toaster.error('Due to some internal error, Data got rejected');
       }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'

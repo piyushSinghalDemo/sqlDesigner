@@ -414,11 +414,11 @@ export default {
             _this.bottomSheet = true;
           }
         },response => {
-          if(response.message){
-            _this.$toaster.error(response.message);
-          }
-          else
-           _this.$toaster.error('There is some internal error please try again later.')
+          // if(response.message){
+          //   _this.$toaster.error(response.message);
+          // }
+          // else
+          //  _this.$toaster.error('There is some internal error please try again later.')
         }).catch(e => {
               console.log(e)
             _this.$toaster.error('Something went wrong...')
@@ -433,10 +433,10 @@ export default {
         postToServer(this, url, ideInputData).then(response=>{  
           _this.$toaster.success('Data save successfully') 
         },response => {
-          if(response && response.message)
-          _this.$toaster.error(response.message);
-          else
-           _this.$toaster.error('There is some internal error please try again later.')
+          // if(response && response.message)
+          // _this.$toaster.error(response.message);
+          // else
+          //  _this.$toaster.error('There is some internal error please try again later.')
         }).catch(e => {
               console.log(e)
             _this.$toaster.error('Something went wrong...')
@@ -533,10 +533,10 @@ export default {
               _this.$store.state.archivalStep[_this.currentStep].storedProcedure.procedureList = listResponse.result;
           },listResponse => {
                 _this.disable_loadProcedureList(_this.currentStep);
-            if(listResponse && listResponse.message)
-                _this.$toaster.error(listResponse.message);
-            else    
-             _this.$toaster.error('Due to some internal error , Procedure List not found');
+            // if(listResponse && listResponse.message)
+            //     _this.$toaster.error(listResponse.message);
+            // else    
+            //  _this.$toaster.error('Due to some internal error , Procedure List not found');
           });
       },
       gettables(){
@@ -686,20 +686,20 @@ export default {
       // console.log(ideData);
     },//
 
-    oneInZeroOutOperator(left, top, className) {
-      var _this = this
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
+    // oneInZeroOutOperator(left, top, className) {
+    //   var _this = this
+    //   var operatorId = 'created_' + className + '_operator_' + this.operatorI;
     
-      var operatorData = _def.methods.oneInZeroOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable').flowchart('createOperator', operatorId, operatorData);
-      _this.$store.state.archivalStep[operatorId]='';
-      this.dataStr.workflow[operatorId] = {};
-      var data = $('#droppable').flowchart('getData')
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data))
-      this.dbData = JSON.parse(JSON.stringify(data))
-      // console.log(JSON.stringify(this.dataStr.dbData));
-    },
+    //   var operatorData = _def.methods.oneInZeroOutOperator(this.operatorI, className, top, left);
+    //   this.operatorI += 1;
+    //   $('#droppable').flowchart('createOperator', operatorId, operatorData);
+    //   _this.$store.state.archivalStep[operatorId]='';
+    //   this.dataStr.workflow[operatorId] = {};
+    //   var data = $('#droppable').flowchart('getData')
+    //   this.dataStr.dbData = JSON.parse(JSON.stringify(data))
+    //   this.dbData = JSON.parse(JSON.stringify(data))
+    //   // console.log(JSON.stringify(this.dataStr.dbData));
+    // },
     oneInOneOutOperator(left, top, className, operatorId) {
       var _this = this;
       // var operatorId = 'created_' + className + '_operator_' + _this.operatorI;
@@ -712,41 +712,41 @@ export default {
       _this.dataStr.dbData = JSON.parse(JSON.stringify(data))
       _this.dbData = JSON.parse(JSON.stringify(data))
     },
-    oneInTwoOutOperator(left, top, className) {
-      let _this = this;
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
-      var operatorData = _def.methods.oneInTwoOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable').flowchart('createOperator', operatorId, operatorData);
-      _this.$store.state.archivalStep[operatorId]='';
-      this.dataStr.workflow[operatorId] = {};
-      var data = $('#droppable').flowchart('getData');
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data));
-    },
-    twoInOneOutOperator(left, top, className) {
-      let _this = this;
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
-      var operatorData = _def.methods.twoInOneOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable').flowchart('createOperator', operatorId, operatorData);
-      _this.$store.state.archivalStep[operatorId]='';
-      this.dataStr.workflow[operatorId] = {};
-      var data = $('#droppable').flowchart('getData');
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data));
-      this.dbData = JSON.parse(JSON.stringify(data));
-    },
-    twoInTwoOutOperator(left, top, className) {
-      let _this = this;
-      var operatorId = 'created_' + className + '_operator_' + this.operatorI;
-      var operatorData = _def.methods.twoInTwoOutOperator(this.operatorI, className, top, left);
-      this.operatorI += 1;
-      $('#droppable').flowchart('createOperator', operatorId, operatorData);
-      _this.$store.state.archivalStep[operatorId]='';
-      var data = $('#droppable').flowchart('getData')
-      this.dataStr.workflow[operatorId] = {};
-      this.dataStr.dbData = JSON.parse(JSON.stringify(data));
-      this.dbData = JSON.parse(JSON.stringify(data));
-    },
+    // oneInTwoOutOperator(left, top, className) {
+    //   let _this = this;
+    //   var operatorId = 'created_' + className + '_operator_' + this.operatorI;
+    //   var operatorData = _def.methods.oneInTwoOutOperator(this.operatorI, className, top, left);
+    //   this.operatorI += 1;
+    //   $('#droppable').flowchart('createOperator', operatorId, operatorData);
+    //   _this.$store.state.archivalStep[operatorId]='';
+    //   this.dataStr.workflow[operatorId] = {};
+    //   var data = $('#droppable').flowchart('getData');
+    //   this.dataStr.dbData = JSON.parse(JSON.stringify(data));
+    // },
+    // twoInOneOutOperator(left, top, className) {
+    //   let _this = this;
+    //   var operatorId = 'created_' + className + '_operator_' + this.operatorI;
+    //   var operatorData = _def.methods.twoInOneOutOperator(this.operatorI, className, top, left);
+    //   this.operatorI += 1;
+    //   $('#droppable').flowchart('createOperator', operatorId, operatorData);
+    //   _this.$store.state.archivalStep[operatorId]='';
+    //   this.dataStr.workflow[operatorId] = {};
+    //   var data = $('#droppable').flowchart('getData');
+    //   this.dataStr.dbData = JSON.parse(JSON.stringify(data));
+    //   this.dbData = JSON.parse(JSON.stringify(data));
+    // },
+    // twoInTwoOutOperator(left, top, className) {
+    //   let _this = this;
+    //   var operatorId = 'created_' + className + '_operator_' + this.operatorI;
+    //   var operatorData = _def.methods.twoInTwoOutOperator(this.operatorI, className, top, left);
+    //   this.operatorI += 1;
+    //   $('#droppable').flowchart('createOperator', operatorId, operatorData);
+    //   _this.$store.state.archivalStep[operatorId]='';
+    //   var data = $('#droppable').flowchart('getData')
+    //   this.dataStr.workflow[operatorId] = {};
+    //   this.dataStr.dbData = JSON.parse(JSON.stringify(data));
+    //   this.dbData = JSON.parse(JSON.stringify(data));
+    // },
     addTableOperator(left, top, className) {
       var _this = this
       var operatorId = 'created_table_operator_' + this.operatorI;

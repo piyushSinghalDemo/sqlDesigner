@@ -220,14 +220,16 @@ export default {
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully');
         this.$store.state.openMergePanel = false;
-      },response=>{
+      }
+      ,response=>{
            if(response && response.message){
-             _this.$toaster.error(response.message);
+            //  _this.$toaster.error(response.message);
              _this.processDoc = true;  
            }
-            else    
-             _this.$toaster.error('Due to some internal error, Data got rejected');
-      }).catch(e => {
+            // else    
+            //  _this.$toaster.error('Due to some internal error, Data got rejected');
+      }
+      ).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'
       })

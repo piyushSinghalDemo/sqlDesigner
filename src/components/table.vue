@@ -326,10 +326,11 @@ export default {
       }, response => {
             // debugger;
             if (response.message == "Process definition name already exists") {
-              _this.$toaster.error(response.message);
-                _this.processDoc = true;
-            }else
-            _this.$toaster.error("Due to some internal error data got rejected");
+              _this.processDoc = true;
+              // _this.$toaster.error(response.message);
+            }
+            // else
+            // _this.$toaster.error("Due to some internal error data got rejected");
         }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'
