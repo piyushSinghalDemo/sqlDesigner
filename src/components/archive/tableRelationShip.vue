@@ -96,7 +96,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
 import { post as postToServer } from '../methods/serverCall'
-import {GET_TABLES, GET_ALL_COLUMN, PREVIOUS_STEPS} from '../constant.js'
+import {GET_TABLES, GET_ALL_COLUMN, PREVIOUS_STEPS, DRIVER_TABLE, DATABASE_TABLE} from '../constant.js'
 export default {
   data() {
       return {
@@ -151,9 +151,9 @@ export default {
         
           let obj = {'tableName':cloneDeep(_this.tableObj.relationship.driverTable.name),
                    'aliesTableName':cloneDeep(_this.tableObj.relationship.driverTable.name + _this.$store.state.aliesCounter++),
-                   'group':'Driver Table', 'stepId':_this.tableObj.relationship.driverTable.stepId}
+                   'group':DRIVER_TABLE, 'stepId':_this.tableObj.relationship.driverTable.stepId}
            _this.tableObj.relationship.driverTable.aliesTableName = obj.aliesTableName;         
-           if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))        
+           if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == DRIVER_TABLE))        
             _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
             _this.isDriverTable = true;
             // _this.tableObj.relationship.driverTable.columns
@@ -276,7 +276,7 @@ export default {
           let dummyTableList=[];
           if(tableList.length){
               tableList.map(function(obj, index){
-              let tempObj = {name: obj, stepId:'Database Table'}
+              let tempObj = {name: obj, stepId:DATABASE_TABLE}
               dummyTableList.push(cloneDeep(tempObj));   
             });
           }
@@ -337,7 +337,7 @@ export default {
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             //For orderBy need saprate driver table column
-            if(object.group == 'Driver Table'){
+            if(object.group == DRIVER_TABLE){
               columnObj.decending = false;
               _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
             }
@@ -369,7 +369,7 @@ export default {
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             
-            if(tableObject.group == 'Driver Table'){
+            if(tableObject.group == DRIVER_TABLE){
               columnObj.decending = false;
             _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
             }

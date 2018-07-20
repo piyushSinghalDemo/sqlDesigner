@@ -18,8 +18,8 @@
         </v-layout>
         <v-layout row wrap v-show="!isDrivar">
           <v-flex style="margin-right:20px;">
-            <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
-              single-line item-text="tableName" item-value="tableName" return-object clearable></v-select>
+            <v-select :items="tableObj.relationship.selectedTableArray" @selected="testChange(tableObj.relationship.fromTable)" v-model="tableObj.relationship.fromTable" 
+            label="From Table"  single-line item-text="tableName" item-value="tableName" return-object clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line clearable></v-select>
@@ -105,7 +105,8 @@
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.valueType == 'date'">
-                      <v-select :items="dateTypeArray" clearable  label="Select Date Type" style="padding-top: 14px;" v-model="obj.dateType">
+                      <v-select :items="dateTypeArray" clearable @change="setDateHint" :hint="dateHint"
+                          label="Select Date Type" style="padding-top: 14px;" v-model="obj.dateType">
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
@@ -224,62 +225,42 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
-import {JOIN_TYPE, FILTER_ARRAY, OPEN_BRASIS_ARRAY, CLOSE_BRASIS_ARRAY, 
-          FUNCTION_ARRAY, VALUE_TYPE_ARRAY, PREVIOUS_STEPS} from '../constant.js'
+import {
+  JOIN_TYPE,
+  FILTER_ARRAY,
+  OPEN_BRASIS_ARRAY,
+  CLOSE_BRASIS_ARRAY,
+  FUNCTION_ARRAY,
+  VALUE_TYPE_ARRAY,
+  PREVIOUS_STEPS,
+  DATE_TYPE_ARRAY,
+  DATE_HINT
+} from '../constant.js'
 import calender from '../element/calender.vue'
 export default {
   data() {
     return {
-          customFilter (item, queryText, itemText) {
-          const hasValue = val => val != null ? val : ''
-          const text = hasValue(item.name)
-          const query = hasValue(queryText)
-          return text.toString()
-            .toLowerCase()
-            .indexOf(query.toString().toLowerCase()) > -1
-          },
-          joinType:JOIN_TYPE,
-          filterArray:FILTER_ARRAY,
-           openbrsisArray:OPEN_BRASIS_ARRAY,
-      closebrsisArray:CLOSE_BRASIS_ARRAY,
-      functionArray:FUNCTION_ARRAY,
-      valueTypeArray:VALUE_TYPE_ARRAY,
-       dateTypeArray: ['date', 'julien'],
-      selectedSearch:"",
-      SearchTable:""             
-    }},
-   props: ['tableObj','isDrivar'],
-   components: {
-          draggable,
-     },
-   computed:{
-     dragOptions () {
-        return {
-            animation: 0,
-            group: 'description',
-            ghostClass: 'ghost'
-         };
-        },
-   },
-   methods: {
-      updateGroup(event){
-        // this.orderList();
+      customFilter(item, queryText, itemText) {
+        const hasValue = val => val != null ? val : ''
+        const text = hasValue(item.name)
+        const query = hasValue(queryText)
+        return text.toString()
+          .toLowerCase()
+          .indexOf(query.toString().toLowerCase()) > -1
       },
-      updateGroup2(event){
-        if(event.added){
-          this.column = event.added.element;
-          this.aliesPanel = true;
-        }
-        // this.orderselectedColumns();
-      },
+      joinType: JOIN_TYPE,
+      filterArray: FILTER_ARRAY,
+      openbrsisArray: OPEN_BRASIS_ARRAY,
+      closebrsisArray: CLOSE_BRASIS_ARRAY,
+      functionArray: FUNCTION_ARRAY,
+      valueTypeArray: VALUE_TYPE_ARRAY,
+      dateTypeArray: DATE_TYPE_ARRAY,
       selectedSearch: "",
-      SearchTable: ""
+      SearchTable: "",
+      dateHint:"",
+    }
   },
   props: ['tableObj', 'isDrivar'],
-  components: {
-    draggable,
-    calender
-  },
   computed: {
     dragOptions() {
       return {
@@ -289,13 +270,20 @@ export default {
       };
     },
   },
+  components: {
+    draggable,
+    calender
+  },
   methods: {
-    setDate(dateParam, index){
-       let _this = this;
+      setDateHint(param){
+      this.dateHint = DATE_HINT[param]
+    },
+    setDate(dateParam, index) {
+      let _this = this;
       //  alert("Date "+dateParam);
-       _this.tableObj.criteriaArray[index].value = dateParam;
-       console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
-     },
+      _this.tableObj.criteriaArray[index].value = dateParam;
+      console.log("criteria Array " + JSON.stringify(_this.tableObj.criteriaArray));
+    },
     updateGroup(event) {
       // this.orderList();
     },
@@ -323,35 +311,39 @@ export default {
     saveArchiveData() {
       let arrayIndex = -1;
       let _this = this;
-      if(_this.isDrivar){
-         _this.tableObj.archive.where=_this.tableObj.criteriaArray;
-       }else{
-         _this.tableObj.relationshipArray.map(function(obj, index){
-                  if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
-                 obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){
-               arrayIndex = index;
-             }
-         });
-         //debugger;
-         if(_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == PREVIOUS_STEPS){
-           _this.tableObj.relationship.jfrom_drv_table = true;
-         }else{
-           _this.tableObj.relationship.jfrom_drv_table = false;
-         }
-         if(_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == PREVIOUS_STEPS){
-           _this.tableObj.relationship.jto_drv_table = true;  
-         }else{
-           _this.tableObj.relationship.jto_drv_table = false;  
-         }
-      let object = {'relationship':_this.tableObj.relationship,
-                    'colArray':_this.tableObj.colArray, 'where':_this.tableObj.criteriaArray, 'select_table':_this.tableObj.archive.selectedTable};
-          if(arrayIndex >= 0){
-            _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
-            _this.$toaster.info('Relationship Updated successfully');
-          }else{
-            _this.tableObj.relationshipArray.push(cloneDeep(object));
-            _this.$toaster.success('Relationship added successfully');
+      if (_this.isDrivar) {
+        _this.tableObj.archive.where = _this.tableObj.criteriaArray;
+      } else {
+        _this.tableObj.relationshipArray.map(function (obj, index) {
+          if (obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName &&
+            obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName) {
+            arrayIndex = index;
           }
+        });
+        //debugger;
+        if (_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == PREVIOUS_STEPS) {
+          _this.tableObj.relationship.jfrom_drv_table = true;
+        } else {
+          _this.tableObj.relationship.jfrom_drv_table = false;
+        }
+        if (_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == PREVIOUS_STEPS) {
+          _this.tableObj.relationship.jto_drv_table = true;
+        } else {
+          _this.tableObj.relationship.jto_drv_table = false;
+        }
+        let object = {
+          'relationship': _this.tableObj.relationship,
+          'colArray': _this.tableObj.colArray,
+          'where': _this.tableObj.criteriaArray,
+          'select_table': _this.tableObj.archive.selectedTable
+        };
+        if (arrayIndex >= 0) {
+          _this.tableObj.relationshipArray[arrayIndex] = cloneDeep(object);
+          _this.$toaster.info('Relationship Updated successfully');
+        } else {
+          _this.tableObj.relationshipArray.push(cloneDeep(object));
+          _this.$toaster.success('Relationship added successfully');
+        }
       } //end of else(not driver table)
       this.resetForm();
       this.$emit('save-data', _this.tableObj)

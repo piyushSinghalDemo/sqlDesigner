@@ -103,7 +103,7 @@
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.valueType == 'date'">
-                      <v-select :items="dateTypeArray" clearable label="Select Date Type" v-model="obj.dateType" style="padding-top: 14px;">
+                      <v-select :items="dateTypeArray" clearable :hint=dateHint @change="setDateHint" label="Select Date Type" v-model="obj.dateType" style="padding-top: 14px;">
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
@@ -229,7 +229,8 @@ import findIndex from 'lodash/findIndex';
 import draggable from 'vuedraggable'
 import filter from 'lodash/filter';
 import columnAlies from '../columnAlies.vue';
-import {JOIN_TYPE,FILTER_ARRAY, OPEN_BRASIS_ARRAY, CLOSE_BRASIS_ARRAY, FUNCTION_ARRAY, VALUE_TYPE_ARRAY, PREVIOUS_STEPS} from '../constant.js'
+import {JOIN_TYPE,FILTER_ARRAY, OPEN_BRASIS_ARRAY, CLOSE_BRASIS_ARRAY, 
+            FUNCTION_ARRAY, VALUE_TYPE_ARRAY, PREVIOUS_STEPS, DATE_TYPE_ARRAY, DATABASE_TABLE, DATE_HINT} from '../constant.js'
 import calender from '../element/calender.vue'
 export default {
   data() {
@@ -248,7 +249,8 @@ export default {
         selectedTable:"",
         availableColumn:[],
         selectedColumns:[],        
-        dateTypeArray: ['date', 'julien'],     
+        dateTypeArray: DATE_TYPE_ARRAY,     
+        dateHint:"",
     }},
    props: ['tableObj'],
    components: {
@@ -266,6 +268,9 @@ export default {
         },
      },
   methods: {
+    setDateHint(param){
+      this.dateHint = DATE_HINT[param]
+    },
     setDate(dateParam, index){
        let _this = this;
       //  alert("Date "+dateParam);
@@ -325,7 +330,7 @@ export default {
         _this.tableObj.selectedColumns = _this.tableObj.merge.selectedColumns
       let object = {
         'relationship': _this.tableObj.relationship,
-        'is_drv_table': _this.tableObj.merge.selectedTable.stepId == "Database Table" ? false : true,
+        'is_drv_table': _this.tableObj.merge.selectedTable.stepId == DATABASE_TABLE ? false : true,
         'colArray': _this.tableObj.colArray,
         'where': _this.tableObj.criteriaArray,
         'workTableOutput': _this.tableObj.merge.selectedColumns,

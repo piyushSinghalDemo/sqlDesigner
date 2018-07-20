@@ -70,7 +70,7 @@ import tableRelationship from './tableRelationShip.vue';
 import config from '../../config.json'
 import { post as postToServer  } from '../methods/serverCall'
 import {getStepData} from '../methods/stepInputData'
-import {IDE_STEP_DATA} from '../constant.js'
+import {IDE_STEP_DATA, PREVIOUS_STEPS} from '../constant.js'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 
 export default {
@@ -358,13 +358,11 @@ export default {
          let obj = {
                 'name': _this.tableObj.title,
                 'columns': _this.tableObj.selectedColumns,
-                'stepId': 'Previous Steps'
+                'stepId': PREVIOUS_STEPS
               }
         addData.map(linkObj=>{
           _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
         })
-        // console.log("flowchartData in save step" + JSON.stringify(flowchartData));
-        // console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully');
         this.$store.state.openArchivePanel = false;
       },response=>{

@@ -1,14 +1,5 @@
 <template>
   <v-container grid-list-md>
-        <!-- <v-layout row wrap style="font-weight: bold;font-size:19px">
-          <v-flex xs2>Parenthesis</v-flex>
-          <v-flex xs2>Columns</v-flex>
-          <v-flex xs1>Operator</v-flex>
-          <v-flex xs2>Value Type</v-flex>
-          <v-flex xs2>Value</v-flex>
-          <v-flex xs2>Parenthesis</v-flex>
-          <v-flex xs1>Operator</v-flex>
-        </v-layout> -->
         <v-layout row wrap v-for="(obj,index) in tableObj.criteriaArray" :key="index">
           <!-- tableObj.criteriaArray : {{tableObj.criteriaArray}} -->
           <v-flex xs3>
@@ -31,16 +22,17 @@
           </v-flex>
            <v-flex xs3 v-if="obj.valueType == 'date'">
              <!-- obj.dateType value : {{obj.dateType}} -->
-            <v-select :items="dateTypeArray" style="padding-top: 10px;" clearable single-line label="Select Date Type" v-model="obj.dateType">
+            <v-select :items="dateTypeArray" style="padding-top: 10px;" clearable single-line @change="setDateHint" :hint=dateHint
+              label="Select Date Type" v-model="obj.dateType">
             </v-select>
           </v-flex>
-          <v-flex xs3 v-if="obj.dateType == 'date'">
+          <v-flex xs3 v-if="obj.dateType == 'Database Date'">
             <v-select :items="['yyyy-mm-dd','mm-dd-yyyy']" style="padding-top: 10px;" clearable 
               label="Date Format" v-model="obj.formatType" @change="obj.value=''">
             </v-select>
           </v-flex>
           <v-flex xs3>
-            <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :format="obj.formatType" 
+            <calender v-if="obj.valueType == 'Database Date' && obj.dateType == 'Database Date'" :format="obj.formatType" 
               :input="obj.value" @update="setDate($event,index)"></calender>
 
             <v-select v-else-if="obj.valueType == 'field'" label="Select Column" clearable :items="tableObj.optionColumn" 
@@ -76,58 +68,70 @@
 </template>
 <script>
 import cloneDeep from 'lodash/cloneDeep';
-import calender from './element/calender.vue'
+import calender from './element/calender.vue';
+import {
+  OPEN_BRASIS_ARRAY,
+  CLOSE_BRASIS_ARRAY,
+  FUNCTION_ARRAY,
+  FILTER_ARRAY,
+  VALUE_TYPE_ARRAY,
+  DATE_TYPE_ARRAY,
+  DATE_HINT
+} from './constant.js'
 export default {
   components: {
     calender,
   },
   data() {
     return {
-        customFilter (item, queryText, itemText) {
-          const hasValue = val => val != null ? val : ''
-          const text = hasValue(item.name)
-          const query = hasValue(queryText)
-          return text.toString()
-            .toLowerCase()
-            .indexOf(query.toString().toLowerCase()) > -1
-        },
-      openbrsisArray:['(','((','((('],
-      closebrsisArray:[')','))',')))'],
-      functionArray:['count','sum'],
-      filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
-                  "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH",
-                  "LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],
-      valueTypeArray:['value','date','field'],               
-      dateTypeArray:['date','julien'],
-    }},
-    props: ['tableObj'],
-   methods: {
-     setDate(dateParam, index){
-       let _this = this;
-      //  alert("Date "+dateParam);
-       _this.tableObj.criteriaArray[index].value = dateParam;
-       console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
-     },
-    deleteCriteria(index){
+      customFilter(item, queryText, itemText) {
+        const hasValue = val => val != null ? val : ''
+        const text = hasValue(item.name)
+        const query = hasValue(queryText)
+        return text.toString()
+          .toLowerCase()
+          .indexOf(query.toString().toLowerCase()) > -1
+      },
+      openbrsisArray: OPEN_BRASIS_ARRAY,
+      closebrsisArray: CLOSE_BRASIS_ARRAY,
+      functionArray: FUNCTION_ARRAY,
+      filterArray: FILTER_ARRAY,
+      valueTypeArray: VALUE_TYPE_ARRAY,
+      dateTypeArray: DATE_TYPE_ARRAY,
+      dateHint:"",
+    }
+  },
+  props: ['tableObj'],
+  methods: {
+    setDateHint(param){
+      this.dateHint = DATE_HINT[param]
+    },
+    setDate(dateParam, index) {
       let _this = this;
-      if(!index){
+      //  alert("Date "+dateParam);
+      _this.tableObj.criteriaArray[index].value = dateParam;
+      console.log("criteria Array " + JSON.stringify(_this.tableObj.criteriaArray));
+    },
+    deleteCriteria(index) {
+      let _this = this;
+      if (!index) {
         return;
       }
-      _this.tableObj.criteriaArray.splice(index,1);
+      _this.tableObj.criteriaArray.splice(index, 1);
       let length = _this.tableObj.criteriaArray.length;
-      _this.tableObj.criteriaArray[length-1].showLogicalOperator = false; 
+      _this.tableObj.criteriaArray[length - 1].showLogicalOperator = false;
     },
-    addCriteria(){
+    addCriteria() {
       let _this = this;
       let length = _this.tableObj.criteriaArray.length;
-      _this.tableObj.criteriaArray[length-1].showLogicalOperator = true;
-      _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject)); 
+      _this.tableObj.criteriaArray[length - 1].showLogicalOperator = true;
+      _this.tableObj.criteriaArray.push(cloneDeep(_this.tableObj.parenthasisobject));
     },
-    switchScreen(num){
-        let _this = this;
-        _this.$emit('update-object', [_this.tableObj, num]);
+    switchScreen(num) {
+      let _this = this;
+      _this.$emit('update-object', [_this.tableObj, num]);
     },
-   }
+  }
 }
 </script>
 <style scoped>
