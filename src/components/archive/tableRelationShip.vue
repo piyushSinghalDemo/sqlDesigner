@@ -26,7 +26,8 @@
                   <!-- tableObj.allBussinessObject: {{tableObj.allBussinessObject}} -->
              <v-select :items="selectBussinessObject" v-else v-model="tableObj.relationship.bussinessObject"
                label="Bussiness Object" item-text="name" item-value="name" return-object autocomplete></v-select>   
-             <a class="addTable" @click.stop="addBussinessObject">Add Object</a>
+             <a class="addTable" v-if="tableObj.isSingleTableArchival" @click.stop="addTable">Add Object</a>
+             <a class="addTable" v-else @click.stop="addBussinessObject">Add Object</a>
           </v-flex>
         </v-layout>
       </v-flex>

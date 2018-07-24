@@ -79,7 +79,7 @@ export function getStepData(_this, tableObj) {
         }
     });
     DrvTableObj.where.length ? DrvTableObj.where[DrvTableObj.where.length - 1].operand = '' : '';
-    archiveStepInput.drv_table.push(DrvTableObj);
+    archiveStepInput.drv_table = DrvTableObj;
 
     let colsObject = { // all column dont have work table o/p as data selection
         "table_alias": "",
@@ -123,7 +123,7 @@ export function getStepData(_this, tableObj) {
                     "name": "", //From Table
                     "cols": []
                 },
-                "joins": [],
+                "joins": {},
                 "where": []
             }
             // debugger;
@@ -153,7 +153,7 @@ export function getStepData(_this, tableObj) {
         });
         //check for join have some data or not
         if (joinObject.jto)
-            relationObject.joins.push(cloneDeep(joinObject));
+            relationObject.joins = cloneDeep(joinObject);
 
         obj.where && obj.where.map(function(whereObj, whereIndex) {
             if (whereObj.column) {
