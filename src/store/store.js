@@ -45,8 +45,8 @@ const state = {
         "limit": '',
         "isSingleTableArchival": false,
         "drv_table": [],
-        "bussiness_object_join": {},
-        "bussiness_object_id": "",
+        "business_object_join": {},
+        "business_object_id": "",
         "list_of_relations": [],
         links: []
     },

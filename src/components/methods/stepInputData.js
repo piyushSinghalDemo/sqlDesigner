@@ -200,7 +200,7 @@ export function getStepData(_this, tableObj) {
         archiveStepInput.list_of_relations.push(relationObject);
     });
     /**
-     * Set Bussiness Object
+     * Set Business Object
      */
     // debugger;
     !tableObj.isSingleTableArchival && tableObj.relationshipArray.map(function(obj, index) {
@@ -225,12 +225,12 @@ export function getStepData(_this, tableObj) {
         //check for join have some data or not
         // if (joinObject.jto)
         // relationObject.joins.push(cloneDeep(joinObject));
-        archiveStepInput.bussiness_object_join = cloneDeep(joinObject);
+        archiveStepInput.business_object_join = cloneDeep(joinObject);
     })
     archiveStepInput.client_id = userData.client_id;
     archiveStepInput.user_id = userData.user_id;
     archiveStepInput.id = tableObj.stepId;
-    archiveStepInput.bussiness_object_id = tableObj.archive.bussinessObjectId;
+    archiveStepInput.business_object_id = tableObj.archive.businessObjectId;
     return archiveStepInput;
 };
 
