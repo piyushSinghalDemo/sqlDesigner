@@ -230,7 +230,7 @@ export function getStepData(_this, tableObj) {
     archiveStepInput.client_id = userData.client_id;
     archiveStepInput.user_id = userData.user_id;
     archiveStepInput.id = tableObj.stepId;
-    archiveStepInput.business_object_id = tableObj.archive.businessObjectId;
+    archiveStepInput.business_object_id = tableObj.archive.bussinessObjectId;
     return archiveStepInput;
 };
 
