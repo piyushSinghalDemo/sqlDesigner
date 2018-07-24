@@ -21,9 +21,12 @@
              </v-checkbox>
           </v-flex>
           <v-flex xs6>
-            <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
+            <v-select :items="selectTable" v-if="tableObj.isSingleTableArchival" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
                label="Select Table" item-text="name" item-value="name" return-object autocomplete></v-select>
-          <a class="addTable" @click.stop="addTable">Add Table</a>
+                  <!-- tableObj.allBussinessObject: {{tableObj.allBussinessObject}} -->
+             <v-select :items="selectBussinessObject" v-else v-model="tableObj.relationship.bussinessObject"
+               label="Bussiness Object" item-text="name" item-value="name" return-object autocomplete></v-select>   
+             <a class="addTable" @click.stop="addBussinessObject">Add Object</a>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -96,7 +99,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
 import { post as postToServer } from '../methods/serverCall'
-import {GET_TABLES, GET_ALL_COLUMN, PREVIOUS_STEPS, DRIVER_TABLE, DATABASE_TABLE} from '../constant.js'
+import {GET_TABLES, GET_ALL_COLUMN, PREVIOUS_STEPS, DRIVER_TABLE, DATABASE_TABLE, BUSSINESS_OBJECT} from '../constant.js'
 export default {
   data() {
       return {
@@ -116,6 +119,11 @@ export default {
     },
     props: ['tableObj'],
     computed: {
+       selectBussinessObject() {
+         let _this = this;
+         console.log("Data: " + JSON.stringify(_this.tableObj.allBussinessObject));
+        return _this.tableObj.allBussinessObject; //allArchiveTables
+      },
        selectTable() {
          let _this = this;
         return _this.tableObj.allArchiveTables; //allArchiveTables
@@ -318,6 +326,33 @@ export default {
          _this.$toaster.success('Table Added Successfully'); 
       }
     },
+    // get
+     addBussinessObject(){
+      let validFlag=true;
+      let _this = this,
+          arrayIndex=-1;
+      // console.log("Demo "+JSON.stringify(_this.demo));
+      // debugger;
+      _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
+        if(obj.group == _this.tableObj.relationship.bussinessObject.group){
+           arrayIndex = index;
+        }
+      }); //bussinessObject
+      // let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
+      //              'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
+      //              'group':BUSSINESS_OBJECT}
+        // let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
+        // let tableName = tempName.join("");
+        _this.tableObj.relationship.bussinessObject.tableName = cloneDeep(_this.tableObj.relationship.bussinessObject.name);
+        _this.tableObj.relationship.bussinessObject.aliesTableName = cloneDeep(_this.tableObj.relationship.bussinessObject.name + _this.$store.state.aliesCounter++);        
+        _this.tableObj.relationship.bussinessObject.group = BUSSINESS_OBJECT;
+        if(arrayIndex>=0)
+        _this.tableObj.relationship.selectedTableArray[arrayIndex] = cloneDeep(_this.tableObj.relationship.bussinessObject);
+        else
+        _this.tableObj.relationship.selectedTableArray.push(cloneDeep(_this.tableObj.relationship.bussinessObject));
+        _this.getBussinessObjectColumn(_this.tableObj.relationship.bussinessObject);
+        _this.$toaster.success('Table Added Successfully'); 
+    },
     getPrevStepCol(object){
       let _this = this;
       if(_this.tableObj.optionColumn.length){
@@ -343,6 +378,20 @@ export default {
             }
           });
          _this.tableObj.is_drv_table = true;  
+    },
+    getBussinessObjectColumn(object){
+      let _this = this;
+      if(_this.tableObj.optionColumn.length){
+        _this.tableObj.optionColumn.push({ divider: true });
+      }
+      let headerObj = { header: object.tableName};
+      _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+      object.unique_identifiers.map(function(col, index){
+        let columnObj = {name: col,value:object.tableName+'-'+col, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''};
+      _this.tableObj.optionColumn.push(cloneDeep(columnObj));                         
+      _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+      });
     },
     getColumn(tableObject){
       let _this = this;

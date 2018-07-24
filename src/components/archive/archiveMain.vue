@@ -119,11 +119,20 @@ export default {
     },
     updateJoin(object) {
       let _this = this;
+      // debugger;
       if(object.tableName == _this.tableObj.relationship.driverTable.name)
         _this.isDrivar = true;
-      else
+      else{
         _this.isDrivar = false;
-      _this.tableObj.archive.selectedTable = object;  
+        /**
+         * Here we will set default value of join from table & to table
+         */
+        // debugger;
+        _this.tableObj.archive.bussinessObjectId = object.id;
+        _this.tableObj.relationship.fromTable = _this.tableObj.relationship.driverTable;
+        _this.tableObj.relationship.toTable = object;
+      }
+      // _this.tableObj.archive.selectedTable = object;  
       _this.getCriteriaData(object);
       _this.dialog2 = true;
     },

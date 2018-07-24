@@ -180,7 +180,7 @@ import {getProcessData} from './methods/processDefenationInput'
 import processName from './processName.vue'
 import {createStepData} from './methods/createStep'
 import {setStepInfo} from './methods/setStepInfo'
-import {GET_PROCESS_DEFINITION_BY_ID, GET_TABLES, 
+import {GET_PROCESS_DEFINITION_BY_ID, GET_TABLES, GET_ALL_BUSSINESS_OBJECT, DATABASE_TABLE, BUSSINESS_OBJECT, 
           VALDATE_PROCESS_DEFINITION, ADD_IDE_DATA, IDE_STEP_DATA, GET_STORED_PROCEDURE_LIST} from './constant.js'
 export default {
   components: {
@@ -559,12 +559,37 @@ export default {
               _this.$store.state.archivalStep[_this.currentStep].allArchiveTables=[];
               _this.$store.state.archivalStep[_this.currentStep].allDbTables=[];             
               allDbTables.table_name_list.map(function(obj, index){
-                let temp = {'name':obj, 'stepId':'Database Table'};
+                let temp = {'name':obj, 'stepId':DATABASE_TABLE};
                 _this.$store.state.archivalStep[_this.currentStep].allArchiveTables.push(cloneDeep(temp));
                 _this.$store.state.archivalStep[_this.currentStep].allDbTables.push(cloneDeep(temp));             
               });
           }
           // console.log("Response from all tables"+JSON.stringify(response));
+        },response => {
+          _this.$store.state.archivalStep[_this.currentStep].loadTable=false;
+        }).catch(e => {
+          console.log(e)
+            this.ErrorMessage = 'Something went wrong.'
+          })
+    },
+    getBussinessObject(){
+        let _this = this;
+        let url = config.BUSSINESS_OBJECT_URL + GET_ALL_BUSSINESS_OBJECT;//'http://192.168.1.100:8010/get_tables';
+        if(_this.$store.state.archivalStep[_this.currentStep])
+        _this.$store.state.archivalStep[_this.currentStep].loadTable=true;
+        let inputJson = {}
+        // debugger;
+        postToServer(this, url, inputJson).then(response=>{
+          _this.$store.state.archivalStep[_this.currentStep].loadTable=false;
+              let bussinessObjectList = response;//JSON.parse(response.bodyText);
+              _this.$store.state.archivalStep[_this.currentStep].allBussinessObject=[];             
+              bussinessObjectList.map(function(obj, index){
+                // let temp = {'name':obj, 'stepId':BUSSINESS_OBJECT};
+                obj.stepId = BUSSINESS_OBJECT;
+                obj.group = BUSSINESS_OBJECT;
+                _this.$store.state.archivalStep[_this.currentStep].allBussinessObject.push(cloneDeep(obj));
+              });
+          console.log("Response from all tables"+JSON.stringify(_this.$store.state.archivalStep));
         },response => {
           _this.$store.state.archivalStep[_this.currentStep].loadTable=false;
         }).catch(e => {
@@ -829,6 +854,7 @@ export default {
            }
            else if(operator.className == 'archive'){
              _this.gettables();
+             _this.getBussinessObject();
             //  _this.$store.state.openArchivePanel = true;
             _this.set_openArchivePanel(true);
            }else if(operator.className == 'merge' || operator.className == 'minus'){

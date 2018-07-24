@@ -9,12 +9,14 @@ export const ADD_IDE_DATA = 'add_ide_data';
 export const IDE_STEP_DATA = 'ide_step_data/add';
 export const GET_STORED_PROCEDURE_LIST = 'get_stored_procedure_list';
 export const GET_STORED_PROCEDURE_PARAM = 'get_stored_procedure_param';
+export const GET_ALL_BUSSINESS_OBJECT = 'get_business_object_list';
 
 /**
  * METADATA
  */
 export const PREVIOUS_STEPS = 'Previous Steps'; //step1
 export const DATABASE_TABLE = 'Database Table'; //step2
+export const BUSSINESS_OBJECT = 'Bussiness Object'
 export const DRIVER_TABLE = "Driver Table";
 export const JOIN_TYPE = ["inner join", "left join", "right join", "full join"];
 export const FILTER_ARRAY = ["EQUALS_TO", "NOT_EQUALS_TO", "LESS_THAN", "GREATER_THAN", "BETWEEN", "IN",

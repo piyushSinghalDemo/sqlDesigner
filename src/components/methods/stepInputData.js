@@ -11,6 +11,7 @@ export function getStepData(_this, tableObj) {
     // let _this = this;
     // console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
     // debugger;
+    // debugger;
     let $flowchart = $("#droppable");
     var flowchartData = $flowchart.flowchart('getData');
     let objectLength = Object.keys(flowchartData.links).length;
@@ -198,9 +199,38 @@ export function getStepData(_this, tableObj) {
         // debugger;
         archiveStepInput.list_of_relations.push(relationObject);
     });
-    archiveStepInput.client_id = userData.client_id,
-        archiveStepInput.user_id = userData.user_id,
-        archiveStepInput.id = tableObj.stepId
+    /**
+     * Set Bussiness Object
+     */
+    debugger;
+    tableObj.relationshipArray.map(function(obj, index) {
+        joinObject.jto = obj.relationship.toTable.tableName;
+        joinObject.jfrom = obj.relationship.fromTable.tableName;
+        joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
+        joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
+        joinObject.type = obj.relationship.selectedFilter;
+        joinObject.jto_drv_table = obj.relationship.jto_drv_table;
+        joinObject.jfrom_drv_table = obj.relationship.jfrom_drv_table;
+        joinObject.condition = [];
+        obj.colArray.map(function(colObj, colIndex) {
+            if (colObj.fromColumn.name) {
+                conditionObject.from_column = colObj.fromColumn.name;
+                conditionObject.to_column = colObj.toColumn.name;
+                conditionObject.from_alias = colObj.fromColumn.tblAlies;
+                conditionObject.to_alias = colObj.toColumn.tblAlies;
+                conditionObject.operator = getjoinOperator(colObj.operator);
+                joinObject.condition.push(cloneDeep(conditionObject));
+            }
+        });
+        //check for join have some data or not
+        // if (joinObject.jto)
+        // relationObject.joins.push(cloneDeep(joinObject));
+        archiveStepInput.bussiness_object_join = cloneDeep(joinObject);
+    })
+    archiveStepInput.client_id = userData.client_id;
+    archiveStepInput.user_id = userData.user_id;
+    archiveStepInput.id = tableObj.stepId;
+    archiveStepInput.bussiness_object_id = tableObj.archive.bussinessObjectId;
     return archiveStepInput;
 };
 

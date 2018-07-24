@@ -25,6 +25,7 @@
             <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
+             <!-- tableObj.relationship.toTable: {{tableObj.relationship.toTable}} -->
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" label="To Table" item-text="tableName"
               item-value="tableName" single-line return-object clearable></v-select>
           </v-flex>
@@ -331,6 +332,7 @@ export default {
         } else {
           _this.tableObj.relationship.jto_drv_table = false;
         }
+        // debugger;
         let object = {
           'relationship': _this.tableObj.relationship,
           'colArray': _this.tableObj.colArray,
