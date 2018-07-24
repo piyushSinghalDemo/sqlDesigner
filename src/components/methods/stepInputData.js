@@ -115,7 +115,7 @@ export function getStepData(_this, tableObj) {
         "joins": [],
         "where": []
     }
-    tableObj.relationshipArray.map(function(obj, index) {
+    tableObj.isSingleTableArchival && tableObj.relationshipArray.map(function(obj, index) {
         let relationObject = {
                 "output_table": "", //From table
                 "select_table": {
@@ -202,8 +202,8 @@ export function getStepData(_this, tableObj) {
     /**
      * Set Bussiness Object
      */
-    debugger;
-    tableObj.relationshipArray.map(function(obj, index) {
+    // debugger;
+    !tableObj.isSingleTableArchival && tableObj.relationshipArray.map(function(obj, index) {
         joinObject.jto = obj.relationship.toTable.tableName;
         joinObject.jfrom = obj.relationship.fromTable.tableName;
         joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;

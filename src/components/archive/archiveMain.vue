@@ -70,7 +70,7 @@ import tableRelationship from './tableRelationShip.vue';
 import config from '../../config.json'
 import { post as postToServer  } from '../methods/serverCall'
 import {getStepData} from '../methods/stepInputData'
-import {IDE_STEP_DATA, PREVIOUS_STEPS, OPERATOR_ARRAY} from '../constant.js'
+import {IDE_STEP_DATA, PREVIOUS_STEPS, OPERATOR_ARRAY, DRIVER_TABLE} from '../constant.js'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 
 export default {
@@ -128,8 +128,11 @@ export default {
          * Here we will set default value of join from table & to table
          */
         // debugger;
+        _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
+          if(obj.group == DRIVER_TABLE)
+            _this.tableObj.relationship.fromTable = obj;
+        });
         _this.tableObj.archive.bussinessObjectId = object.id;
-        _this.tableObj.relationship.fromTable = _this.tableObj.relationship.driverTable;
         _this.tableObj.relationship.toTable = object;
       }
       // _this.tableObj.archive.selectedTable = object;  

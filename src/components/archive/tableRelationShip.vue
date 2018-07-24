@@ -192,6 +192,9 @@ export default {
           _this.tableObj.allDbTables = cloneDeep(_this.allDbTablesCopy); 
           return;
         }
+        if(!value && !_this.createCopy){
+          return;
+        }
         //Firstly It will search data in current list   
         let found = false;
         _this.tableObj.allDbTables.map((obj, index)=>{
@@ -249,6 +252,11 @@ export default {
         // if search input is blank, It will load all previous tables
         if(!value && _this.createTableCopy){
           _this.tableObj.allArchiveTables = cloneDeep(_this.allArchiveTablesCopy); 
+          return;
+        }
+         // if search input is blank, It will load all previous tables
+        if(!value && !_this.createTableCopy){
+          // _this.tableObj.allArchiveTables = cloneDeep(_this.allArchiveTablesCopy); 
           return;
         }
         //Firstly It will search data in current list   
