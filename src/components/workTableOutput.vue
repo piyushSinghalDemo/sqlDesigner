@@ -27,6 +27,7 @@
                       <i class="fa fa-search srch-icon"></i>
                     </v-flex>
                   </v-layout>
+                  <!-- {{worktableColumn }} -->
                   <draggable element="span" v-model="worktableColumn"  :options="dragOptions" :move="onMove" @start="isDragging=true"
                     @end="isDragging=false" @change="updateGroup($event)">
                     <transition-group type="transition" :name="'flip-list'" class="list-group ht-215" tag="ul">
@@ -112,7 +113,6 @@ export default {
             ghostClass: 'ghost'
          };
         },
-
      },
     watch: {
       stepper :{
@@ -130,8 +130,6 @@ export default {
             this.worktableColumn = cloneDeep(array);
       },
       filterSelColumn(){
-          // this.selectedColumns = this.filterBy(this.selectedColumns, this.selectedSearch);
-            // debugger;
           let array = this.filterBy(this.tableObj.selectedColumns, this.selectedSearch);
             this.selectedColumns = cloneDeep(array);
       },

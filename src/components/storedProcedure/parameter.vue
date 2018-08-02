@@ -5,10 +5,7 @@
         <span style="color: red;font-size: 16px;">Parameter List Loading...</span>
     </div>
     <div v-show="!tableObj.loadParamater">
-    <!-- <ul>
-      <li @click.stop="switchScreen(1)" :class="{chevron:true}">Procedure List</li>
-      <li @click.stop="switchScreen(2)" :class="{chevron:true,chevron_active:true}">Parameter</li>
-    </ul> -->
+
     <v-layout row wrap style="height:375px">
       <v-flex style="overflow:auto">
         <!-- {{tableObj}} -->
@@ -26,21 +23,6 @@
               <td class="">
                  <v-text-field name="value" label="Value" v-if="props.item.Type !== 'date'" single-line v-model="props.item.value"></v-text-field>
                     <!-- **********************************************************************************************   -->
-                      <!-- <v-menu ref="props.item.value" :close-on-content-click="false"
-                          v-model="props.item.value" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition" offset-y full-width min-width="290px" >
-                          <v-text-field slot="activator" v-model="date"  label="Select Date"
-                            prepend-icon="event" readonly></v-text-field>
-                          <v-date-picker v-model="props.item.value" @input="$refs.props.item.value.save(date)"></v-date-picker>
-                      </v-menu> -->
-
-                       <!-- <v-menu ref="menu" lazy :close-on-content-click="false" v-if="props.item.Type == 'date'" v-model="obj.menu" transition="scale-transition"
-                          offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="obj.date">
-                          <v-text-field slot="activator" label="Picker in menu" v-model="obj.date" prepend-icon="event" readonly></v-text-field>
-                          <v-date-picker v-model="obj.date" no-title scrollable>
-                            <v-spacer></v-spacer>
-                            <v-btn flat color="primary" @click="$refs.menu.save(obj.date)">OK</v-btn>
-                          </v-date-picker>
-                        </v-menu> -->
                          <calender v-else @update="setDate($event,props)"></calender>
                          <!-- **********************************************************************************************        -->
               </td>
@@ -67,6 +49,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import config from '../../config.json';
 import calender from '../element/calender.vue'
+import {} from '../constant.js'
 export default {
    components: {
     calender,

@@ -62,6 +62,7 @@ import tableRelationship from './mergeTableRelationShip.vue';
 import config from '../../config.json'
 import { post as postToServer  } from '../methods/serverCall'
 import mergeStepData from '../methods/mergeStepInput'
+import {IDE_STEP_DATA, PREVIOUS_STEPS, OPERATOR_ARRAY} from '../constant.js'
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
   components: {
@@ -157,21 +158,7 @@ export default {
       this.$store.state.openMergePanel = false
     },
     getjoinOperator(sign) {
-      let operatorArray = {
-        EQUALS_TO: '_eq_',
-        NOT_EQUALS_TO: '_not_eq_',
-        LESS_THAN: '_lt_',
-        GREATER_THAN: '_gt_',
-        LESS_THAN_EQUALS_TO: '_lt_eq_',
-        GREATER_THAN_EQUALS_TO: '_gt_eq_',
-        IS_NULL: '_is_n_',
-        IS_NOT_NULL: '_is_nt_n_',
-        LIKE_STARTS_WITH: '_sl_',
-        LIKE_ENDS_WITH: '_el_',
-        LIKE_CONTAINS_WITH: '_cl_',
-        BETWEEN: '_bet_',
-        IN: '_in_'
-      };
+      let operatorArray = OPERATOR_ARRAY;
       return operatorArray[sign];
     },
     saveDialog(objData) {
@@ -190,7 +177,7 @@ export default {
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
       inputParam.process_definition_name = _this.$store.state.process_definition_name;
       console.log("inputParam in merge step " +JSON.stringify(inputParam));
-      let url = config.IDE_API_URL+'ide_step_data/add'; //'http://192.168.1.101:8016/ide_step_data/add';
+      let url = config.IDE_API_URL+IDE_STEP_DATA; //'http://192.168.1.101:8016/ide_step_data/add';
       postToServer(this, url, inputParam).then(response=>{
         _this.tableObj.stepId = response.id;
         _this.$store.state.process_definition_id = response.process_definition_id;
@@ -224,7 +211,7 @@ export default {
          let obj = {
                 'name': _this.tableObj.title,
                 'columns': _this.tableObj.selectedColumns,
-                'stepId': 'Previous Steps'
+                'stepId': PREVIOUS_STEPS
               }
         addData.map(linkObj=>{
           _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
@@ -233,14 +220,16 @@ export default {
         console.log("tableObj in save step" + JSON.stringify(_this.tableObj));
         _this.$toaster.success('Data save successfully');
         this.$store.state.openMergePanel = false;
-      },response=>{
+      }
+      ,response=>{
            if(response && response.message){
-             _this.$toaster.error(response.message);
+            //  _this.$toaster.error(response.message);
              _this.processDoc = true;  
            }
-            else    
-             _this.$toaster.error('Due to some internal error, Data got rejected');
-      }).catch(e => {
+            // else    
+            //  _this.$toaster.error('Due to some internal error, Data got rejected');
+      }
+      ).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'
       })

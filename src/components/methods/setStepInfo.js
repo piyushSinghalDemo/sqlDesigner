@@ -11,6 +11,7 @@ import mergeAPIData from './setMergeStep'
 import { post as postToServer } from './serverCall';
 import config from '../../config.json';
 import { ClientResponse } from 'http';
+import { PREVIOUS_STEPS, GET_ALL_COLUMN, DATABASE_TABLE, OPERATOR_ARRAY } from '../constant'
 export async function setStepInfo(_this, processData) {
     let step = {};
     let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -48,10 +49,10 @@ export async function setStepInfo(_this, processData) {
                     toTableObj = {};
                 fromTableObj.tableName = stpObj.select_table.name;
                 fromTableObj.aliesTableName = stpObj.select_table.alias;
-                fromTableObj.stepId = stpObj.select_table.is_drv_table ? "Previous Steps" : "Database Table";
+                fromTableObj.stepId = stpObj.select_table.is_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
                 toTableObj.tableName = stpObj.select_table.name;
                 toTableObj.aliesTableName = stpObj.select_table.alias;
-                toTableObj.stepId = stpObj.select_table.is_drv_table ? "Previous Steps" : "Database Table";
+                toTableObj.stepId = stpObj.select_table.is_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
                 tableObj.joins = false;
                 tableObj.relationship.fromTable = fromTableObj;
                 tableObj.relationship.toTable = toTableObj;
@@ -74,10 +75,10 @@ export async function setStepInfo(_this, processData) {
                         colArray = [];
                     fromTableObj.tableName = joinObj.jfrom;
                     fromTableObj.aliesTableName = joinObj.jfromalias;
-                    fromTableObj.stepId = joinObj.jfrom_drv_table ? "Previous Steps" : "Database Table";
+                    fromTableObj.stepId = joinObj.jfrom_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
                     toTableObj.tableName = joinObj.jto;
                     toTableObj.aliesTableName = joinObj.jtoalias;
-                    toTableObj.stepId = joinObj.jto_drv_table ? "Previous Steps" : "Database Table";
+                    toTableObj.stepId = joinObj.jto_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
                     tableObj.relationship.fromTable = fromTableObj;
                     tableObj.relationship.toTable = toTableObj;
                     tableObj.relationship.selectedFilter = joinObj.type;
@@ -128,10 +129,10 @@ export async function setStepInfo(_this, processData) {
                         colArray = [];
                     fromTableObj.tableName = joinObj.jfrom;
                     fromTableObj.aliesTableName = joinObj.jfromalias;
-                    fromTableObj.stepId = joinObj.jfrom_drv_table ? "Previous Steps" : "Database Table";
+                    fromTableObj.stepId = joinObj.jfrom_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
                     toTableObj.tableName = joinObj.jto;
                     toTableObj.aliesTableName = joinObj.jtoalias;
-                    toTableObj.stepId = joinObj.jto_drv_table ? "Previous Steps" : "Database Table";
+                    toTableObj.stepId = joinObj.jto_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
                     tableObj.relationship.fromTable = fromTableObj;
                     tableObj.relationship.toTable = toTableObj;
                     tableObj.relationship.selectedFilter = joinObj.type;
@@ -190,7 +191,7 @@ export async function setStepInfo(_this, processData) {
         });
         if (stpObj.drv_table && stpObj.drv_table.length) {
             tableObj.relationship.driverTable.name = stpObj.drv_table[0].select_table.name;
-            tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? "Previous Steps" : "Database Table";
+            tableObj.relationship.driverTable.stepId = stpObj.drv_table[0].select_table.is_drv_table ? PREVIOUS_STEPS : DATABASE_TABLE;
             tableObj.relationship.driverTable.aliesTableName = stpObj.drv_table[0].select_table.alias;
             tableObj.is_drv_table = stpObj.drv_table[0].select_table.is_drv_table;
             stpObj.drv_table[0].order_by && stpObj.drv_table[0].order_by.map(async orderObj => {
@@ -224,7 +225,7 @@ export async function setStepInfo(_this, processData) {
                 }
 
             } else {
-                let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+                let url = config.AGENT_API_URL + GET_ALL_COLUMN; //'http://192.168.1.100:8010/get_all_columns';
                 let inputJson = {
                     "conn_str": _this.$store.state.conn_str,
                     "schema": _this.$store.state.schema,
@@ -320,7 +321,8 @@ export async function setStepInfo(_this, processData) {
         });
         tableObj.relationship.selectedTableArray = uniqBy(tableObj.relationship.selectedTableArray, 'tableName');
         tableObj.relationship.selectedTableArray.map(async(tblObj, tblindx) => {
-            if (tblObj.stepId == 'Previous Steps') {
+            if (tblObj.stepId == PREVIOUS_STEPS) {
+
                 if (tableObj.optionColumn.length) {
                     tableObj.optionColumn.push({ divider: true });
                 }
@@ -346,7 +348,7 @@ export async function setStepInfo(_this, processData) {
 
             } else {
                 // getColumn(_this, tblObj, tableObj);
-                let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+                let url = config.AGENT_API_URL + GET_ALL_COLUMN; //'http://192.168.1.100:8010/get_all_columns';
                 let inputJson = {
                     "conn_str": _this.$store.state.conn_str,
                     "schema": _this.$store.state.schema,
@@ -396,7 +398,7 @@ export async function setStepInfo(_this, processData) {
             // tableObj.storedProcedure.params = stpObj.params;
         }
         // 
-        console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
+        // console.log("archivalStep data **********" + JSON.stringify(_this.$store.state.archivalStep));
         _this.$store.state.archivalStep[stpObj.id] = cloneDeep(tableObj); //for archival and other step
         // step[stpObj.id] = cloneDeep(tableObj);
     });
@@ -425,20 +427,6 @@ function setOperand(param) {
 }
 
 function getjoinOperator(sign) {
-    let operatorArray = {
-        '_eq_': "EQUALS_TO",
-        '_not_eq_': "NOT_EQUALS_TO",
-        '_lt_': "LESS_THAN",
-        '_gt_': "GREATER_THAN",
-        '_lt_eq_': "LESS_THAN_EQUALS_TO",
-        '_gt_eq_': "GREATER_THAN_EQUALS_TO",
-        '_is_n_': "IS_NULL",
-        '_is_nt_n_': "IS_NOT_NULL",
-        '_sl_': "LIKE_STARTS_WITH",
-        '_el_': "LIKE_ENDS_WITH",
-        '_cl_': "LIKE_CONTAINS_WITH",
-        '_bet_': "BETWEEN",
-        '_in_': "IN"
-    };
+    let operatorArray = OPERATOR_ARRAY;
     return operatorArray[sign];
 }

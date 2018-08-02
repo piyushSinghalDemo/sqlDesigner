@@ -18,13 +18,14 @@
         </v-layout>
         <v-layout row wrap v-show="!isDrivar">
           <v-flex style="margin-right:20px;">
-            <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.fromTable" label="From Table"
-              single-line item-text="tableName" item-value="tableName" return-object clearable></v-select>
+            <v-select :items="tableObj.relationship.selectedTableArray" @selected="testChange(tableObj.relationship.fromTable)" v-model="tableObj.relationship.fromTable" 
+            label="From Table"  single-line item-text="tableName" item-value="tableName" return-object clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
             <v-select :items="joinType" v-model="tableObj.relationship.selectedFilter" label="Join Type" single-line clearable></v-select>
           </v-flex>
           <v-flex style="margin-right:20px;">
+             <!-- tableObj.relationship.toTable: {{tableObj.relationship.toTable}} -->
             <v-select :items="tableObj.relationship.selectedTableArray" v-model="tableObj.relationship.toTable" label="To Table" item-text="tableName"
               item-value="tableName" single-line return-object clearable></v-select>
           </v-flex>
@@ -105,7 +106,8 @@
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.valueType == 'date'">
-                      <v-select :items="dateTypeArray" clearable  label="Select Date Type" style="padding-top: 14px;" v-model="obj.dateType">
+                      <v-select :items="dateTypeArray" clearable @change="setDateHint" :hint="dateHint"
+                          label="Select Date Type" style="padding-top: 14px;" v-model="obj.dateType">
                       </v-select>
                     </v-flex>
                     <v-flex xs3 v-if="obj.dateType == 'date' && obj.valueType == 'date'">
@@ -114,7 +116,7 @@
                       </v-select>
                     </v-flex>
                     <v-flex xs3>
-                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'date'" :input="obj.value"  @update="setDate($event,index)"></calender>
+                      <calender v-if="obj.valueType == 'date' && obj.dateType == 'Database Date'" :input="obj.value"  @update="setDate($event,index)"></calender>
                       <v-select :items="tableObj.archive.optionColumn" item-text="name" single-line label="Select Column" v-else-if="obj.valueType == 'field'" v-model="obj.field"
                          clearable return-object></v-select>
                       
@@ -147,16 +149,6 @@
             <v-card>
               <v-card-text>
                 <v-container grid-list-md>
-                  <!-- <div class="row clearfix">
-                          <div class="col-sm-6">
-                            <label style="font-size:20px;cursor:pointer">
-                              <input type="checkbox" v-model="tableObj.merge.selectAll" style="vertical-align: baseline;margin-right: 11px;"> Select All</label>
-                          </div>
-                          <div class="col-sm-6">
-                            <label style="font-size:20px;cursor:pointer">
-                              <input type="checkbox" v-model="tableObj.merge.distinct" style="vertical-align: baseline;margin-right: 11px;">Distinct</label>
-                          </div>
-                        </div> -->
                   <v-layout row wrap>
                     <v-flex xs6>
                       <v-card>
@@ -234,6 +226,17 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import draggable from 'vuedraggable'
+import {
+  JOIN_TYPE,
+  FILTER_ARRAY,
+  OPEN_BRASIS_ARRAY,
+  CLOSE_BRASIS_ARRAY,
+  FUNCTION_ARRAY,
+  VALUE_TYPE_ARRAY,
+  PREVIOUS_STEPS,
+  DATE_TYPE_ARRAY,
+  DATE_HINT
+} from '../constant.js'
 import calender from '../element/calender.vue'
 export default {
   data() {
@@ -246,24 +249,19 @@ export default {
           .toLowerCase()
           .indexOf(query.toString().toLowerCase()) > -1
       },
-      joinType: ["inner join", "left join", "right join", "full join"],
-      filterArray: ["EQUALS_TO", "NOT_EQUALS_TO", "LESS_THAN", "GREATER_THAN", "BETWEEN", "IN",
-        "LESS_THAN_EQUALS_TO", "GREATER_THAN_EQUALS_TO", "IS_NULL", "IS_NOT_NULL", "LIKE_STARTS_WITH", "LIKE_ENDS_WITH", "LIKE_CONTAINS_WITH"
-      ],
-      openbrsisArray: ['(', '((', '((('],
-      closebrsisArray: [')', '))', ')))'],
-      functionArray: ['count', 'sum'],
-      valueTypeArray: ['value', 'date', 'field'],
-      dateTypeArray: ['date', 'julien'],
+      joinType: JOIN_TYPE,
+      filterArray: FILTER_ARRAY,
+      openbrsisArray: OPEN_BRASIS_ARRAY,
+      closebrsisArray: CLOSE_BRASIS_ARRAY,
+      functionArray: FUNCTION_ARRAY,
+      valueTypeArray: VALUE_TYPE_ARRAY,
+      dateTypeArray: DATE_TYPE_ARRAY,
       selectedSearch: "",
-      SearchTable: ""
+      SearchTable: "",
+      dateHint:"",
     }
   },
   props: ['tableObj', 'isDrivar'],
-  components: {
-    draggable,
-    calender
-  },
   computed: {
     dragOptions() {
       return {
@@ -273,13 +271,20 @@ export default {
       };
     },
   },
+  components: {
+    draggable,
+    calender
+  },
   methods: {
-    setDate(dateParam, index){
-       let _this = this;
+      setDateHint(param){
+      this.dateHint = DATE_HINT[param]
+    },
+    setDate(dateParam, index) {
+      let _this = this;
       //  alert("Date "+dateParam);
-       _this.tableObj.criteriaArray[index].value = dateParam;
-       console.log("criteria Array "+JSON.stringify(_this.tableObj.criteriaArray));
-     },
+      _this.tableObj.criteriaArray[index].value = dateParam;
+      console.log("criteria Array " + JSON.stringify(_this.tableObj.criteriaArray));
+    },
     updateGroup(event) {
       // this.orderList();
     },
@@ -317,16 +322,17 @@ export default {
           }
         });
         //debugger;
-        if (_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == "Previous Steps") {
+        if (_this.tableObj.relationship.fromTable.stepId && _this.tableObj.relationship.fromTable.stepId == PREVIOUS_STEPS) {
           _this.tableObj.relationship.jfrom_drv_table = true;
         } else {
           _this.tableObj.relationship.jfrom_drv_table = false;
         }
-        if (_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == "Previous Steps") {
+        if (_this.tableObj.relationship.toTable.stepId && _this.tableObj.relationship.toTable.stepId == PREVIOUS_STEPS) {
           _this.tableObj.relationship.jto_drv_table = true;
         } else {
           _this.tableObj.relationship.jto_drv_table = false;
         }
+        // debugger;
         let object = {
           'relationship': _this.tableObj.relationship,
           'colArray': _this.tableObj.colArray,

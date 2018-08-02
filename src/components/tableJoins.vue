@@ -73,6 +73,7 @@
 </template>
 <script>
 import cloneDeep from 'lodash/cloneDeep';
+import {JOIN_TYPE,FILTER_ARRAY} from './constant.js';
 export default {
      data() {
     return {
@@ -84,9 +85,8 @@ export default {
             .toLowerCase()
             .indexOf(query.toString().toLowerCase()) > -1
         },
-          joinType:["inner join","left join","right join","full join"],
-          filterArray:["EQUALS_TO","NOT_EQUALS_TO","LESS_THAN", "GREATER_THAN","BETWEEN","IN",
-                  "LESS_THAN_EQUALS_TO","GREATER_THAN_EQUALS_TO","IS_NULL","IS_NOT_NULL","LIKE_STARTS_WITH","LIKE_ENDS_WITH","LIKE_CONTAINS_WITH"],    
+          joinType:JOIN_TYPE,
+          filterArray:FILTER_ARRAY,    
     }},
    props: ['tableObj'],
    methods: {
@@ -97,9 +97,6 @@ export default {
     savedata(){
       let arrayIndex = -1;
       let _this = this;
-      // debugger;
-      // console.log("tableObj.relationship"+JSON.stringify(_this.tableObj.relationship));
-      // _this.tableObj = data.tableObj;
       _this.tableObj.relationshipArray.map(function(obj, index){
           if(obj.relationship.fromTable.tableName == _this.tableObj.relationship.fromTable.tableName && 
               obj.relationship.toTable.tableName == _this.tableObj.relationship.toTable.tableName){

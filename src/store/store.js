@@ -44,7 +44,9 @@ const state = {
         "desc": "temp desc archival",
         "limit": '',
         "isSingleTableArchival": false,
-        "drv_table": [],
+        "drv_table": {},
+        "business_object_join": {},
+        "business_object_id": "",
         "list_of_relations": [],
         links: []
     },

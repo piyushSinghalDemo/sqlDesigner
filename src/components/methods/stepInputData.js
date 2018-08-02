@@ -6,9 +6,11 @@
 'use strict'
 import cloneDeep from 'lodash/cloneDeep';
 import flowchartLink from './getOperatorLink';
+import { OPERATOR_ARRAY } from '../constant'
 export function getStepData(_this, tableObj) {
     // let _this = this;
     // console.log("_this.tableObj" + JSON.stringify(_this.tableObj));
+    // debugger;
     // debugger;
     let $flowchart = $("#droppable");
     var flowchartData = $flowchart.flowchart('getData');
@@ -77,7 +79,7 @@ export function getStepData(_this, tableObj) {
         }
     });
     DrvTableObj.where.length ? DrvTableObj.where[DrvTableObj.where.length - 1].operand = '' : '';
-    archiveStepInput.drv_table.push(DrvTableObj);
+    archiveStepInput.drv_table = DrvTableObj;
 
     let colsObject = { // all column dont have work table o/p as data selection
         "table_alias": "",
@@ -113,7 +115,7 @@ export function getStepData(_this, tableObj) {
         "joins": [],
         "where": []
     }
-    tableObj.relationshipArray.map(function(obj, index) {
+    tableObj.isSingleTableArchival && tableObj.relationshipArray.map(function(obj, index) {
         let relationObject = {
                 "output_table": "", //From table
                 "select_table": {
@@ -121,7 +123,7 @@ export function getStepData(_this, tableObj) {
                     "name": "", //From Table
                     "cols": []
                 },
-                "joins": [],
+                "joins": {},
                 "where": []
             }
             // debugger;
@@ -151,7 +153,7 @@ export function getStepData(_this, tableObj) {
         });
         //check for join have some data or not
         if (joinObject.jto)
-            relationObject.joins.push(cloneDeep(joinObject));
+            relationObject.joins = cloneDeep(joinObject);
 
         obj.where && obj.where.map(function(whereObj, whereIndex) {
             if (whereObj.column) {
@@ -197,27 +199,42 @@ export function getStepData(_this, tableObj) {
         // debugger;
         archiveStepInput.list_of_relations.push(relationObject);
     });
-    archiveStepInput.client_id = userData.client_id,
-        archiveStepInput.user_id = userData.user_id,
-        archiveStepInput.id = tableObj.stepId
+    /**
+     * Set Business Object
+     */
+    // debugger;
+    !tableObj.isSingleTableArchival && tableObj.relationshipArray.map(function(obj, index) {
+        joinObject.jto = obj.relationship.toTable.tableName;
+        joinObject.jfrom = obj.relationship.fromTable.tableName;
+        joinObject.jfromalias = obj.relationship.fromTable.aliesTableName;
+        joinObject.jtoalias = obj.relationship.toTable.aliesTableName;
+        joinObject.type = obj.relationship.selectedFilter;
+        joinObject.jto_drv_table = obj.relationship.jto_drv_table;
+        joinObject.jfrom_drv_table = obj.relationship.jfrom_drv_table;
+        joinObject.condition = [];
+        obj.colArray.map(function(colObj, colIndex) {
+            if (colObj.fromColumn.name) {
+                conditionObject.from_column = colObj.fromColumn.name;
+                conditionObject.to_column = colObj.toColumn.name;
+                conditionObject.from_alias = colObj.fromColumn.tblAlies;
+                conditionObject.to_alias = colObj.toColumn.tblAlies;
+                conditionObject.operator = getjoinOperator(colObj.operator);
+                joinObject.condition.push(cloneDeep(conditionObject));
+            }
+        });
+        //check for join have some data or not
+        // if (joinObject.jto)
+        // relationObject.joins.push(cloneDeep(joinObject));
+        archiveStepInput.business_object_join = cloneDeep(joinObject);
+    })
+    archiveStepInput.client_id = userData.client_id;
+    archiveStepInput.user_id = userData.user_id;
+    archiveStepInput.id = tableObj.stepId;
+    archiveStepInput.business_object_id = tableObj.archive.bussinessObjectId;
     return archiveStepInput;
 };
 
 function getjoinOperator(sign) {
-    let operatorArray = {
-        EQUALS_TO: '_eq_',
-        NOT_EQUALS_TO: '_not_eq_',
-        LESS_THAN: '_lt_',
-        GREATER_THAN: '_gt_',
-        LESS_THAN_EQUALS_TO: '_lt_eq_',
-        GREATER_THAN_EQUALS_TO: '_gt_eq_',
-        IS_NULL: '_is_n_',
-        IS_NOT_NULL: '_is_nt_n_',
-        LIKE_STARTS_WITH: '_sl_',
-        LIKE_ENDS_WITH: '_el_',
-        LIKE_CONTAINS_WITH: '_cl_',
-        BETWEEN: '_bet_',
-        IN: '_in_'
-    };
+    let operatorArray = OPERATOR_ARRAY;
     return operatorArray[sign];
 }

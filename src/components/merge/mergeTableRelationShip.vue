@@ -85,6 +85,13 @@ import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
 import {
+  PREVIOUS_STEPS,
+  GET_TABLES,
+  GET_ALL_COLUMN,
+  DRIVER_TABLE,
+  DATABASE_TABLE
+} from '../constant.js'
+import {
   post as postToServer
 } from '../methods/serverCall'
 export default {
@@ -100,8 +107,6 @@ export default {
       createCopy: false,
       allDbTablesCopy: [],
       createTableCopy: false,
-      // conn_str:this.$store.state.conn_str,
-      // schema :_this.$store.state.schema,
     }
   },
   props: ['tableObj'],
@@ -143,14 +148,14 @@ export default {
       let obj = {
         'tableName': cloneDeep(_this.tableObj.relationship.driverTable.name),
         'aliesTableName': cloneDeep(_this.tableObj.relationship.driverTable.name + _this.$store.state.aliesCounter++),
-        'group': 'Driver Table',
+        'group': DRIVER_TABLE,
         'stepId': _this.tableObj.relationship.driverTable.stepId
       }
       _this.tableObj.relationship.driverTable.aliesTableName = obj.aliesTableName;
-      if (!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))
+      if (!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == DRIVER_TABLE))
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
       _this.isDriverTable = true;
-      if (_this.tableObj.relationship.driverTable.stepId == 'Previous Steps') {
+      if (_this.tableObj.relationship.driverTable.stepId == PREVIOUS_STEPS) {
         obj.columns = _this.tableObj.relationship.driverTable.columns;
         _this.getPrevStepCol(cloneDeep(obj));
       } else {
@@ -192,7 +197,7 @@ export default {
           _this.createCopy = true;
         }
         this.loading = true;
-        let url = config.AGENT_API_URL + 'get_tables' //'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL + GET_TABLES //'http://192.168.1.100:8010/get_tables';
         let conn_str = _this.$store.state.conn_str;
         let schema = _this.$store.state.schema;
         let userData = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -210,7 +215,7 @@ export default {
             tableList.map(function (obj, index) {
               let tempObj = {
                 name: obj,
-                stepId: 'Database Table'
+                stepId: DATABASE_TABLE
               }
               dummyTableList.push(cloneDeep(tempObj));
             });
@@ -243,11 +248,11 @@ export default {
         let obj = {
           'tableName': cloneDeep(_this.tableObj.relationship.selectedTable.name),
           'aliesTableName': cloneDeep(tableName + _this.$store.state.aliesCounter++),
-          'group': 'Database Table',
+          'group': DATABASE_TABLE,
           'stepId': _this.tableObj.relationship.selectedTable.stepId
         }
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-        if (_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps') {
+        if (_this.tableObj.relationship.selectedTable.stepId == PREVIOUS_STEPS) {
           obj.columns = _this.tableObj.relationship.selectedTable.columns;
           _this.getPrevStepCol(cloneDeep(obj));
         } else {
@@ -273,7 +278,7 @@ export default {
         if (obj.colAlies)
           columnObj = {
             name: obj.colAlies,
-            value:object.tableName+'-'+obj.colAlies,
+            value: object.tableName + '-' + obj.colAlies,
             group: object.tableName,
             fixed: false,
             tblAlies: object.aliesTableName,
@@ -282,7 +287,7 @@ export default {
         else
           columnObj = {
             name: obj.name,
-            value:object.tableName+'-'+obj.name,
+            value: object.tableName + '-' + obj.name,
             group: object.tableName,
             fixed: false,
             tblAlies: object.aliesTableName,
@@ -294,7 +299,7 @@ export default {
     },
     getColumn(tableObject) {
       let _this = this;
-      let url = config.AGENT_API_URL + 'get_all_columns'; //'http://192.168.1.100:8010/get_all_columns';
+      let url = config.AGENT_API_URL + GET_ALL_COLUMN; //'http://192.168.1.100:8010/get_all_columns';
       let userData = JSON.parse(sessionStorage.getItem("userInfo"));
       let inputJson = {
         "conn_str": _this.conn_str,
@@ -318,7 +323,7 @@ export default {
         allColumn.map(function (obj, index) {
           let columnObj = {
             name: obj,
-            value:tableObject.tableName+'-'+obj,
+            value: tableObject.tableName + '-' + obj,
             group: tableObject.tableName,
             fixed: false,
             tblAlies: tableObject.aliesTableName,

@@ -8,6 +8,7 @@ export default {
         selectedColumn: null,
         selectedFilter: null,
         driverTable: {},
+        bussinessObject: ""
     },
     relationshipArray: [],
     parenthasisobject: {
@@ -48,6 +49,7 @@ export default {
     availableColumn: [],
     previousSteps: [],
     selectedColumns: [],
+    allBussinessObject: [],
     allDbTables: [],
     allArchiveTables: [],
     distinct: false,
@@ -82,6 +84,7 @@ export default {
     },
     archive: {
         selectedTable: {},
+        bussinessObjectId: "",
         optionColumn: [],
         driverTable: {
             columns: [],

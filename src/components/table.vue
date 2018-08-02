@@ -71,6 +71,7 @@ import tableRelationship from './tableRelationship.vue';
 import config from '../config.json';
 import processName from './processName.vue';
 import {post as postToServer} from './methods/serverCall.js'
+import {IDE_STEP_DATA, PREVIOUS_STEPS, OPERATOR_ARRAY} from './constant.js'
 
 const message = ['vue.draggable', 'draggable', 'component', 'for', 'vue.js 2.0', 'based', 'on', 'Sortablejs']
 export default {
@@ -141,10 +142,6 @@ export default {
     nextScreen(number) {
       this.progressbar = number;
     },
-    // deleteRowIndex(object){
-    //   this.$store.state.dataSelectionIndex=object.index;
-    //   this.dialog3 = true;
-    // },
     closeDialog() {
       this.$store.state.dialog = false
     },
@@ -154,11 +151,9 @@ export default {
       let $flowchart = $("#droppable");
       var flowchartData = $flowchart.flowchart('getData');
       let objectLength = Object.keys(flowchartData.links).length;
-        // for (var i = 0; i < objectLength; i++) {
-      // console.log("relationshipArray" +JSON.stringify(_this.tableObj.relationshipArray));
+
       let workTablecolumns = [];
       dbStepInput.distinct = _this.tableObj.distinct;
-      // dbStepInput.output_table = _this.tableObj.relationship.selectedTableArray[0].tableName;
       dbStepInput.select_table.name = _this.tableObj.relationship.selectedTableArray[0].tableName;
       dbStepInput.select_table.alias = _this.tableObj.relationship.selectedTableArray[0].aliesTableName;
       dbStepInput.select_table.is_drv_table = _this.tableObj.is_drv_table;
@@ -270,21 +265,7 @@ export default {
       return dbStepInput;
     },
     getjoinOperator(sign) {
-      let operatorArray = {
-        EQUALS_TO: '_eq_',
-        NOT_EQUALS_TO: '_not_eq_',
-        LESS_THAN: '_lt_',
-        GREATER_THAN: '_gt_',
-        LESS_THAN_EQUALS_TO: '_lt_eq_',
-        GREATER_THAN_EQUALS_TO: '_gt_eq_',
-        IS_NULL: '_is_n_',
-        IS_NOT_NULL: '_is_nt_n_',
-        LIKE_STARTS_WITH: '_sl_',
-        LIKE_ENDS_WITH: '_el_',
-        LIKE_CONTAINS_WITH: '_cl_',
-        BETWEEN: '_bet_',
-        IN: '_in_'
-      };
+      let operatorArray = OPERATOR_ARRAY;
       return operatorArray[sign];
     },
     saveDialog(objData) {
@@ -301,13 +282,7 @@ export default {
       inputParam.left = operatorData.left+"";
       // inputParam.env_id = _this.userData.env_id[0];
       inputParam.process_definition_id = _this.$store.state.process_definition_id; //To add net step on the same process designer
-      let url = config.IDE_API_URL+'ide_step_data/add';//'http://192.168.1.101:8016/ide_step_data/add';
-      // _this.$http.post(url, inputParam, {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization':_this.userData.accessToken
-      //   }
-      // }).then(response => {
+      let url = config.IDE_API_URL+IDE_STEP_DATA;//'http://192.168.1.101:8016/ide_step_data/add';
       postToServer(this, url, inputParam).then(response=>{  
         _this.tableObj.stepId = response.id;        
         _this.$store.state.process_definition_id = response.process_definition_id;
@@ -316,17 +291,6 @@ export default {
         _this.$store.state.processArray.push(cloneDeep(inputParam));
         
         let objectLength = Object.keys(flowchartData.links).length;
-        // for (var i = 0; i < objectLength; i++) {
-        //   if (flowchartData.links[i].fromOperator == _this.$store.state.currentStep) {
-        //     let obj = {
-        //       'name': _this.tableObj.title,
-        //       'columns': _this.tableObj.selectedColumns,
-        //       'stepId': 'Previous Steps'
-        //     }
-        //     _this.$store.state.archivalStep[flowchartData.links[i].toOperator].allDbTables.push(cloneDeep(obj));
-        //   }
-        // }
-        // let i = 0,
         let findLink=[],
         addData = [];
         let currentStep = _this.$store.state.currentStep;
@@ -351,7 +315,7 @@ export default {
          let obj = {
                 'name': _this.tableObj.title,
                 'columns': _this.tableObj.selectedColumns,
-                'stepId': 'Previous Steps'
+                'stepId': PREVIOUS_STEPS
               }
         addData.map(linkObj=>{
         _this.$store.state.archivalStep[linkObj].allPrevStepTables.push(obj);
@@ -362,10 +326,11 @@ export default {
       }, response => {
             // debugger;
             if (response.message == "Process definition name already exists") {
-              _this.$toaster.error(response.message);
-                _this.processDoc = true;
-            }else
-            _this.$toaster.error("Due to some internal error data got rejected");
+              _this.processDoc = true;
+              // _this.$toaster.error(response.message);
+            }
+            // else
+            // _this.$toaster.error("Due to some internal error data got rejected");
         }).catch(e => {
         console.log(e)
         this.ErrorMessage = 'Something went wrong.'

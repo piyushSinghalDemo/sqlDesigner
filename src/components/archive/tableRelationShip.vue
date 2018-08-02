@@ -21,9 +21,13 @@
              </v-checkbox>
           </v-flex>
           <v-flex xs6>
-            <v-select :items="selectTable" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
+            <v-select :items="selectTable" v-if="tableObj.isSingleTableArchival" v-model="tableObj.relationship.selectedTable" :loading="loading" :search-input.sync="search"
                label="Select Table" item-text="name" item-value="name" return-object autocomplete></v-select>
-          <a class="addTable" @click.stop="addTable">Add Table</a>
+                  <!-- tableObj.allBussinessObject: {{tableObj.allBussinessObject}} -->
+             <v-select :items="selectBussinessObject" v-else v-model="tableObj.relationship.bussinessObject"
+               label="Bussiness Object" item-text="name" item-value="name" return-object autocomplete></v-select>   
+             <a class="addTable" v-if="tableObj.isSingleTableArchival" @click.stop="addTable">Add Object</a>
+             <a class="addTable" v-else @click.stop="addBussinessObject">Add Object</a>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -96,6 +100,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import union from 'lodash/union'
 import config from '../../config.json';
 import { post as postToServer } from '../methods/serverCall'
+import {GET_TABLES, GET_ALL_COLUMN, PREVIOUS_STEPS, DRIVER_TABLE, DATABASE_TABLE, BUSSINESS_OBJECT} from '../constant.js'
 export default {
   data() {
       return {
@@ -115,6 +120,11 @@ export default {
     },
     props: ['tableObj'],
     computed: {
+       selectBussinessObject() {
+         let _this = this;
+         console.log("Data: " + JSON.stringify(_this.tableObj.allBussinessObject));
+        return _this.tableObj.allBussinessObject; //allArchiveTables
+      },
        selectTable() {
          let _this = this;
         return _this.tableObj.allArchiveTables; //allArchiveTables
@@ -150,13 +160,13 @@ export default {
         
           let obj = {'tableName':cloneDeep(_this.tableObj.relationship.driverTable.name),
                    'aliesTableName':cloneDeep(_this.tableObj.relationship.driverTable.name + _this.$store.state.aliesCounter++),
-                   'group':'Driver Table', 'stepId':_this.tableObj.relationship.driverTable.stepId}
+                   'group':DRIVER_TABLE, 'stepId':_this.tableObj.relationship.driverTable.stepId}
            _this.tableObj.relationship.driverTable.aliesTableName = obj.aliesTableName;         
-           if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == 'Driver Table'))        
+           if(!_this.tableObj.relationship.selectedTableArray.find(o => o.group && o.group == DRIVER_TABLE))        
             _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
             _this.isDriverTable = true;
             // _this.tableObj.relationship.driverTable.columns
-            if(_this.tableObj.relationship.driverTable.stepId == 'Previous Steps'){
+            if(_this.tableObj.relationship.driverTable.stepId == PREVIOUS_STEPS){
               obj.columns = _this.tableObj.relationship.driverTable.columns;
               _this.getPrevStepCol(cloneDeep(obj));
             }else{
@@ -183,6 +193,9 @@ export default {
           _this.tableObj.allDbTables = cloneDeep(_this.allDbTablesCopy); 
           return;
         }
+        if(!value && !_this.createCopy){
+          return;
+        }
         //Firstly It will search data in current list   
         let found = false;
         _this.tableObj.allDbTables.map((obj, index)=>{
@@ -199,7 +212,7 @@ export default {
           _this.createCopy = true;
           }
         this.loading = true;
-        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+GET_TABLES//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
         let userData= JSON.parse(sessionStorage.getItem("userInfo"));
@@ -242,6 +255,11 @@ export default {
           _this.tableObj.allArchiveTables = cloneDeep(_this.allArchiveTablesCopy); 
           return;
         }
+         // if search input is blank, It will load all previous tables
+        if(!value && !_this.createTableCopy){
+          // _this.tableObj.allArchiveTables = cloneDeep(_this.allArchiveTablesCopy); 
+          return;
+        }
         //Firstly It will search data in current list   
         let found = false;
         _this.tableObj.allArchiveTables.map((obj, index)=>{
@@ -258,7 +276,7 @@ export default {
           _this.createTableCopy = true;
           }
         this.loading = true;
-        let url = config.AGENT_API_URL+'get_tables'//'http://192.168.1.100:8010/get_tables';
+        let url = config.AGENT_API_URL+GET_TABLES//'http://192.168.1.100:8010/get_tables';
         let conn_str=_this.$store.state.conn_str;
         let schema =_this.$store.state.schema;
         let userData = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -275,7 +293,7 @@ export default {
           let dummyTableList=[];
           if(tableList.length){
               tableList.map(function(obj, index){
-              let tempObj = {name: obj, stepId:'Database Table'}
+              let tempObj = {name: obj, stepId:DATABASE_TABLE}
               dummyTableList.push(cloneDeep(tempObj));   
             });
           }
@@ -308,7 +326,7 @@ export default {
                    'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
                    'group':'Database Table','stepId':_this.tableObj.relationship.selectedTable.stepId}
         _this.tableObj.relationship.selectedTableArray.push(cloneDeep(obj));
-        if(_this.tableObj.relationship.selectedTable.stepId == 'Previous Steps'){
+        if(_this.tableObj.relationship.selectedTable.stepId == PREVIOUS_STEPS){
            obj.columns = _this.tableObj.relationship.selectedTable.columns;
           _this.getPrevStepCol(cloneDeep(obj));
         }else{
@@ -316,6 +334,33 @@ export default {
         }
          _this.$toaster.success('Table Added Successfully'); 
       }
+    },
+    // get
+     addBussinessObject(){
+      let validFlag=true;
+      let _this = this,
+          arrayIndex=-1;
+      // console.log("Demo "+JSON.stringify(_this.demo));
+      // debugger;
+      _this.tableObj.relationship.selectedTableArray.map(function(obj, index){
+        if(obj.group == _this.tableObj.relationship.bussinessObject.group){
+           arrayIndex = index;
+        }
+      }); //bussinessObject
+      // let obj = {'tableName':cloneDeep(_this.tableObj.relationship.selectedTable.name),
+      //              'aliesTableName':cloneDeep(tableName + _this.$store.state.aliesCounter++),
+      //              'group':BUSSINESS_OBJECT}
+        // let tempName = _this.tableObj.relationship.selectedTable.name.split(" ");
+        // let tableName = tempName.join("");
+        _this.tableObj.relationship.bussinessObject.tableName = cloneDeep(_this.tableObj.relationship.bussinessObject.name);
+        _this.tableObj.relationship.bussinessObject.aliesTableName = cloneDeep(_this.tableObj.relationship.bussinessObject.name + _this.$store.state.aliesCounter++);        
+        _this.tableObj.relationship.bussinessObject.group = BUSSINESS_OBJECT;
+        if(arrayIndex>=0)
+        _this.tableObj.relationship.selectedTableArray[arrayIndex] = cloneDeep(_this.tableObj.relationship.bussinessObject);
+        else
+        _this.tableObj.relationship.selectedTableArray.push(cloneDeep(_this.tableObj.relationship.bussinessObject));
+        _this.getBussinessObjectColumn(_this.tableObj.relationship.bussinessObject);
+        _this.$toaster.success('Table Added Successfully'); 
     },
     getPrevStepCol(object){
       let _this = this;
@@ -336,16 +381,30 @@ export default {
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             //For orderBy need saprate driver table column
-            if(object.group == 'Driver Table'){
+            if(object.group == DRIVER_TABLE){
               columnObj.decending = false;
               _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
             }
           });
          _this.tableObj.is_drv_table = true;  
     },
+    getBussinessObjectColumn(object){
+      let _this = this;
+      if(_this.tableObj.optionColumn.length){
+        _this.tableObj.optionColumn.push({ divider: true });
+      }
+      let headerObj = { header: object.tableName};
+      _this.tableObj.optionColumn.push(cloneDeep(headerObj));
+      object.unique_identifiers.map(function(col, index){
+        let columnObj = {name: col,value:object.tableName+'-'+col, group: object.tableName, fixed: false, 
+                               tblAlies:object.aliesTableName, colAlies: ''};
+      _this.tableObj.optionColumn.push(cloneDeep(columnObj));                         
+      _this.tableObj.availableColumn.push(cloneDeep(columnObj));
+      });
+    },
     getColumn(tableObject){
       let _this = this;
-      let url = config.AGENT_API_URL+'get_all_columns';//'http://192.168.1.100:8010/get_all_columns';
+      let url = config.AGENT_API_URL+GET_ALL_COLUMN;//'http://192.168.1.100:8010/get_all_columns';
        let userData= JSON.parse(sessionStorage.getItem("userInfo"));
         let inputJson = {
                "conn_str": _this.conn_str,
@@ -368,7 +427,7 @@ export default {
             _this.tableObj.optionColumn.push(cloneDeep(columnObj));
             _this.tableObj.availableColumn.push(cloneDeep(columnObj));
             
-            if(tableObject.group == 'Driver Table'){
+            if(tableObject.group == DRIVER_TABLE){
               columnObj.decending = false;
             _this.tableObj.archive.driverTable.columns.push(cloneDeep(columnObj));
             }
