@@ -29,6 +29,8 @@ export const VALUE_TYPE_ARRAY = ['value', 'date', 'field'];
 export const DATE_TYPE_ARRAY = ['Database Date', 'JDE Julien', 'CCYYMMDD', 'Century Only',
     'Year Only', 'Month Only', 'YYDDD'
 ];
+export const STEP_DATA_ARRAY = { 'db': 'getSelectData', 'archive': 'getArchiveData', 'merge': 'getMergeMinusData', 'minus': 'getMergeMinusData', 'spstep': 'getStoredProcedureData' };
+export const STEP_TYPE_ARRAY = { 'db': 'select', 'archive': 'archival', 'merge': 'merge', 'minus': 'minus', 'spstep': 'stored_procedure' };
 export const DATE_HINT = {
     'Database Date': "Example: 2007-12-24",
     'JDE Julien': "Example: 107358",

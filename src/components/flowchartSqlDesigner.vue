@@ -181,7 +181,7 @@ import processName from './processName.vue'
 import {createStepData} from './methods/createStep'
 import {setStepInfo} from './methods/setStepInfo'
 import {GET_PROCESS_DEFINITION_BY_ID, GET_TABLES, GET_ALL_BUSSINESS_OBJECT, DATABASE_TABLE, BUSSINESS_OBJECT, 
-          VALDATE_PROCESS_DEFINITION, ADD_IDE_DATA, IDE_STEP_DATA, GET_STORED_PROCEDURE_LIST} from './constant.js'
+          VALDATE_PROCESS_DEFINITION, ADD_IDE_DATA, IDE_STEP_DATA, GET_STORED_PROCEDURE_LIST, STEP_DATA_ARRAY, STEP_TYPE_ARRAY} from './constant.js'
 export default {
   components: {
     Simplert,
@@ -197,6 +197,8 @@ export default {
   },
   data() {
     return {
+      stepDataArray: STEP_DATA_ARRAY,
+      stepTypeArray: STEP_TYPE_ARRAY,
       dataStr: _def.dataStr,
       bottomSheet:false,
       dom: {},
@@ -452,19 +454,24 @@ export default {
          _this.addTitle = false;
          let url = config.IDE_API_URL + IDE_STEP_DATA;
          let stepType = "";
-         if(_this.type == "db"){
-           stepType = 'select'
-         }else if(_this.type == "archive"){
-           stepType = 'archival'
-         }else if(_this.type == "merge"){
-           stepType = 'merge'
-         }else if(_this.type == "minus"){
-           stepType = 'minus'
-         }else if(_this.type == "spstep"){
-           stepType = 'stored_procedure'
-         }else{
-           return ;
-         }
+          
+         stepType = this.stepTypeArray[_this.type];
+        //  if(_this.type == "db"){
+        //    stepType = 'select'
+        //  }else if(_this.type == "archive"){
+        //    stepType = 'archival'
+        //  }else if(_this.type == "merge"){
+        //    stepType = 'merge'
+        //  }else if(_this.type == "minus"){
+        //    stepType = 'minus'
+        //  }else if(_this.type == "spstep"){
+        //    stepType = 'stored_procedure'
+        //  }else{
+        //    return ;
+        //  }
+        if(!stepType)
+            return
+
          let inputJson = {
            process_definition_id : _this.process_definition_id,
            name:_this.stepName,
@@ -640,72 +647,72 @@ export default {
         }
       });
     },
-    deletTable() {
-      this.deleteOperator()
-      this.closeRightPael()
-      this.blockData = {
-        top: 0,
-        left: 0,
-        properties: {
-          title: "",
-          inputs: {},
-          outputs: {}
-        }
-      }
-      this.operatorId = ''
-    },
-    operatorClick() {
-      this.saveBlockData();
-    },
+    // deletTable() {
+    //   this.deleteOperator()
+    //   this.closeRightPael()
+    //   this.blockData = {
+    //     top: 0,
+    //     left: 0,
+    //     properties: {
+    //       title: "",
+    //       inputs: {},
+    //       outputs: {}
+    //     }
+    //   }
+    //   this.operatorId = ''
+    // },
+    // operatorClick() {
+    //   this.saveBlockData();
+    // },
     saveBlockData() {
       // console.log(this.blockData);
       var blockId = localStorage.getItem("operatorId")
       this.setOperatorData(this.operatorId)
     },
-    addInputs() {
-      var _this = this
-      var noOfItems = Object.keys(this.blockData.properties.inputs).length + 1;
-      this.blockData.properties.inputs["input_" + noOfItems] = {
-        "label": "Input"
-      }
-      this.setOperatorData(this.operatorId)
-    },
-    removeInput(index) {
-      // console.log(index);
-      delete this.blockData.properties.inputs[index];
-      this.saveBlockData()
-    },
-    addOutputs() {
-      var noOfItems = Object.keys(this.blockData.properties.outputs).length + 1;
-      this.blockData.properties.outputs["output_" + noOfItems] = {
-        "label": "Output"
-      }
-      this.setOperatorData(this.operatorId)
-    },
-    removeOutput(index) {
-      delete this.blockData.properties.outputs[index];
-      this.saveBlockData()
-    },
-    addWhere() {},
-    removeWhere() {},
-    addOr() {},
-    removeOr() {},
-    getTableColumns() {
-      //make dynamic call to api and get the table columns
-      this.tableColumns = [{
-        column: "column1",
-        type: "integer"
-      }, {
-        column: "column2",
-        type: "string"
-      }, {
-        column: "column3",
-        type: "date"
-      }, {
-        column: "column4",
-        type: "datetime"
-      }]
-    },
+    // addInputs() {
+    //   var _this = this
+    //   var noOfItems = Object.keys(this.blockData.properties.inputs).length + 1;
+    //   this.blockData.properties.inputs["input_" + noOfItems] = {
+    //     "label": "Input"
+    //   }
+    //   this.setOperatorData(this.operatorId)
+    // },
+    // removeInput(index) {
+    //   // console.log(index);
+    //   delete this.blockData.properties.inputs[index];
+    //   this.saveBlockData()
+    // },
+    // addOutputs() {
+    //   var noOfItems = Object.keys(this.blockData.properties.outputs).length + 1;
+    //   this.blockData.properties.outputs["output_" + noOfItems] = {
+    //     "label": "Output"
+    //   }
+    //   this.setOperatorData(this.operatorId)
+    // },
+    // removeOutput(index) {
+    //   delete this.blockData.properties.outputs[index];
+    //   this.saveBlockData()
+    // },
+    // addWhere() {},
+    // removeWhere() {},
+    // addOr() {},
+    // removeOr() {},
+    // getTableColumns() {
+    //   //make dynamic call to api and get the table columns
+    //   this.tableColumns = [{
+    //     column: "column1",
+    //     type: "integer"
+    //   }, {
+    //     column: "column2",
+    //     type: "string"
+    //   }, {
+    //     column: "column3",
+    //     type: "date"
+    //   }, {
+    //     column: "column4",
+    //     type: "datetime"
+    //   }]
+    // },
     getData() {
       var ideData = getData()
       // console.log(ideData);
@@ -836,6 +843,28 @@ export default {
         $('#droppable').flowchart('setData', _this.dataStr.dbData);
       }.bind(this), 200)
     },
+    getSelectData(){
+      let _this = this;
+           _this.gettables();
+            _this.set_dialog(true);
+    },
+    getArchiveData(){
+      alert("Working");
+      let _this = this;
+              _this.gettables();
+        _this.getBussinessObject();
+      _this.set_openArchivePanel(true);
+    },
+    getMergeMinusData(){
+      let _this = this;
+        _this.gettables();
+      _this.set_openMergePanel(true);
+    },
+    getStoredProcedureData(){
+      let _this = this;
+          _this.getProcedureList();
+            _this.set_openStoredProcedure(true);
+    },
     loadData(data) {
       var _this = this
       $('#droppable').flowchart({
@@ -848,24 +877,26 @@ export default {
           var op = _this.operatorOptions[type]
           _this.operatorId = operatorId;
           _this.setCurrentStep(operatorId);
-           if(operator.className == 'db'){
-              _this.gettables();
-            _this.set_dialog(true);
-           }
-           else if(operator.className == 'archive'){
-             _this.gettables();
-             _this.getBussinessObject();
-            //  _this.$store.state.openArchivePanel = true;
-            _this.set_openArchivePanel(true);
-           }else if(operator.className == 'merge' || operator.className == 'minus'){
-             _this.gettables();
-            //  _this.$store.state.openMergePanel = true;
-            _this.set_openMergePanel(true);
-           }else if(operator.className == 'spstep'){
-             _this.getProcedureList();
-            //  _this.$store.state.openStoredProcedure = true;
-            _this.set_openStoredProcedure(true);
-           } 
+          // stepDataArray = {'db':'getSelectData','archive':'getArchiveData','merge':'getMergeMinusData','spstep':'getStoredProcedureData'};
+          _this[_this.stepDataArray[operator.className]]();
+          //  if(operator.className == 'db'){
+          //     _this.gettables();
+          //   _this.set_dialog(true);
+          //  }
+          //  else if(operator.className == 'archive'){
+          //    _this.gettables();
+          //    _this.getBussinessObject();
+          //   //  _this.$store.state.openArchivePanel = true;
+          //   _this.set_openArchivePanel(true);
+          //  }else if(operator.className == 'merge' || operator.className == 'minus'){
+          //    _this.gettables();
+          //   //  _this.$store.state.openMergePanel = true;
+          //   _this.set_openMergePanel(true);
+          //  }else if(operator.className == 'spstep'){
+          //    _this.getProcedureList();
+          //   //  _this.$store.state.openStoredProcedure = true;
+          //   _this.set_openStoredProcedure(true);
+          //  } 
           return true;
         },
         onOperatorCreate: function (operatorId, operatorData, fullElement) {
