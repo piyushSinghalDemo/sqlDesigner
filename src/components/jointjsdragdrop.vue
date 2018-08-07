@@ -1,5 +1,6 @@
 <template>
     <div>
+		<button class="btn btn-info" @click="getData">Get Data(console)</button>
        	<div id="stencil"></div>
 		<div id="paper"></div>
     </div>
@@ -7,7 +8,10 @@
 
 <script>
     export default {
-        mounted() {        	
+			data() {
+				graph:""
+			},
+      mounted() {        	
         	// Canvas where sape are dropped
 			var graph = new joint.dia.Graph,
 			  paper = new joint.dia.Paper({
@@ -21,7 +25,8 @@
 			    height: 60,
 			    model: stencilGraph,
 			    interactive: false
-			  });
+				});
+				this.graph = stencilGraph;
 		var link = new joint.shapes.standard.Link();
 		// 	graph.options.defaultAnchor = {
 		//     name: 'midSide',
@@ -144,6 +149,12 @@
 			    $('#flyPaper').remove();
 			  });
 			});
-        }
+				},
+			methods: {
+				getData(){
+					let data = this.graph.toJSON(); 
+					console.log("data"+JSON.stringify(data));
+				}
+			}	
     }
 </script>
