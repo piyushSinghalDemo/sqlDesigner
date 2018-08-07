@@ -1,4 +1,5 @@
 <style src="vue2-animate/dist/vue2-animate.min.css"></style>
+<style src="jointjs/dist/joint.min.css"></style>
 <style src="vue-nav-tabs/themes/vue-tabs.css"></style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style src="v-toaster/dist/v-toaster.css"></style>

@@ -8,42 +8,16 @@ import Hello from '@/components/Hello'
 import FlowchartSqlDesigner from '@/components/flowchartSqlDesigner'
 import JointDemo from '@/components/jointdemo'
 import Jointjsdragdrop from '@/components/jointjsdragdrop'
+import demo from '@/components/jointJs/demo'
 Vue.use(Router)
 
 export default new Router({
     mode: 'history',
-    routes: [
-        // {
-        //     path: '/',
-        //     name: 'Hello',
-        //     component: sqldata
-        // },
-        // {
-        //     path: '/sqldata',
-        //     name: 'sqldata',
-        //     component: sqldata
-        // },
-        //
-        // {
-        //   path: '/collection/:collectionId/edit',
-        //   name: 'edit-collection',
-        //   component: ManageCollection
-        // },
-        // {
-        //     path: '/sqldesigner',
-        //     name: 'sqldesigner',
-        //     component: SqlDesigner
-        // },
-        // {
-        //   path: '/gojsdesigner',
-        //   name: 'gojsdesigner',
-        //   component: GoJsSqlDesigner
-        // },
-        // {
-        //   path: '/jsplubmdesigner',
-        //   name: 'jsplubmdesigner',
-        //   component: JsPlumbSqlDesigner
-        // },
+    routes: [{
+            path: '/demo',
+            name: 'demo',
+            component: demo
+        },
         {
             path: '/flowchartdesigner',
             name: 'flowchartdesigner',
