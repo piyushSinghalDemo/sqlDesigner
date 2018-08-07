@@ -1,5 +1,6 @@
 <template>
     <div>
+		<button class="btn btn-info" @click="getData">Get Data(console)</button>
        	<div id="stencil"></div>
 		<div id="paper"></div>
     </div>
@@ -7,15 +8,21 @@
 
 <script>
     export default {
-        mounted() {        	
+			data() {
+				graph:""
+			},
+      		mounted() {        	
         	// Canvas where sape are dropped
-			var graph = new joint.dia.Graph,
-			  paper = new joint.dia.Paper({
-			    el: $('#paper'),
-			    model: graph,
-			    gridSize: 5,
-  				drawGrid:true
-			  });
+				var graph = new joint.dia.Graph,
+			  	paper = new joint.dia.Paper({
+			    	el: $('#paper'),
+			    	model: graph,
+			    	gridSize: 5,
+  					drawGrid:true,
+					defaultLink: new joint.dia.Link({
+        			attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+					}),
+			  	});
 			// Canvas from which you take shapes
 			var stencilGraph = new joint.dia.Graph,
 			  stencilPaper = new joint.dia.Paper({
@@ -43,21 +50,56 @@
         		alert(cellView.model.id)
     		});
 
-			// var r1 = new joint.shapes.basic.Rect({
-			//   position: {
-			//     x: 10,
-			//     y: 10
-			//   },
-			//   size: {
-			//     width: 100,
-			//     height: 40
-			//   },
-			//   attrs: {
-			//     text: {
-			//       text: 'Rect1'
-			//     },
-			//   },
-			// });
+		this.graph = stencilGraph;
+		var link = new joint.shapes.standard.Link();
+		// 	graph.options.defaultAnchor = {
+		//     name: 'midSide',
+		//     args: {
+		//         rotate: true,
+		//         padding: 20
+		//     }
+		// };
+		var selected;
+
+		// paper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
+		//     cellView.remove();
+		// });
+		paper.on('link:pointerdblclick', function(linkView) {
+				// resetAll(this);
+				// alert("Worked");
+
+				// var description = prompt("Please description", "Harry Potter");
+				debugger;
+				 var currentLink = linkView.model;
+				 currentLink.attr('line/stroke', 'orange');
+
+				 currentLink.attr('text/text', '1:m');
+				 let description = prompt("Enter Relation","Data");
+				 currentLink.labels([{
+				    attrs: {
+				        text: {
+				            text: description
+				        }
+				    }
+				}]);
+
+				});
+
+			var r1 = new joint.shapes.basic.Rect({
+			  position: {
+			    x: 10,
+			    y: 10
+			  },
+			  size: {
+			    width: 100,
+			    height: 40
+			  },
+			  attrs: {
+			    text: {
+			      text: 'Rect1'
+			    },
+			  },
+			});
 			var model = new joint.shapes.devs.Model({
 			  position: {
 			    x: 230,
@@ -246,6 +288,12 @@
 			    $('#flyPaper').remove();
 			  });
 			});
-        }
+				},
+			methods: {
+				getData(){
+					let data = this.graph.toJSON(); 
+					console.log("data"+JSON.stringify(data));
+				}
+			}	
     }
 </script>
