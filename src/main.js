@@ -28,6 +28,9 @@ Vue.config.productionTip = false
 Vue.prototype.host = process.env.HOST
 Vue.prototype.yaml_host = process.env.YAML_HOST
 
+window.joint = require('jointjs');
+
+
 Vue.http.interceptors.push(function(request, next) {
     // $('body').addClass("loading");
     // request.headers.set("Access-Control-Allow-Origin", "*")

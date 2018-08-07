@@ -6,6 +6,8 @@ import Hello from '@/components/Hello'
 // import GoJsSqlDesigner from '@/components/GoJsSqlDesigner'
 // import JsPlumbSqlDesigner from '@/components/JsPlumbSqlDesigner'
 import FlowchartSqlDesigner from '@/components/flowchartSqlDesigner'
+import JointDemo from '@/components/jointdemo'
+import Jointjsdragdrop from '@/components/jointjsdragdrop'
 Vue.use(Router)
 
 export default new Router({
@@ -46,7 +48,17 @@ export default new Router({
             path: '/flowchartdesigner',
             name: 'flowchartdesigner',
             component: FlowchartSqlDesigner
-        }
+        },
+        {
+            path: '/jointdemo',
+            name: 'jointdemo',
+            component: JointDemo
+        },
+        {
+            path: '/jointjsdragdrop',
+            name: 'jointjsdragdrop',
+            component: Jointjsdragdrop
+        },
         // {
         //   path: '/streamer/index',
         //   name: 'streamer.index',
