@@ -16,7 +16,10 @@
 			var graph = new joint.dia.Graph,
 			  paper = new joint.dia.Paper({
 			    el: $('#paper'),
-			    model: graph
+					model: graph,
+					 defaultLink: new joint.dia.Link({
+        		attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+					}),
 			  });
 			// Canvas from which you take shapes
 			var stencilGraph = new joint.dia.Graph,
@@ -37,8 +40,28 @@
 		// };
 		var selected;
 
-		paper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
-		    cellView.remove();
+		// paper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
+		//     cellView.remove();
+		// });
+		paper.on('link:pointerdblclick', function(linkView) {
+				// resetAll(this);
+				// alert("Worked");
+
+				// var description = prompt("Please description", "Harry Potter");
+				debugger;
+				 var currentLink = linkView.model;
+				 currentLink.attr('line/stroke', 'orange');
+
+				 currentLink.attr('text/text', '1:m');
+				 let description = prompt("Enter Relation","Data");
+				 currentLink.labels([{
+    attrs: {
+        text: {
+            text: description
+        }
+    }
+}]);
+
 		});
 
 			var r1 = new joint.shapes.basic.Rect({
