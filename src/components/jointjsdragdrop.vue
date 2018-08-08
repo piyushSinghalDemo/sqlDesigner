@@ -9,7 +9,9 @@
 <script>
     export default {
 			data() {
-				graph:""
+				return{
+					graph:""
+				}
 			},
       		mounted() {        	
         	// Canvas where sape are dropped
@@ -22,6 +24,24 @@
 					defaultLink: new joint.dia.Link({
         			attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
 					}),
+					 validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+								// Prevent linking from input ports.
+								if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+								// Prevent linking from output ports to input ports within one element.
+								if (cellViewS === cellViewT) return false;
+								// Prevent linking to input ports.
+								return magnetT && magnetT.getAttribute('port-group') === 'in';
+						},
+						validateMagnet: function(cellView, magnet) {
+								// Note that this is the default behaviour. Just showing it here for reference.
+								// Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
+								return magnet.getAttribute('magnet') !== 'passive';
+						},
+						// Enable marking available cells & magnets
+						markAvailable: true,
+						
+						 // Enable link snapping within 75px lookup radius
+    				snapLinks: { radius: 75 }
 			  	});
 			// Canvas from which you take shapes
 			var stencilGraph = new joint.dia.Graph,
@@ -122,7 +142,13 @@
 			        position: 'top',
 			        label: {
 			          position: 'outside'
-			        }
+							},
+							attrs: {
+                    '.port-body': {
+                        // fill: '#16A085',
+                        magnet: 'passive'
+                    }
+                }
 			      },
 			      'out': {
 			        position: 'bottom',
@@ -297,3 +323,14 @@
 			}	
     }
 </script>
+<style>
+/* port styling */
+.available-magnet {
+    fill: yellow;
+}
+
+/* element styling */
+.available-cell rect {
+    stroke-dasharray: 5, 2;
+}
+</style>
