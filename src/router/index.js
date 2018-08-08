@@ -9,6 +9,7 @@ import FlowchartSqlDesigner from '@/components/flowchartSqlDesigner'
 import JointDemo from '@/components/jointdemo'
 import Jointjsdragdrop from '@/components/jointjsdragdrop'
 import demo from '@/components/jointJs/demo'
+import redrawgraph from '@/components/redrawgraph'
 Vue.use(Router)
 
 export default new Router({
@@ -32,6 +33,11 @@ export default new Router({
             path: '/jointjsdragdrop',
             name: 'jointjsdragdrop',
             component: Jointjsdragdrop
+        },
+        {
+            path: '/redrawgraph',
+            name: 'redrawgraph',
+            component: redrawgraph
         },
         // {
         //   path: '/streamer/index',
