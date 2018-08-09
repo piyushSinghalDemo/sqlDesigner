@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
     export default {
 			data() {
 				return{
@@ -122,12 +121,30 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 			//   },
 			// });
 			var model = new joint.shapes.devs.Model({
-			  position: {x: 230,y: 10},
-			  size: {width: 100,height: 40},
-			   attrs: {
-        	'.label': { text: 'Model',style:{'font-size':'14px'}},
-        	rect: { fill: 'lightgray' }
-    		},
+			  position: {
+			    x: 230,
+			    y: 10
+			  },
+			  size: {
+			    width: 100,
+			    height: 40
+			  },
+			  attrs: {
+                 body: {
+                    strokeWidth: 5,
+                    strokeOpacity: .7,
+                    stroke: 'gray',
+                    rx: 3,
+                    ry: 3,
+                    fill: 'lightgray',
+                    fillOpacity: .5
+                },
+  
+			    text: {
+						text: 'Rect3',
+						fontSize: 18,
+			    }
+			  },
 			  inPorts: ['a'],
 			  outPorts: ['b'],
 			  ports: {
@@ -142,7 +159,7 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
                         // fill: '#16A085',
 												magnet: 'passive',
 												fill:'gray',
-												r:6
+												r:5
                     }
                 }
 			      },
@@ -155,7 +172,7 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
                     '.port-body': {
                         // fill: '#16A085',
 												fill:'gray',
-												r:6
+												r:5
                     }
                 }
 			      }
@@ -313,8 +330,6 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 			    $('#flyPaper').remove();
 			  });
 			});
-
-			
 				},
 			methods: {
 				getData(){

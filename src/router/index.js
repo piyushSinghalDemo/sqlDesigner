@@ -9,11 +9,17 @@ import FlowchartSqlDesigner from '@/components/flowchartSqlDesigner'
 import JointDemo from '@/components/jointdemo'
 import Jointjsdragdrop from '@/components/jointjsdragdrop'
 import demo from '@/components/jointJs/demo'
+import dropConnecting from '@/components/jointJs/dropConnecting'
 Vue.use(Router)
 
 export default new Router({
     mode: 'history',
     routes: [{
+            path: '/dropConnecting',
+            name: 'dropConnecting',
+            component: dropConnecting
+        },
+        {
             path: '/demo',
             name: 'demo',
             component: demo
