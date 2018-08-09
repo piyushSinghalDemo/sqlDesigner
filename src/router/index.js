@@ -12,6 +12,7 @@ import demo from '@/components/jointJs/demo'
 import dropConnecting from '@/components/jointJs/dropConnecting'
 import redrawgraph from '@/components/redrawgraph'
 import imagedemo from '@/components/imagedemo'
+import contextmenu from '@/components/contextmenu'
 Vue.use(Router)
 
 export default new Router({
@@ -50,6 +51,11 @@ export default new Router({
             path: '/imagedemo',
             name: 'imagedemo',
             component: imagedemo
+        },
+        {
+            path: '/contextmenu',
+            name: 'contextmenu',
+            component: contextmenu
         },
         // {
         //   path: '/streamer/index',
