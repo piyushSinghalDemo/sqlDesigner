@@ -8,323 +8,318 @@
 
 <script>
 import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
-    export default {
-			data() {
-				return{
-					graph:""
-				}
-			},
-      		mounted() {        	
-        	// Canvas where sape are dropped
-				var graph = new joint.dia.Graph,
-			  	paper = new joint.dia.Paper({
-			    	el: $('#paper'),
-			    	model: graph,
-			    	gridSize: 5,
-  					drawGrid:true,
-						defaultLink: new joint.dia.Link({connector: { name: 'rounded' },
-								attrs: {'.connection': { stroke: '#333333','stroke-width': 3},
-								'.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
-									}
-						}),
-					 validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
-								// Prevent linking from input ports.
-								if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
-								// Prevent linking from output ports to input ports within one element.
-								if (cellViewS === cellViewT) return false;
-								// Prevent linking to input ports.
-								return magnetT && magnetT.getAttribute('port-group') === 'in';
-						},
-						validateMagnet: function(cellView, magnet) {
-								// Note that this is the default behaviour. Just showing it here for reference.
-								// Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
-								return magnet.getAttribute('magnet') !== 'passive';
-						},
-						// Enable marking available cells & magnets
-						markAvailable: true,
-						
-						 // Enable link snapping within 75px lookup radius
-    				snapLinks: { radius: 75 }
-			  	});
-			// Canvas from which you take shapes
-			var stencilGraph = new joint.dia.Graph,
-			  stencilPaper = new joint.dia.Paper({
-			    el: $('#stencil'),
-			    height: 60,
-			    model: stencilGraph,
-			    interactive: false
-			  });
-
-		paper.on('cell:keydown', function(cellView,e) {
-				// debugger;
-        		alert(e.which)
-    		});
-
-		paper.on('element:pointerdblclick', function(cellView, evt, x, y) {
-		    //cellView.remove();
-		    // debugger;
-		    var shapeText = prompt('Enter your table name:', '');
-		    cellView.model.attr('text/text', shapeText)
-		    cellView.model.attr('rect/title', 'abc')
-		    // console.log(graph)
-
-		}).on('cell:contextmenu', function(cellView,e) {
-				// debugger;
-        		alert(cellView.model.id)
-    		});
-
-		this.graph = stencilGraph;
-		var link = new joint.shapes.standard.Link();
-		// 	graph.options.defaultAnchor = {
-		//     name: 'midSide',
-		//     args: {
-		//         rotate: true,
-		//         padding: 20
-		//     }
-		// };
-		var selected;
-
-		// paper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
-		//     cellView.remove();
-		// });
-		paper.on('link:pointerdblclick', function(linkView) {
-				// resetAll(this);
-				// alert("Worked");
-
-				// var description = prompt("Please description", "Harry Potter");
-				// debugger;
-				 var currentLink = linkView.model;
-				//  currentLink.attr('line/stroke', 'orange');
-
-				 currentLink.attr('text/text', '1:m');
-				 let description = prompt("Enter Relation","Data");
-				 currentLink.labels([{
-				    attrs: {
-				        text: {
-				            text: description
-				        }
-				    }
-				}]);
-
-				});
-
-			// var r1 = new joint.shapes.basic.Rect({
-			//   position: {
-			//     x: 10,
-			//     y: 10
-			//   },
-			//   size: {
-			//     width: 100,
-			//     height: 40
-			//   },
-			//   attrs: {
-			//     text: {
-			//       text: 'Rect1'
-			//     },
-			//   },
-			// });
-			var model = new joint.shapes.devs.Model({
-			  position: {x: 230,y: 10},
-			  size: {width: 100,height: 40},
-			   attrs: {
-        	'.label': { text: 'Rect3',style:{'font-size':'14px'}},
-        	rect: { fill: 'lightgray',rx:10,ry:10 }
-    		},
-			  inPorts: ['a'],
-			  outPorts: ['b'],
-			  ports: {
-			    groups: {
-			      'in': {
-			        position: 'top',
-			        label: {
-			          position: 'outside'
-							},
-							attrs: {
-                    '.port-body': {
-                        // fill: '#16A085',
-												magnet: 'passive',
-												fill:'gray',
-												r:6
-                    }
-                }
-			      },
-			      'out': {
-			        position: 'bottom',
-			        label: {
-			          position: 'outside',
-			        },
-							attrs: {
-                    '.port-body': {
-                        // fill: '#16A085',
-												fill:'gray',
-												r:6
-                    }
-                }
-			      }
-			    }
-			  }
-			});
-			var r2 = new joint.shapes.basic.Rect({
-			  position: {
-			    x: 120,
-			    y: 10
-			  },
-			  size: {
-			    width: 100,
-			    height: 40
-			  },
-			  attrs: {
-			    text: {
-			      text: 'Rect2'
-			    }
-			  }
-			});
-
-			joint.shapes.devs.MyImageModel = joint.shapes.devs.Model.extend({
-
-					markup: '<g class="rotatable" ><g class="scalable"><rect class="body"/></g><image/><text class="label"/>'+ 
-										'<g class="inPorts"/><g class="outPorts"/></g>',
-
-			    defaults: joint.util.deepSupplement({
-
-			        type: 'devs.MyImageModel',
-			        size: { width: 100, height: 40 },
-			        attrs: {
-			            '.port-body': {
-			                r: 5,
-			                magnet: true,
-			                stroke: '#000000'
-			            },
-			            '.inPorts circle': { fill: '' },
-			            '.outPorts circle': { fill: '' },
-			            image: { 'xlink:href': '../../static/flowchart/images/archive.png', width: 100, height: 40, 'ref-x': .5, 'ref-y': .5, ref: 'rect', 'x-alignment': 'middle', 'y-alignment': 'middle'}
-			        }
-
-			    }, joint.shapes.devs.Model.prototype.defaults)
-			});
-
-			joint.shapes.devs.MyImageModelView = joint.shapes.devs.ModelView;
-
-
-			var imageModel = new joint.shapes.devs.MyImageModel({
-			    position: { x: 10, y: 10 },
-			    size: { width: 100, height: 40 },
-			    attrs: {
-			    text: {
-			      text: ''
-			    }
-				},
-			  inPorts: ['a'],
-			  outPorts: ['b'],
-			  ports: {
-			    groups: {
-			      'in': {
-			        position: 'top',
-			        label: {
-			          position: 'outside'
-			        }
-			      },
-			      'out': {
-			        position: 'bottom',
-			        label: {
-			          position: 'outside'
-			        }
-			      }
-			    }
-			  },
-			});
-
-			var image = new joint.shapes.basic.Image({
-		    position: {
-			    x: 10,
-			    y: 10
-			  },
-			  size: {
-			    width: 100,
-			    height: 40
-			  },
-			  inPorts: ['a'],
-			  outPorts: ['b'],
-			  ports: {
-			    groups: {
-			      'in': {
-			        position: 'top',
-			        label: {
-			          position: 'outside'
-			        }
-			      },
-			      'out': {
-			        position: 'bottom',
-			        label: {
-			          position: 'outside'
-			        }
-			      }
-			    }
-			  },
-		    attrs : {
-		        image : {
-		            "xlink:href" : "../../static/flowchart/images/archive.png",
-		            width : 200,
-		            height : 100
-		        	}
-		    	}
-			});
-
-			stencilGraph.addCells([imageModel, r2,model]);
-
-			stencilPaper.on('cell:pointerdown', function(cellView, e, x, y) {
-			  $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
-			  var flyGraph = new joint.dia.Graph,
-			    flyPaper = new joint.dia.Paper({
-			      el: $('#flyPaper'),
-			      model: flyGraph,
-			      interactive: false
-			    }),
-			    flyShape = cellView.model.clone(),
-			    pos = cellView.model.position(),
-			    offset = {
-			      x: x - pos.x,
-			      y: y - pos.y
-			    };
-
-			  flyShape.position(0, 0);
-			  flyGraph.addCell(flyShape);
-			  $("#flyPaper").offset({
-			    left: e.pageX - offset.x,
-			    top: e.pageY - offset.y
-			  });
-			  $('body').on('mousemove.fly', function(e) {
-			    $("#flyPaper").offset({
-			      left: e.pageX - offset.x,
-			      top: e.pageY - offset.y
-			    });
-			  });
-			  $('body').on('mouseup.fly', function(e) {
-			    var x = e.pageX,
-			      y = e.pageY,
-			      target = paper.$el.offset();
-			    
-			    // Dropped over paper ?
-			    if (x > target.left && x < target.left + paper.$el.width() && y > target.top && y < target.top + paper.$el.height()) {
-			      var s = flyShape.clone();
-			      s.position(x - target.left - offset.x, y - target.top - offset.y);
-			      graph.addCell(s);
-			    }
-			    $('body').off('mousemove.fly').off('mouseup.fly');
-			    flyShape.remove();
-			    $('#flyPaper').remove();
-			  });
-			});
-
-			
-				},
-			methods: {
-				getData(){
-					let data = this.graph.toJSON(); 
-					console.log("data"+JSON.stringify(data));
-				}
-			}	
+export default {
+  data() {
+    return {
+      graph: ""
     }
+  },
+  mounted() {
+    var gridsize = 1;
+    var currentScale = 1;
+    // Canvas where sape are dropped
+    var graph = new joint.dia.Graph,
+      paper = new joint.dia.Paper({
+        el: $('#paper'),
+        model: graph,
+        gridSize: 5,
+        drawGrid: true,
+        defaultLink: new joint.dia.Link({
+          connector: {
+            name: 'rounded'
+          },
+          attrs: {
+            '.connection': {
+              stroke: '#333333',
+              'stroke-width': 3
+            },
+            '.marker-target': {
+              d: 'M 10 0 L 0 5 L 10 10 z'
+            }
+          }
+        }),
+        validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+          // Prevent linking from input ports.
+          if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+          // Prevent linking from output ports to input ports within one element.
+          if (cellViewS === cellViewT) return false;
+          // Prevent linking to input ports.
+          return magnetT && magnetT.getAttribute('port-group') === 'in';
+        },
+        validateMagnet: function (cellView, magnet) {
+          // Note that this is the default behaviour. Just showing it here for reference.
+          // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
+          return magnet.getAttribute('magnet') !== 'passive';
+        },
+        // Enable marking available cells & magnets
+        markAvailable: true,
+
+        // Enable link snapping within 75px lookup radius
+        snapLinks: {
+          radius: 75
+        }
+      });
+    //Bonus function use (see below) - create dotted grid
+    setGrid(paper, gridsize * 15, '#808080');
+    let panAndZoom = "";
+    setTimeout(() => {
+      panAndZoom = svgPanZoom(paper.svg, {
+        //   viewportSelector: paper.svg.childNodes[0],
+        zoomEnabled: true,
+        zoomScaleSensitivity: 0.4,
+        panEnabled: false,
+        controlIconsEnabled: true,
+        fit: false,
+        onZoom: function (scale) {
+        currentScale = scale;
+        setGrid(paper, gridsize * 15 * currentScale, '#808080');
+        },
+        beforePan: function (oldpan, newpan) {
+          setGrid(paper, gridsize * 15 * currentScale, '#808080', newpan);
+        }
+
+      });
+    }, 1500);
+
+    //Enable pan when a blank area is click (held) on
+    paper.on('blank:pointerdown', function (evt, x, y) {
+      panAndZoom.enablePan();
+      //console.log(x + ' ' + y);
+    });
+
+    //Disable pan when the mouse button is released
+    paper.on('cell:pointerup blank:pointerup', function (cellView, event) {
+      panAndZoom.disablePan();
+    });
+
+    //BONUS function - will add a css background of a dotted grid that will scale reasonably
+    //well with zooming and panning.
+    function setGrid(paper, size, color, offset) {
+      // Set grid size on the JointJS paper object (joint.dia.Paper instance)
+      paper.options.gridsize = gridsize;
+      // Draw a grid into the HTML 5 canvas and convert it to a data URI image
+      var canvas = $('<canvas/>', {
+        width: size,
+        height: size
+      });
+      canvas[0].width = size;
+      canvas[0].height = size;
+      var context = canvas[0].getContext('2d');
+      context.beginPath();
+      context.rect(1, 1, 1, 1);
+      context.fillStyle = color || '#AAAAAA';
+      context.fill();
+      // Finally, set the grid background image of the paper container element.
+      var gridBackgroundImage = canvas[0].toDataURL('image/png');
+      $(paper.el.childNodes[0]).css('background-image', 'url("' + gridBackgroundImage + '")');
+      if (typeof (offset) != 'undefined') {
+        $(paper.el.childNodes[0]).css('background-position', offset.x + 'px ' + offset.y + 'px');
+      }
+    }
+
+
+    // Canvas from which you take shapes
+    var stencilGraph = new joint.dia.Graph,
+      stencilPaper = new joint.dia.Paper({
+        el: $('#stencil'),
+        height: 60,
+        model: stencilGraph,
+        interactive: false
+      });
+
+    paper.on('element:pointerdblclick', function (cellView, evt, x, y) {
+      //cellView.remove();
+      // debugger;
+      var shapeText = prompt('Enter your table name:', '');
+      cellView.model.attr('text/text', shapeText)
+      cellView.model.attr('rect/title', 'abc')
+      // console.log(graph)
+
+    });
+
+    this.graph = stencilGraph;
+    var link = new joint.shapes.standard.Link();
+    var selected;
+
+    paper.on('link:pointerdblclick', function (linkView) {
+
+      var currentLink = linkView.model;
+
+      currentLink.attr('text/text', '1:m');
+      let description = prompt("Enter Relation", "Data");
+      currentLink.labels([{
+        attrs: {
+          text: {
+            text: description
+          }
+        }
+      }]);
+
+    });
+
+    var model = new joint.shapes.devs.Model({
+      position: {
+        x: 230,
+        y: 10
+      },
+      size: {
+        width: 100,
+        height: 40
+      },
+      attrs: {
+        '.label': {
+          text: 'Rect3',
+          style: {
+            'font-size': '14px'
+          }
+        },
+        rect: {
+          fill: 'lightgray',
+          rx: 10,
+          ry: 10
+        }
+      },
+      inPorts: ['a'],
+      outPorts: ['b'],
+      ports: {
+        groups: {
+          'in': {
+            position: 'top',
+            label: {
+              position: 'outside'
+            },
+            attrs: {
+              '.port-body': {
+                magnet: 'passive',
+                fill: 'gray',
+                r: 6
+              }
+            }
+          },
+          'out': {
+            position: 'bottom',
+            label: {
+              position: 'outside',
+            },
+            attrs: {
+              '.port-body': {
+                fill: 'gray',
+                r: 6
+              }
+            }
+          }
+        }
+      }
+    });
+    var r2 = new joint.shapes.basic.Rect({
+      position: {
+        x: 120,
+        y: 10
+      },
+      size: {
+        width: 100,
+        height: 40
+      },
+      attrs: {
+        text: {
+          text: 'Rect2'
+        }
+      }
+    });
+
+    joint.shapes.devs.MyImageModel = joint.shapes.devs.Model.extend({
+
+      markup: '<g class="rotatable" ><g class="scalable"><rect class="body"/></g><image/><text class="label"/>' +
+        '<g class="inPorts"/><g class="outPorts"/></g>',
+
+      defaults: joint.util.deepSupplement({
+
+        type: 'devs.MyImageModel',
+        size: {
+          width: 100,
+          height: 40
+        },
+        attrs: {
+          '.port-body': {
+            r: 5,
+            magnet: true,
+            stroke: '#000000'
+          },
+          '.inPorts circle': {
+            fill: ''
+          },
+          '.outPorts circle': {
+            fill: ''
+          },
+          image: {
+            'xlink:href': '../../static/flowchart/images/archive.png',
+            width: 100,
+            height: 40,
+            'ref-x': .5,
+            'ref-y': .5,
+            ref: 'rect',
+            'x-alignment': 'middle',
+            'y-alignment': 'middle'
+          }
+        }
+
+      }, joint.shapes.devs.Model.prototype.defaults)
+    });
+
+    joint.shapes.devs.MyImageModelView = joint.shapes.devs.ModelView;
+
+    stencilGraph.addCells([r2, model]);
+
+    stencilPaper.on('cell:pointerdown', function (cellView, e, x, y) {
+      $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
+      var flyGraph = new joint.dia.Graph,
+        flyPaper = new joint.dia.Paper({
+          el: $('#flyPaper'),
+          model: flyGraph,
+          interactive: false
+        }),
+        flyShape = cellView.model.clone(),
+        pos = cellView.model.position(),
+        offset = {
+          x: x - pos.x,
+          y: y - pos.y
+        };
+
+      flyShape.position(0, 0);
+      flyGraph.addCell(flyShape);
+      $("#flyPaper").offset({
+        left: e.pageX - offset.x,
+        top: e.pageY - offset.y
+      });
+      $('body').on('mousemove.fly', function (e) {
+        $("#flyPaper").offset({
+          left: e.pageX - offset.x,
+          top: e.pageY - offset.y
+        });
+      });
+      $('body').on('mouseup.fly', function (e) {
+        var x = e.pageX,
+          y = e.pageY,
+          target = paper.$el.offset();
+        // Dropped over paper ?
+        if (x > target.left && x < target.left + paper.$el.width() && y > target.top && y < target.top + paper.$el.height()) {
+          var s = flyShape.clone();
+          s.position(x - target.left - offset.x, y - target.top - offset.y);
+          graph.addCell(s);
+        }
+        $('body').off('mousemove.fly').off('mouseup.fly');
+        flyShape.remove();
+        $('#flyPaper').remove();
+      });
+    });
+  },
+  methods: {
+    getData() {
+      let data = this.graph.toJSON();
+      console.log("data" + JSON.stringify(data));
+    }
+  }
+}
 </script>
 <style>
 /* port styling */
