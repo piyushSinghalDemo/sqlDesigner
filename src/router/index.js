@@ -11,6 +11,7 @@ import Jointjsdragdrop from '@/components/jointjsdragdrop'
 import demo from '@/components/jointJs/demo'
 import dropConnecting from '@/components/jointJs/dropConnecting'
 import redrawgraph from '@/components/redrawgraph'
+import imagedemo from '@/components/imagedemo'
 Vue.use(Router)
 
 export default new Router({
@@ -44,6 +45,11 @@ export default new Router({
             path: '/redrawgraph',
             name: 'redrawgraph',
             component: redrawgraph
+        },
+        {
+            path: '/imagedemo',
+            name: 'imagedemo',
+            component: imagedemo
         },
         // {
         //   path: '/streamer/index',
