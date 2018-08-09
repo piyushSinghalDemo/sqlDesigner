@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
     export default {
 			data() {
 				return{
@@ -22,11 +21,9 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 			    	model: graph,
 			    	gridSize: 5,
   					drawGrid:true,
-						defaultLink: new joint.dia.Link({connector: { name: 'rounded' },
-								attrs: {'.connection': { stroke: '#333333','stroke-width': 3},
-								'.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
-									}
-						}),
+					defaultLink: new joint.dia.Link({
+        			attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+					}),
 					 validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 								// Prevent linking from input ports.
 								if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
@@ -124,12 +121,30 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 			//   },
 			// });
 			var model = new joint.shapes.devs.Model({
-			  position: {x: 230,y: 10},
-			  size: {width: 100,height: 40},
-			   attrs: {
-        	'.label': { text: 'Rect3',style:{'font-size':'14px'}},
-        	rect: { fill: 'lightgray',rx:10,ry:10 }
-    		},
+			  position: {
+			    x: 230,
+			    y: 10
+			  },
+			  size: {
+			    width: 100,
+			    height: 40
+			  },
+			  attrs: {
+                 body: {
+                    strokeWidth: 5,
+                    strokeOpacity: .7,
+                    stroke: 'gray',
+                    rx: 3,
+                    ry: 3,
+                    fill: 'lightgray',
+                    fillOpacity: .5
+                },
+  
+			    text: {
+						text: 'Rect3',
+						fontSize: 18,
+			    }
+			  },
 			  inPorts: ['a'],
 			  outPorts: ['b'],
 			  ports: {
@@ -144,7 +159,7 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
                         // fill: '#16A085',
 												magnet: 'passive',
 												fill:'gray',
-												r:6
+												r:5
                     }
                 }
 			      },
@@ -157,7 +172,7 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
                     '.port-body': {
                         // fill: '#16A085',
 												fill:'gray',
-												r:6
+												r:5
                     }
                 }
 			      }
@@ -315,8 +330,6 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 			    $('#flyPaper').remove();
 			  });
 			});
-
-			
 				},
 			methods: {
 				getData(){

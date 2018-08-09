@@ -8,7 +8,7 @@
 <script>
     export default {
          mounted() { 
-
+//m
              var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({ el: $('#paper-link'), width: 650, height: 200, gridSize: 1, model: graph });
 
