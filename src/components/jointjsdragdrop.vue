@@ -22,9 +22,11 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 			    	model: graph,
 			    	gridSize: 5,
   					drawGrid:true,
-					defaultLink: new joint.dia.Link({
-        			attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
-					}),
+						defaultLink: new joint.dia.Link({connector: { name: 'rounded' },
+								attrs: {'.connection': { stroke: '#333333','stroke-width': 3},
+								'.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
+									}
+						}),
 					 validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 								// Prevent linking from input ports.
 								if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
@@ -125,8 +127,8 @@ import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 			  position: {x: 230,y: 10},
 			  size: {width: 100,height: 40},
 			   attrs: {
-        	'.label': { text: 'Model',style:{'font-size':'14px'}},
-        	rect: { fill: 'lightgray' }
+        	'.label': { text: 'Rect3',style:{'font-size':'14px'}},
+        	rect: { fill: 'lightgray',rx:10,ry:10 }
     		},
 			  inPorts: ['a'],
 			  outPorts: ['b'],
