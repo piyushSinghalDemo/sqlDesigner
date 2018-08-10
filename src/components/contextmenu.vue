@@ -1,6 +1,6 @@
 <template>
     <div>
-		<button class="btn btn-info" @click="GetStatus">GetStatus()</button>
+		<button class="btn btn-info" @click="GetStatus()">GetStatus</button>
        	<div id="stencil"></div>
 		<div id="paper"  @contextmenu.prevent="$refs.ctxMenu.open"></div>
 		<context-menu id="context-menu" ref="ctxMenu">
@@ -21,7 +21,7 @@
 					cut_ele:'',
 					copy_ele:'',
 					is_not_cut_or_copied:true,
-					is_not_selected:true
+					is_not_selected:true,
 				}
 			},
       		mounted() {        	
@@ -109,26 +109,16 @@
 		});
 		var selected;
 		paper.on('cell:mouseover', function(cellView) {
-			if(this.is_not_selected){
-				this.is_not_selected=false
-			}
-			else{
-				this.is_not_selected=true
-			}
-
 			if(selected){
 				selected.unhighlight()
-				// this.is_not_selected = true
 			}
 			selected = cellView
 			selected.highlight();
-			// this.is_not_selected = false
 		});
 		paper.on('blank:mouseover', function(cellView) {
 			if(selected){
 				selected.unhighlight()
 			}
-				// this.is_not_selected = false
 
 		});
 		paper.on('cell:contextmenu', function(cellView) {
@@ -139,6 +129,13 @@
 			// selected = cellView
 			// selected.highlight();
 			// this.is_not_selected = false
+			alert(_this.is_not_selected)
+			if(_this.is_not_selected){
+				_this.is_not_selected=false
+			}
+			else{
+				_this.is_not_selected=true
+			}
 		});
 
 			stencilPaper.on('cell:pointerdown', function(cellView, e, x, y) {
@@ -188,6 +185,12 @@
 	methods: {
 		GetStatus(){
 			alert(this.is_not_selected)
+			if(this.is_not_selected){
+				this.is_not_selected=false
+			}
+			else{
+				this.is_not_selected=true
+			}
 		},
 		CutMouseOver(){
 			this.$refs.elcut.style.backgroundColor = "grey";
