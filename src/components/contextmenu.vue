@@ -1,12 +1,11 @@
 <template>
     <div>
-		<button class="btn btn-info" @click="GetStatus()">GetStatus</button>
        	<div id="stencil"></div>
-		<div id="paper"  @contextmenu.prevent="$refs.ctxMenu.open"></div>
+		<div id="paper"  @contextmenu.prevent="$refs.ctxMenu.open" ref="elpaper"></div>
 		<context-menu id="context-menu" ref="ctxMenu">
-  			<li style="font-weight:bold" @mouseover="CopyMouseOver()" @mouseout="CopyMouseOut()" v-bind:class="{disabled : is_not_selected}" ref="elcopy">Copy</li>
-  			<li style="font-weight:bold" @mouseover="CutMouseOver()" @mouseout="CutMouseOut()" v-bind:class="{disabled : is_not_selected}" ref="elcut">Cut</li>
-  			<li style="font-weight:bold" @mouseover="PasteMouseOver()" @mouseout="PasteMouseOut()" v-bind:class="{disabled : is_not_cut_or_copied}" ref="elpaste">Paste</li>
+			<li style="font-weight:bold" @mouseover="CutMouseOver()" @mouseout="CutMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('cut')" ref="elcut">Cut</li>
+  			<li style="font-weight:bold" @mouseover="CopyMouseOver()" @mouseout="CopyMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('copy')" ref="elcopy">Copy</li>
+  			<li style="font-weight:bold" @mouseover="PasteMouseOver()" @mouseout="PasteMouseOut()" @click="ContextMenuClick('paste')" v-bind:class="{disabled : !is_cut_or_copied}" ref="elpaste">Paste</li>
 		</context-menu>
     </div>
 </template>
@@ -17,18 +16,19 @@
     	  	components: { contextMenu },
 			data() {
 				return{
-					graph:"",
-					cut_ele:'',
-					copy_ele:'',
-					is_not_cut_or_copied:true,
-					is_not_selected:true,
+					// graph:"",
+					cut_copy_ele:'',
+					is_cut_or_copied:false,
+					is_selected:false,
+					selected_el:'',
+					graph: new joint.dia.Graph
 				}
 			},
       		mounted() {        	
         	// Canvas where sape are dropped
         		let _this = this
-				var graph = new joint.dia.Graph,
-			  	paper = new joint.dia.Paper({
+				var graph =_this.graph
+			  	var paper = new joint.dia.Paper({
 			    	el: $('#paper'),
 			    	model: graph,
 			    	gridSize: 5,
@@ -58,6 +58,38 @@
 						 // Enable link snapping within 75px lookup radius
     				snapLinks: { radius: 75 }
 			  	});
+
+
+			var selected;
+			paper.on('cell:mouseover', function(cellView) {
+				if(selected){
+					selected.unhighlight()
+				}
+				selected = cellView
+				selected.highlight();
+				_this.is_selected = true
+			}).on('cell:contextmenu', function(cellView) {
+				selected = cellView
+				selected.highlight();
+				_this.is_selected = true
+			}).on('cell:pointerdblclick', function(cellView) {
+				var shapeText = prompt('Enter your table name:', '');
+		    	cellView.model.attr('.name/text', shapeText)
+			});
+
+			paper.on('blank:mouseover', function(cellView) {
+				if(selected){
+					selected.unhighlight()
+				}
+				_this.is_selected = false
+			}).on('blank:contextmenu', function(cellView) {
+				if(selected){
+					selected.unhighlight()
+				}
+				_this.is_selected = false
+			});
+
+  	
 			// Canvas from which you take shapes
 			  var stencilGraph = new joint.dia.Graph,
 			  stencilPaper = new joint.dia.Paper({
@@ -75,68 +107,7 @@
 
   		var archivalcell = this.getCell(520,10,150,60,'archival','',"archive.png",'#30d0c6','#f1f1f1')
 		stencilGraph.addCells([selectioncell,minuscell, mergecell ,archivalcell]);
-
-		paper.on('element:pointerdblclick', function(cellView, evt, x, y) {
-		    //cellView.remove();
-		    debugger;
-		    var shapeText = prompt('Enter your table name:', '');
-		    cellView.model.attr('.name/text', shapeText)
-		    // cellView.model.attr('rect/title', 'abc')
-		    // console.log(graph)
-
-		});
-
-		this.graph = stencilGraph;
-		var link = new joint.shapes.standard.Link();
-		paper.on('link:pointerdblclick', function(linkView) {
-			// resetAll(this);
-			// alert("Worked");
-
-			// var description = prompt("Please description", "Harry Potter");
-			debugger;
-			 var currentLink = linkView.model;
-			 currentLink.attr('line/stroke', 'orange');
-
-			 currentLink.attr('text/text', '1:m');
-			 let description = prompt("Enter Relation","Data");
-			 currentLink.labels([{
-			    attrs: {
-			        text: {
-			            text: description
-			        }
-			    }
-			}]);
-		});
-		var selected;
-		paper.on('cell:mouseover', function(cellView) {
-			if(selected){
-				selected.unhighlight()
-			}
-			selected = cellView
-			selected.highlight();
-		});
-		paper.on('blank:mouseover', function(cellView) {
-			if(selected){
-				selected.unhighlight()
-			}
-
-		});
-		paper.on('cell:contextmenu', function(cellView) {
-			// this.is_not_selected = false
-			// if(selected){
-			// 	selected.unhighlight()
-			// }
-			// selected = cellView
-			// selected.highlight();
-			// this.is_not_selected = false
-			alert(_this.is_not_selected)
-			if(_this.is_not_selected){
-				_this.is_not_selected=false
-			}
-			else{
-				_this.is_not_selected=true
-			}
-		});
+		
 
 			stencilPaper.on('cell:pointerdown', function(cellView, e, x, y) {
 			  $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
@@ -183,14 +154,10 @@
 		});
 	},
 	methods: {
-		GetStatus(){
-			alert(this.is_not_selected)
-			if(this.is_not_selected){
-				this.is_not_selected=false
-			}
-			else{
-				this.is_not_selected=true
-			}
+		ContextMenuClick(){
+			var selectioncell = this.getCell(10,10,150,60,'selection','',"db_icon.png",'#30d0c6','#f1f1f1')
+			// console.log(this.$refs.elpaper)
+			console.log(this.graph.addCell(selectioncell))
 		},
 		CutMouseOver(){
 			this.$refs.elcut.style.backgroundColor = "grey";
@@ -274,46 +241,34 @@
 }
 </style>
 
-	// var cell = new joint.shapes.org.Member({
-		// // markup:'<g class="inPorts"/><g class="outPorts"/>',
-  //       position: { x: 10, y: 10 },
-  //       size: {
-		// 	    width: 150,
-		// 	    height: 60
-		// 	  },
-		// ports:{
-		// 	groups: {
-		// 		'in':{
-		// 			position:{
-		// 				name:'left',
-		// 				args:{
-		// 				},
-		// 			},
-		// 		markup:'<circle class="joint-port-body" r="5" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
-		// 		},
-		// 		'out':{
-		// 			position:{
-		// 				name:'right',
-		// 				args:{}
-		// 			},
-		// 		markup:'<circle class="joint-port-body" r="5" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
-		// 		}
-		// 	},
-		// 	items:[
-		// 		{
-		// 			group:'in',
-		// 			args:{}
-		// 		},
-		// 		{
-		// 			group:'out',
-		// 			args:{}
-		// 		}
-		// 	]
-		// },
-  //       attrs: {
-  //           '.card': { fill: '#30d0c6', stroke: 'none'},
-  //             image: { 'xlink:href': "../../static/flowchart/images/archive.png", opacity: 0.7 },
-  //           '.rank': { text: 'archival', fill: '#f1f1f1', 'word-spacing': '-5px', 'letter-spacing': 0},
-  //           '.name': { text: '', fill: '#f1f1f1', 'font-size': 13, 'font-family': 'Arial', 'letter-spacing': 0 },
-  //       	}
-  //   	});
+// paper.on('element:pointerdblclick', function(cellView, evt, x, y) {
+		//     //cellView.remove();
+		//     debugger;
+		    // var shapeText = prompt('Enter your table name:', '');
+		    // cellView.model.attr('.name/text', shapeText)
+		//     // cellView.model.attr('rect/title', 'abc')
+		//     // console.log(graph)
+
+		// });
+
+		// this.graph = stencilGraph;
+		// var link = new joint.shapes.standard.Link();
+		// paper.on('link:pointerdblclick', function(linkView) {
+		// 	// resetAll(this);
+		// 	// alert("Worked");
+
+		// 	// var description = prompt("Please description", "Harry Potter");
+		// 	debugger;
+		// 	 var currentLink = linkView.model;
+		// 	 currentLink.attr('line/stroke', 'orange');
+
+		// 	 currentLink.attr('text/text', '1:m');
+		// 	 let description = prompt("Enter Relation","Data");
+		// 	 currentLink.labels([{
+		// 	    attrs: {
+		// 	        text: {
+		// 	            text: description
+		// 	        }
+		// 	    }
+		// 	}]);
+		// });
