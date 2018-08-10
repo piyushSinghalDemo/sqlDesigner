@@ -34,6 +34,7 @@
 			    	model: graph,
 			    	gridSize: 5,
   					drawGrid:true,
+  					height:400,
 					defaultLink: new joint.dia.Link({connector: { name: 'rounded' },
         			attrs: {'.connection': { stroke: '#333333','stroke-width': 3},
         			'.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
@@ -69,7 +70,6 @@
 				selected = cellView
 				_this.selected_el = cellView
 				selected.highlight();
-				console.log(selected)
 				_this.is_selected = true
 			}).on('cell:contextmenu', function(cellView) {
 				selected = cellView
@@ -81,6 +81,32 @@
 		    	cellView.model.attr('.name/text', shapeText)
 		  // _this.graph(cellView.clone())
 			});
+
+			$('#paper')
+			    .attr('tabindex', 0)
+			    .on('mouseover', function() {
+			        this.focus();
+			    })
+			    .on('keydown', function(e) {
+			    	// if(_this.is_selected){
+			    	// 	// if(e.which === 46){
+			    	// 	// 	alert('delete key pressed')
+			    	// 	// }
+
+			    	// }
+			    	var key = e.which || e.keyCode;
+			    	var ctrl = e.ctrlKey ? e.ctrlKey : ((key === 17) ? true : false);
+			    	if(key === 46 && _this.is_selected){
+			    		_this.ContextMenuClick('delete')
+			    	}
+			    	else if ( key == 88 && ctrl && _this.is_selected ) {
+				        _this.ContextMenuClick('cut')
+				    } else if ( key == 67 && ctrl && _this.is_selected) {
+				        _this.ContextMenuClick('copy')
+				    } else if ( key == 86 && ctrl && _this.is_cut_or_copied) {
+				        _this.ContextMenuClick('paste')
+				    }
+			    });
 
 			paper.on('blank:mouseover', function(cellView) {
 				if(selected){
