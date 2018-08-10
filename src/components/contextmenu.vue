@@ -6,6 +6,7 @@
 			<li style="font-weight:bold" @mouseover="CutMouseOver()" @mouseout="CutMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('cut')" ref="elcut">Cut</li>
   			<li style="font-weight:bold" @mouseover="CopyMouseOver()" @mouseout="CopyMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('copy')" ref="elcopy">Copy</li>
   			<li style="font-weight:bold" @mouseover="PasteMouseOver()" @mouseout="PasteMouseOut()" @click="ContextMenuClick('paste')" v-bind:class="{disabled : !is_cut_or_copied}" ref="elpaste">Paste</li>
+  			<li style="font-weight:bold" @mouseover="DeleteMouseOver()" @mouseout="DeleteMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('delete')" ref="eldelete">Delete</li>
 		</context-menu>
     </div>
 </template>
@@ -66,15 +67,19 @@
 					selected.unhighlight()
 				}
 				selected = cellView
+				_this.selected_el = cellView
 				selected.highlight();
+				console.log(selected)
 				_this.is_selected = true
 			}).on('cell:contextmenu', function(cellView) {
 				selected = cellView
 				selected.highlight();
+				_this.selected_el = cellView
 				_this.is_selected = true
 			}).on('cell:pointerdblclick', function(cellView) {
 				var shapeText = prompt('Enter your table name:', '');
 		    	cellView.model.attr('.name/text', shapeText)
+		  // _this.graph(cellView.clone())
 			});
 
 			paper.on('blank:mouseover', function(cellView) {
@@ -154,10 +159,32 @@
 		});
 	},
 	methods: {
-		ContextMenuClick(){
-			var selectioncell = this.getCell(10,10,150,60,'selection','',"db_icon.png",'#30d0c6','#f1f1f1')
-			// console.log(this.$refs.elpaper)
-			console.log(this.graph.addCell(selectioncell))
+		ContextMenuClick(action_type){
+			if(action_type==='cut'){
+				this.cut_copy_ele = this.selected_el.model.clone()
+				this.is_cut_or_copied = true
+				this.selected_el.remove()
+			}
+			else if(action_type === 'copy'){
+				this.cut_copy_ele = this.selected_el.model.clone()
+				this.is_cut_or_copied = true
+				if(this.cut_copy_ele.attributes.attrs['.name'].text){
+					var copied_text = 'Copy of ' +this.cut_copy_ele.attributes.attrs['.name'].text
+					this.cut_copy_ele.attributes.attrs['.name'].text = copied_text
+				}
+			}
+			else if(action_type === 'paste'){
+				var copy_el = this.cut_copy_ele
+				copy_el.position(10, 10)
+				this.graph.addCell(copy_el.clone())	
+			}
+			else if(action_type === 'delete'){
+				this.selected_el.remove()
+				this.is_selected = false
+			}
+			// var copy_el = this.selected_el.model.clone()
+			// copy_el.position(10, 10)
+			// this.graph.addCell(copy_el)
 		},
 		CutMouseOver(){
 			this.$refs.elcut.style.backgroundColor = "grey";
@@ -178,6 +205,13 @@
 		PasteMouseOut(){
 			this.$refs.elpaste.style.backgroundColor = "white";
 		},
+		DeleteMouseOver(){
+			this.$refs.eldelete.style.backgroundColor = "grey";
+		},
+		DeleteMouseOut(){
+			this.$refs.eldelete.style.backgroundColor = "white";
+		},
+
 		getCell(x, y,width,height, rank, name, image, background, textColor) {
 
 	    	textColor = textColor || "#000";
@@ -221,7 +255,7 @@
 	            '.card': { fill: background, stroke: 'none'},
 	              image: { 'xlink:href':'../../static/flowchart/images/'+image, opacity: 0.7 },
 	            '.rank': { text: rank, fill: "#000", 'word-spacing': '-5px', 'letter-spacing': 0},
-	            '.name': { text: name, fill: textColor, 'font-size': 13, 'font-family': 'Arial', 'letter-spacing': 0 }
+	            '.name': { text: name, fill: textColor, 'font-size': 13, 'font-family': 'Arial', 'letter-spacing': 0}
 	        		}
 	    		});
 	    		return cell;
