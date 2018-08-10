@@ -59,8 +59,6 @@ export default {
           radius: 75
         }
       });
-    //Bonus function use (see below) - create dotted grid
-    setGrid(paper, gridsize * 15, '#808080');
     let panAndZoom = "";
     setTimeout(() => {
       panAndZoom = svgPanZoom(paper.svg, {
@@ -72,12 +70,11 @@ export default {
         fit: false,
         onZoom: function (scale) {
         currentScale = scale;
-        setGrid(paper, gridsize * 15 * currentScale, '#808080');
+        // setGrid(paper, gridsize * 15 * currentScale, '#808080');
         },
         beforePan: function (oldpan, newpan) {
-          setGrid(paper, gridsize * 15 * currentScale, '#808080', newpan);
+          // setGrid(paper, gridsize * 15 * currentScale, '#808080', newpan);
         }
-
       });
     }, 1500);
 
@@ -91,33 +88,6 @@ export default {
     paper.on('cell:pointerup blank:pointerup', function (cellView, event) {
       panAndZoom.disablePan();
     });
-
-    //BONUS function - will add a css background of a dotted grid that will scale reasonably
-    //well with zooming and panning.
-    function setGrid(paper, size, color, offset) {
-      // Set grid size on the JointJS paper object (joint.dia.Paper instance)
-      paper.options.gridsize = gridsize;
-      // Draw a grid into the HTML 5 canvas and convert it to a data URI image
-      var canvas = $('<canvas/>', {
-        width: size,
-        height: size
-      });
-      canvas[0].width = size;
-      canvas[0].height = size;
-      var context = canvas[0].getContext('2d');
-      context.beginPath();
-      context.rect(1, 1, 1, 1);
-      context.fillStyle = color || '#AAAAAA';
-      context.fill();
-      // Finally, set the grid background image of the paper container element.
-      var gridBackgroundImage = canvas[0].toDataURL('image/png');
-      $(paper.el.childNodes[0]).css('background-image', 'url("' + gridBackgroundImage + '")');
-      if (typeof (offset) != 'undefined') {
-        $(paper.el.childNodes[0]).css('background-position', offset.x + 'px ' + offset.y + 'px');
-      }
-    }
-
-
     // Canvas from which you take shapes
     var stencilGraph = new joint.dia.Graph,
       stencilPaper = new joint.dia.Paper({
@@ -211,66 +181,11 @@ export default {
         }
       }
     });
-    var r2 = new joint.shapes.basic.Rect({
-      position: {
-        x: 120,
-        y: 10
-      },
-      size: {
-        width: 100,
-        height: 40
-      },
-      attrs: {
-        text: {
-          text: 'Rect2'
-        }
-      }
-    });
 
-    joint.shapes.devs.MyImageModel = joint.shapes.devs.Model.extend({
-
-      markup: '<g class="rotatable" ><g class="scalable"><rect class="body"/></g><image/><text class="label"/>' +
-        '<g class="inPorts"/><g class="outPorts"/></g>',
-
-      defaults: joint.util.deepSupplement({
-
-        type: 'devs.MyImageModel',
-        size: {
-          width: 100,
-          height: 40
-        },
-        attrs: {
-          '.port-body': {
-            r: 5,
-            magnet: true,
-            stroke: '#000000'
-          },
-          '.inPorts circle': {
-            fill: ''
-          },
-          '.outPorts circle': {
-            fill: ''
-          },
-          image: {
-            'xlink:href': '../../static/flowchart/images/archive.png',
-            width: 100,
-            height: 40,
-            'ref-x': .5,
-            'ref-y': .5,
-            ref: 'rect',
-            'x-alignment': 'middle',
-            'y-alignment': 'middle'
-          }
-        }
-
-      }, joint.shapes.devs.Model.prototype.defaults)
-    });
-
-    joint.shapes.devs.MyImageModelView = joint.shapes.devs.ModelView;
-
-    stencilGraph.addCells([r2, model]);
+    stencilGraph.addCells([model]);
 
     stencilPaper.on('cell:pointerdown', function (cellView, e, x, y) {
+			// debugger;
       $('body').append('<div id="flyPaper" style="position:fixed;z-index:100;opacity:.7;pointer-event:none;"></div>');
       var flyGraph = new joint.dia.Graph,
         flyPaper = new joint.dia.Paper({
@@ -284,7 +199,6 @@ export default {
           x: x - pos.x,
           y: y - pos.y
         };
-
       flyShape.position(0, 0);
       flyGraph.addCell(flyShape);
       $("#flyPaper").offset({
