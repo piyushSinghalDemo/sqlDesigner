@@ -61,7 +61,6 @@
     				snapLinks: { radius: 75 }
 			  	});
 
-
 			var selected;
 			paper.on('cell:mouseover', function(cellView) {
 				if(selected){
@@ -138,7 +137,60 @@
 
   		var minuscell = this.getCell(350,10,150,60,'minus','',"minus.png",'#30d0c6','#f1f1f1')
 
-  		var archivalcell = this.getCell(520,10,150,60,'archival','',"archive.png",'#30d0c6','#f1f1f1')
+  		// var archivalcell = this.getCell(520,10,150,60,'archival','',"archive.png",'#30d0c6','#f1f1f1')
+  		var archivalcell = new joint.shapes.standard.BorderedImage({
+	    position : {
+	        x : 520,
+	        y : 10
+	    },
+	    size : {
+	        width : 100,
+	        height : 60
+	    },
+	    attrs : {
+	    	rect: {
+	        	rx:5,
+	        },
+
+	        image : {
+	            "xlink:href" : '../../static/flowchart/images/archive.png',
+	            width : 100,
+	            height : 60
+	        },
+	        text: { text: 'Archival','font-weight':'bold'},
+	    	data:'foo',
+	    },
+	    ports:{
+				groups: {
+					'in':{
+						position:{
+							name:'left',
+							args:{
+							},
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					},
+					'out':{
+						position:{
+							name:'right',
+							args:{}
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					}
+				},
+				items:[
+					{
+						group:'in',
+						args:{}
+					},
+					{
+						group:'out',
+						args:{}
+					}
+				]
+			},
+	});
+
 		stencilGraph.addCells([selectioncell,minuscell, mergecell ,archivalcell]);
 		
 
@@ -207,7 +259,7 @@
 				this.graph.addCell(copy_el.clone())	
 			}
 			else if(action_type === 'delete'){
-				this.selected_el.remove()
+				this.selected_el.model.remove({disconnectLinks : false})
 				this.is_selected = false
 			}
 			// var copy_el = this.selected_el.model.clone()
@@ -280,11 +332,11 @@
 				]
 			},
 	        attrs: {
-	            '.card': { fill: background, stroke: 'none'},
+	            '.card': { fill: background, stroke: 'none',rx:5},
 	              image: { 'xlink:href':'../../static/flowchart/images/'+image, opacity: 0.7 },
 	            '.rank': { text: rank, fill: "#000", 'word-spacing': '-5px', 'letter-spacing': 0},
 	            '.name': { text: name, fill: textColor, 'font-size': 13, 'font-family': 'Arial', 'letter-spacing': 0}
-	        		}
+	        		},
 	    		});
 	    		return cell;
 			},

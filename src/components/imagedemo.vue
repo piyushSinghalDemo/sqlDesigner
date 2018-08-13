@@ -80,7 +80,7 @@
 	    position: { x: 10, y: 10 },
 	    size: { width: 100, height: 60 },
 	    attrs: { 
-	        text: { text: 'My Element' },
+	        text: { text: 'Test',fill:'#FFFFFF' },
 	        image: { 'xlink:href': '../../static/flowchart/images/archive.png' },
 	        rect: {
 	        	rx:5
@@ -176,11 +176,11 @@
 		stencilGraph.addCells([decoratedRect,image]);
 
 		paper.on('element:pointerdblclick', function(cellView, evt, x, y) {
-		    //cellView.remove();
-		    debugger;
-		    // var shapeText = prompt('Enter your table name:', '');
-		    // cellView.model.attr('text/text', shapeText)
-		    alert(cellView.model.attr('data'))
+		    // cellView.remove();
+		    // debugger;
+		    var shapeText = prompt('Enter your table name:', '');
+		    cellView.model.attr('text/text', shapeText)
+		    // alert(cellView.model.attr('data'))
 		    // cellView.model.attr('rect/title', 'abc')
 		    // console.log(graph)
 

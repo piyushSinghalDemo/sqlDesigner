@@ -27,6 +27,10 @@
             let rect2 = rect.clone();
             rect2.translate(300);
 
+            paper.on('cell:pointerdblclick', function(cellView) {
+              cellView.model.remove()
+            });
+
             let link = new joint.dia.Link({
                 source: { id: rect.id },
                 target: { id: rect2.id }
