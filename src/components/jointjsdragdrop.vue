@@ -62,18 +62,16 @@ export default {
     let panAndZoom = "";
     setTimeout(() => {
       panAndZoom = svgPanZoom(paper.svg, {
-        //   viewportSelector: paper.svg.childNodes[0],
         zoomEnabled: true,
         zoomScaleSensitivity: 0.4,
         panEnabled: false,
         controlIconsEnabled: true,
         fit: false,
+        center: false,
         onZoom: function (scale) {
         currentScale = scale;
-        // setGrid(paper, gridsize * 15 * currentScale, '#808080');
         },
         beforePan: function (oldpan, newpan) {
-          // setGrid(paper, gridsize * 15 * currentScale, '#808080', newpan);
         }
       });
     }, 1500);
@@ -104,7 +102,6 @@ export default {
       cellView.model.attr('text/text', shapeText)
       cellView.model.attr('rect/title', 'abc')
       // console.log(graph)
-
     });
 
     this.graph = stencilGraph;
@@ -112,9 +109,7 @@ export default {
     var selected;
 
     paper.on('link:pointerdblclick', function (linkView) {
-
       var currentLink = linkView.model;
-
       currentLink.attr('text/text', '1:m');
       let description = prompt("Enter Relation", "Data");
       currentLink.labels([{
