@@ -19,7 +19,7 @@
 			  	paper = new joint.dia.Paper({
 			    	el: $('#paper'),
 			    	model: graph,
-			    	gridSize: 5,
+			    	gridSize: 10,
   					drawGrid:true,
 					defaultLink: new joint.dia.Link({connector: { name: 'rounded' },
         			attrs: {'.connection': { stroke: '#333333','stroke-width': 3},
@@ -59,16 +59,128 @@
 
   		var mergecell = this.getCell(180,10,150,60,'merge','',"merge.png",'#30d0c6','#f1f1f1')
 
-  		var minuscell = this.getCell(350,10,150,60,'minus','',"minus.png",'#30d0c6','#f1f1f1')
+  		joint.shapes.basic.DecoratedRect = joint.shapes.basic.Generic.extend({
 
-  		var archivalcell = this.getCell(520,10,150,60,'archival','',"archive.png",'#30d0c6','#f1f1f1')
-		stencilGraph.addCells([selectioncell,minuscell, mergecell ,archivalcell]);
+	    markup: '<g class="rotatable"><g class="scalable"><rect/></g><image/><text/></g>',
+
+	    defaults: joint.util.deepSupplement({
+
+	        type: 'basic.DecoratedRect',
+	        size: { width: 100, height: 60 },
+	        attrs: {
+	            'rect': { fill: '#FFFFFF', stroke: 'black', width: 100, height: 100 },
+	            'text': { 'font-size': 14, text: '', 'ref-x': .5, 'ref-y': .5, ref: 'rect', 'y-alignment': 'top', 'x-alignment': 'middle', fill: 'black' },
+	            'image': { 'ref-x': 2, 'ref-y': 2,ref: 'rect', width: 50, height: 50 }
+	        }
+
+	    }, joint.shapes.basic.Generic.prototype.defaults)
+	});
+
+	  	var decoratedRect = new joint.shapes.basic.DecoratedRect({
+	    position: { x: 10, y: 10 },
+	    size: { width: 100, height: 60 },
+	    attrs: { 
+	        text: { text: 'My Element' },
+	        image: { 'xlink:href': '../../static/flowchart/images/archive.png' },
+	        rect: {
+	        	rx:5
+	        },
+	    },
+	    ports:{
+				groups: {
+					'in':{
+						position:{
+							name:'left',
+							args:{
+							},
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					},
+					'out':{
+						position:{
+							name:'right',
+							args:{}
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					}
+				},
+				items:[
+					{
+						group:'in',
+						args:{}
+					},
+					{
+						group:'out',
+						args:{}
+					}
+				]
+			},
+		});
+
+		var image = new joint.shapes.standard.BorderedImage({
+	    position : {
+	        x : 180,
+	        y : 10
+	    },
+	    size : {
+	        width : 100,
+	        height : 60
+	    },
+	    attrs : {
+	    	rect: {
+	        	rx:5,
+	        },
+
+	        image : {
+	            "xlink:href" : '../../static/flowchart/images/archive.png',
+	            width : 100,
+	            height : 60
+	        },
+	        text: { text: 'My Element','font-weight':'bold'},
+	    	data:'foo',
+	    },
+	    ports:{
+				groups: {
+					'in':{
+						position:{
+							name:'left',
+							args:{
+							},
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					},
+					'out':{
+						position:{
+							name:'right',
+							args:{}
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					}
+				},
+				items:[
+					{
+						group:'in',
+						args:{}
+					},
+					{
+						group:'out',
+						args:{}
+					}
+				]
+			},
+	});
+  		// var minuscell = this.getCell(350,10,150,60,'minus','',"minus.png",'#30d0c6','#f1f1f1')
+
+  		// var archivalcell = this.getCell(520,10,150,60,'archival','',"archive.png",'#30d0c6','#f1f1f1')
+
+		stencilGraph.addCells([decoratedRect,image]);
 
 		paper.on('element:pointerdblclick', function(cellView, evt, x, y) {
 		    //cellView.remove();
 		    debugger;
-		    var shapeText = prompt('Enter your table name:', '');
-		    cellView.model.attr('.name/text', shapeText)
+		    // var shapeText = prompt('Enter your table name:', '');
+		    // cellView.model.attr('text/text', shapeText)
+		    alert(cellView.model.attr('data'))
 		    // cellView.model.attr('rect/title', 'abc')
 		    // console.log(graph)
 

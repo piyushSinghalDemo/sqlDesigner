@@ -80,6 +80,8 @@
 				var shapeText = prompt('Enter your table name:', '');
 		    	cellView.model.attr('.name/text', shapeText)
 		  // _this.graph(cellView.clone())
+		  // alert(cellView.model.id)
+		  // console.log("data"+JSON.stringify(_this.graph))
 			});
 
 			$('#paper')
@@ -225,7 +227,7 @@
 			this.$refs.elcopy.style.backgroundColor = "white";
 		},
 		PasteMouseOver(){
-			if(!is_not_cut_or_copied)
+			if(this.is_cut_or_copied)
 				this.$refs.elpaste.style.backgroundColor = "grey";
 		},
 		PasteMouseOut(){
