@@ -13,6 +13,7 @@
 
 <script>
 	import contextMenu from 'vue-context-menu'
+	import graphlib from 'graphlib'
     export default {
     	  	components: { contextMenu },
 			data() {
@@ -62,6 +63,13 @@
 			  	});
 
 			var selected;
+			 paper.on("link:connect", function(linkView) {
+            if(graphlib.alg.findCycles(graph.toGraphLib()).length > 0) {
+                linkView.model.remove();
+                // show some error message here
+            	}
+        	});
+
 			paper.on('cell:mouseover', function(cellView) {
 				if(selected){
 					selected.unhighlight()
