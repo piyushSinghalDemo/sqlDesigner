@@ -36,10 +36,18 @@
 			    	gridSize: 5,
   					drawGrid:true,
   					height:400,
-					defaultLink: new joint.dia.Link({connector: { name: 'rounded' },
-        			attrs: {'.connection': { stroke: '#333333','stroke-width': 3},
-        			'.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
-        				}
+					defaultLink: new joint.dia.Link({router: { name: 'manhattan' },
+                  	connector: { name: 'rounded' },
+                  		attrs: {
+                      	'.connection': {
+                          	stroke: '#333333',
+                          	'stroke-width': 3
+                      		},
+                      		'.marker-target': {
+                          		fill: '#333333',
+                          		d: 'M 10 0 L 0 5 L 10 10 z'
+                      		}	
+                  		}
 					}),
 					circle:{ opacity: "1",r: "2"},
 					 validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
@@ -98,26 +106,6 @@
 			    }
 			});
 
-			// function overlap(rect1, rect2) {
-			// 	    return !(rect1.right < rect2.left || 
-			// 	             rect1.left > rect2.right || 
-			// 	             rect1.bottom < rect2.top || 
-			// 	             rect1.top > rect2.bottom);
-			// 	}
-
-			// 	_this.graph.on('change:position', function(cell) {
-			// 	    if (_.contains(listOfElements, cell)) {
-			// 	        var bbox = paper.findViewByModel(cell);
-			// 	        _.each(listOfLinks, function(link) {
-			// 	            var linkView = paper.findViewByModel(link);
-			// 	            if (overlap(linkView.getBBox(), bbox)) {
-			// 	                linkView.update();
-			// 	            }
-			// 	        });
-			// 	    }
-			// 	});
-
-
 			$('#paper')
 			    .attr('tabindex', 0)
 			    .on('mouseover', function() {
@@ -156,7 +144,59 @@
 				_this.is_selected = false
 			});
 
+			graph.on('change:position', function(cell) {
+				var listOfElements = graph.getElements()
+				var listOfLinks = graph.getLinks()
+			    if (_.contains(listOfElements, cell)) {
+			        _.each(listOfLinks, function(link) {
+			                paper.findViewByModel(link).update();
+			        });
+			    }
+			}).on('add', function(cell) {
+				var listOfElements = graph.getElements()
+				var listOfLinks = graph.getLinks()
+			    if (_.contains(listOfElements, cell)) {
+			        _.each(listOfLinks, function(link) {
+			                paper.findViewByModel(link).update();
+			        });
+			    }
+			});
   	
+			// function overlap(rect1, rect2) {
+			//     return !(rect1.right < rect2.left || 
+			//              rect1.left > rect2.right || 
+			//              rect1.bottom < rect2.top || 
+			//              rect1.top > rect2.bottom);
+			// }
+
+			// graph.on('change:position', function(cell) {
+			// 	var listOfElements = graph.getElements()
+			// 	var listOfLinks = graph.getLinks()
+			//     if (_.contains(listOfElements, cell)) {
+			//         var bbox = paper.findViewByModel(cell);
+			//         _.each(listOfLinks, function(link) {
+			//             var linkView = paper.findViewByModel(link);
+			//             if (overlap(linkView.getBBox(), bbox.getBBox())) {
+			//                 linkView.update();
+			//             }
+			//         });
+			//     }
+			// });
+
+			$('.router-switch').on('click', function(evt) {
+				debugger;
+			    var router = $(evt.target).data('router');
+			    var connector = $(evt.target).data('connector');
+
+			    if (router) {
+			        link.set('router', { name: router });
+			    } else {
+			        link.unset('router');
+			    }
+
+			    link.set('connector', { name: connector });
+			});
+
 			// Canvas from which you take shapes
 			  var stencilGraph = new joint.dia.Graph,
 			  stencilPaper = new joint.dia.Paper({
