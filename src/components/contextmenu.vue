@@ -44,11 +44,11 @@
 					circle:{ opacity: "1",r: "2"},
 					 validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 								// Prevent linking from input ports.
-								if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+								if (magnetS && (magnetS.getAttribute('port-group') === 'in' || magnetS.getAttribute('port-group') === 'top')) return false;
 								// Prevent linking from output ports to input ports within one element.
 								if (cellViewS === cellViewT) return false;
 								// Prevent linking to input ports.
-								return magnetT && magnetT.getAttribute('port-group') === 'in';
+								return magnetT && (magnetT.getAttribute('port-group') === 'in' || (magnetT.getAttribute('port-group') === 'top'));
 						},
 						validateMagnet: function(cellView, magnet) {
 								// Note that this is the default behaviour. Just showing it here for reference.
@@ -89,7 +89,34 @@
 		  // _this.graph(cellView.clone())
 		  // alert(cellView.model.id)
 		  // console.log("data"+JSON.stringify(_this.graph))
+			}).on('cell:pointerup', function (cellView, evt) {
+			    var elem = cellView.model
+			    var source = elem.get('source')
+			    var target = elem.get('target')
+			    if (elem instanceof joint.dia.Link && (!source.id || !target.id)) {
+			        elem.remove()
+			    }
 			});
+
+			// function overlap(rect1, rect2) {
+			// 	    return !(rect1.right < rect2.left || 
+			// 	             rect1.left > rect2.right || 
+			// 	             rect1.bottom < rect2.top || 
+			// 	             rect1.top > rect2.bottom);
+			// 	}
+
+			// 	_this.graph.on('change:position', function(cell) {
+			// 	    if (_.contains(listOfElements, cell)) {
+			// 	        var bbox = paper.findViewByModel(cell);
+			// 	        _.each(listOfLinks, function(link) {
+			// 	            var linkView = paper.findViewByModel(link);
+			// 	            if (overlap(linkView.getBBox(), bbox)) {
+			// 	                linkView.update();
+			// 	            }
+			// 	        });
+			// 	    }
+			// 	});
+
 
 			$('#paper')
 			    .attr('tabindex', 0)
@@ -145,59 +172,8 @@
 
   		var minuscell = this.getCell(350,10,150,60,'minus','',"minus.png",'#30d0c6','#f1f1f1')
 
-  		// var archivalcell = this.getCell(520,10,150,60,'archival','',"archive.png",'#30d0c6','#f1f1f1')
-  		var archivalcell = new joint.shapes.standard.BorderedImage({
-	    position : {
-	        x : 520,
-	        y : 10
-	    },
-	    size : {
-	        width : 100,
-	        height : 60
-	    },
-	    attrs : {
-	    	rect: {
-	        	rx:5,
-	        },
-
-	        image : {
-	            "xlink:href" : '../../static/flowchart/images/archive.png',
-	            width : 100,
-	            height : 60
-	        },
-	        text: { text: 'Archival','font-weight':'bold'},
-	    	data:'foo',
-	    },
-	    ports:{
-				groups: {
-					'in':{
-						position:{
-							name:'left',
-							args:{
-							},
-						},
-					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
-					},
-					'out':{
-						position:{
-							name:'right',
-							args:{}
-						},
-					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
-					}
-				},
-				items:[
-					{
-						group:'in',
-						args:{}
-					},
-					{
-						group:'out',
-						args:{}
-					}
-				]
-			},
-	});
+  		var archivalcell = this.getCell(520,10,150,60,'archival','',"archive.png",'#30d0c6','#f1f1f1')
+ //  		
 
 		stencilGraph.addCells([selectioncell,minuscell, mergecell ,archivalcell]);
 		
@@ -326,6 +302,21 @@
 							args:{}
 						},
 					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					},
+					'top':{
+						position:{
+							name:'top',
+							args:{
+							},
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					},
+					'bottom':{
+						position:{
+							name:'bottom',
+							args:{}
+						},
+					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
 					}
 				},
 				items:[
@@ -335,6 +326,14 @@
 					},
 					{
 						group:'out',
+						args:{}
+					},
+					{
+						group:'top',
+						args:{}
+					},
+					{
+						group:'bottom',
 						args:{}
 					}
 				]
@@ -394,3 +393,81 @@
 		// 	    }
 		// 	}]);
 		// });
+
+
+
+		var archivalcell = new joint.shapes.standard.BorderedImage({
+	//     position : {
+	//         x : 520,
+	//         y : 10
+	//     },
+	//     size : {
+	//         width : 100,
+	//         height : 60
+	//     },
+	//     attrs : {
+	//     	rect: {
+	//         	rx:5,
+	//         },
+
+	//         image : {
+	//             "xlink:href" : '../../static/flowchart/images/archive.png',
+	//             width : 100,
+	//             height : 60
+	//         },
+	//         text: { text: 'Archival','font-weight':'bold'},
+	//     	data:'foo',
+	//     },
+	//     ports:{
+	// 			groups: {
+	// 				'in':{
+	// 					position:{
+	// 						name:'left',
+	// 						args:{
+	// 						},
+	// 					},
+	// 				markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+	// 				},
+	// 				'out':{
+	// 					position:{
+	// 						name:'right',
+	// 						args:{}
+	// 					},
+	// 				markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+	// 				},
+	// 				'top':{
+	// 					position:{
+	// 						name:'top',
+	// 						args:{
+	// 						},
+	// 					},
+	// 				markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+	// 				},
+	// 				'bottom':{
+	// 					position:{
+	// 						name:'bottom',
+	// 						args:{}
+	// 					},
+	// 				markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+	// 				}
+	// 			},
+	// 			items:[
+	// 				{
+	// 					group:'in',
+	// 					args:{}
+	// 				},
+	// 				{
+	// 					group:'out',
+	// 					args:{}
+	// 				},
+	// 				{
+	// 					group:'top',
+	// 					args:{}
+	// 				},
+	// 				{
+	// 					group:'bottom',
+	// 					args:{}
+	// 				}
+	// 			]
+	// 		},
+	// });
