@@ -267,7 +267,7 @@
 			if(action_type==='cut'){
 				this.cut_copy_ele = this.selected_el.model.clone()
 				this.is_cut_or_copied = true
-				this.selected_el.remove()
+				this.selected_el.model.remove()
 			}
 			else if(action_type === 'copy'){
 				this.cut_copy_ele = this.selected_el.model.clone()
