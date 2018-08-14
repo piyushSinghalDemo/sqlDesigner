@@ -13,6 +13,7 @@ import dropConnecting from '@/components/jointJs/dropConnecting'
 import redrawgraph from '@/components/redrawgraph'
 import imagedemo from '@/components/imagedemo'
 import contextmenu from '@/components/contextmenu'
+import jointjsminimap from '@/components/jointjsminimap'
 Vue.use(Router)
 
 export default new Router({
@@ -56,6 +57,11 @@ export default new Router({
             path: '/contextmenu',
             name: 'contextmenu',
             component: contextmenu
+        },
+        {
+            path: '/jointjsminimap',
+            name: 'jointjsminimap',
+            component: jointjsminimap
         },
         // {
         //   path: '/streamer/index',
