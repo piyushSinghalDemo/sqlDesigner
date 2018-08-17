@@ -10,7 +10,17 @@
   			<li style="font-weight:bold" @mouseover="PasteMouseOver()" @mouseout="PasteMouseOut()" @click="ContextMenuClick('paste')" v-bind:class="{disabled : !is_cut_or_copied}" ref="elpaste">Paste</li>
   			<li style="font-weight:bold" @mouseover="DeleteMouseOver()" @mouseout="DeleteMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('delete')" ref="eldelete">Delete</li>
 		</context-menu>
-    <div class="paper" id="paper-multiple-papers-small" style="position: absolute; top: 70px; left: 625px;background:#E5E8E8;"></div>
+	    <div class="paper" id="paper-multiple-papers-small" style="position: absolute; top: 390px; left: 590px;background:#E5E8E8;">	    	
+	    </div>
+	    <div style="position: absolute; top: 390px; left: 750px;font-size:30px;">
+	    <button @click="ZoomAction('zoom_in')" title="zoom in">
+	     <v-icon style="font-size:30px;" >zoom_in</v-icon> </button> </br>
+
+	    <button @click="ZoomAction('zoom_reset')" title="reset zoom">
+	     <v-icon style="font-size:30px;">restore</v-icon> </button></br>
+
+	     <button @click="ZoomAction('zoom_out')" title="zoom out">
+	     <v-icon style="font-size:30px;">zoom_out</v-icon> </button></div>
     </div>
         
 
@@ -29,7 +39,8 @@
 					is_cut_or_copied:false,
 					is_selected:false,
 					selected_el:'',
-					graph: new joint.dia.Graph
+					graph: new joint.dia.Graph,
+					panAndZoom:''
 				}
 			},
       		mounted() {        	
@@ -106,13 +117,13 @@
 	    });
 		var paperSmall_scale = paperSmall_width / paper_width
 	    paperSmall.scale(paperSmall_scale); 
-	    	let panAndZoom = "";
+	    	let panAndZoom = '';
 		    setTimeout(() => {
 		      panAndZoom = svgPanZoom(paper.svg,{
 		        zoomEnabled: false,
-		        zoomScaleSensitivity: 0.4,
+		        zoomScaleSensitivity: 0.1,
 		        panEnabled: false,
-		        controlIconsEnabled: true,
+		        controlIconsEnabled: false,
 		        dblClickZoomEnabled: false,
 		        fit: false,
 		        center: false,
@@ -125,6 +136,7 @@
 		        onPan: function(){
 		        }
 		      });
+		      _this.panAndZoom = panAndZoom
 		    }, 1500);
 
 			var selected;
@@ -184,13 +196,14 @@
 		 //      console.log(paper.options.width)
 		 //      //console.log(x + ' ' + y);
 		 //    });
-
+		 	
 		    paperSmall.on('blank:pointerclick',function(event,x,y){
-		    	debugger;
+		    	panAndZoom.resetZoom()
 		    	document.getElementById('container').scrollLeft = (x -400)
 		    	document.getElementById('container').scrollTop = (y-250)
 		    }).on('cell:pointerclick',function(cellview,event,x,y){
 		    	debugger;
+		    	panAndZoom.resetZoom()
 		    	document.getElementById('container').scrollLeft = (cellview.model.attributes.position.x -400)
 		    	document.getElementById('container').scrollTop = (cellview.model.attributes.position.y - 250)
 		    });
@@ -340,6 +353,17 @@
 		});
 	},
 	methods: {
+		ZoomAction(action){
+			if(action==='zoom_in'){
+				this.panAndZoom.zoomIn()
+			}
+			else if(action==='zoom_out'){
+				this.panAndZoom.zoomOut()
+			}
+			else{
+				this.panAndZoom.resetZoom()
+			}
+		},
 		ContextMenuClick(action_type){
 			if(action_type==='cut'){
 				this.cut_copy_ele = this.selected_el.model.clone()
@@ -486,6 +510,12 @@ div#container {
   lef:10px;
  }
 
-
+.lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 80px;
+  height: 80px;
+}
 
 </style>
