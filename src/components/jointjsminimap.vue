@@ -1,14 +1,16 @@
 <template>
-    <div>
+    <div id="diagram">
        	<div id="stencil"></div>
-		<div id="paper"  @contextmenu.prevent="$refs.ctxMenu.open" ref="elpaper"></div>
+       	<div id="container">
+			<div id="paper" style="left:10px;" @contextmenu.prevent="$refs.ctxMenu.open" ref="elpaper"></div>
+		</div>
 		<context-menu id="context-menu" ref="ctxMenu">
 			<li style="font-weight:bold" @mouseover="CutMouseOver()" @mouseout="CutMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('cut')" ref="elcut">Cut</li>
   			<li style="font-weight:bold" @mouseover="CopyMouseOver()" @mouseout="CopyMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('copy')" ref="elcopy">Copy</li>
   			<li style="font-weight:bold" @mouseover="PasteMouseOver()" @mouseout="PasteMouseOut()" @click="ContextMenuClick('paste')" v-bind:class="{disabled : !is_cut_or_copied}" ref="elpaste">Paste</li>
   			<li style="font-weight:bold" @mouseover="DeleteMouseOver()" @mouseout="DeleteMouseOut()" v-bind:class="{disabled : !is_selected}" @click="ContextMenuClick('delete')" ref="eldelete">Delete</li>
 		</context-menu>
-    <div class="paper" id="paper-multiple-papers-small" style="position: absolute; top: 75px; left: 650px;"></div>
+    <div class="paper" id="paper-multiple-papers-small" style="position: absolute; top: 70px; left: 625px;background:#E5E8E8;"></div>
     </div>
         
 
@@ -17,6 +19,7 @@
 <script>
 	import contextMenu from 'vue-context-menu'
 	import graphlib from 'graphlib'
+	import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js"
     export default {
     	  	components: { contextMenu },
 			data() {
@@ -32,13 +35,19 @@
       		mounted() {        	
         	// Canvas where sape are dropped
         		let _this = this
+        		var paper_heigth = 1600
+        		var paper_width = 1600
+        		var currentScale = 1
+        		var currentScaleForMinimap = 1
 				var graph =_this.graph
 			  	var paper = new joint.dia.Paper({
 			    	el: $('#paper'),
 			    	model: graph,
 			    	gridSize: 5,
   					drawGrid:true,
-  					height:400,
+  					height:paper_heigth,
+  					width:paper_width,
+  					x:10,
 					defaultLink: new joint.dia.Link({router: { name: 'manhattan' },
                   	connector: { name: 'rounded' },
                   		attrs: {
@@ -74,14 +83,49 @@
 			  	});
 
 			var paperSmall = new joint.dia.Paper({
-	        el: document.getElementById('paper-multiple-papers-small'),
+	        el: $('#paper-multiple-papers-small'),
 	        model: graph,
-	        width: 150,
-	        height: 100,
+	        width: 160,
+	        height: 160,
 	        gridSize: 1,
-	        interactive: false
+	        interactive: false,
+	        defaultLink: new joint.dia.Link({router: { name: 'manhattan' },
+                  	connector: { name: 'rounded' },
+                  		attrs: {
+                      	'.connection': {
+                          	stroke: '#333333',
+                          	'stroke-width': 3
+                      		},
+                      		'.marker-target': {
+                          		fill: '#333333',
+                          		d: 'M 10 0 L 0 5 L 10 10 z'
+                      		}	
+                  		}
+					})
 	    });
-	    paperSmall.scale(0.25); 
+	    paperSmall.scale(0.10); 
+	    	let panAndZoom = "";
+		    setTimeout(() => {
+		      panAndZoom = svgPanZoom(paper.svg,{
+		        zoomEnabled: true,
+		        zoomScaleSensitivity: 0.4,
+		        panEnabled: false,
+		        controlIconsEnabled: true,
+		        dblClickZoomEnabled: false,
+		        fit: false,
+		        center: false,
+		        scroll:true,
+		        onZoom: function (scale) {
+		        currentScale = scale;
+		        currentScaleForMinimap = scale;
+		        },
+		        beforePan: function (oldpan, newpan) {
+		        },
+		        onPan: function(){
+		        }
+		      });
+		    }, 1500);
+
 			var selected;
 			 paper.on("link:connect", function(linkView) {
             if(graphlib.alg.findCycles(graph.toGraphLib()).length > 0) {
@@ -89,7 +133,6 @@
                 // show some error message here
             	}
         	});
-
 			paper.on('cell:mouseover', function(cellView) {
 				if(selected){
 					selected.unhighlight()
@@ -109,15 +152,24 @@
 		  // _this.graph(cellView.clone())
 		  // alert(cellView.model.id)
 		  // console.log("data"+JSON.stringify(_this.graph))
-			}).on('cell:pointerup', function (cellView, evt) {
-			    var elem = cellView.model
-			    var source = elem.get('source')
-			    var target = elem.get('target')
-			    if (elem instanceof joint.dia.Link && (!source.id || !target.id)) {
-			        elem.remove()
-			    }
+			}).on('cell:pointerup blank:pointerup', function (cellView, evt) {
+			    // panAndZoom.disablePan();
+			    if(cellView.model){
+				    var elem = cellView.model
+				    var source = elem.get('source')
+				    var target = elem.get('target')
+				    if (elem instanceof joint.dia.Link && (!source.id || !target.id)) {
+				        elem.remove()
+				    }
+				}
 			});
-
+			paper.on('blank:pointerdown', function (evt, x, y) {
+		      // panAndZoom.enablePan();
+		      console.log(paper.options.width)
+		      //console.log(x + ' ' + y);
+		    }).on('blank:pointerdblclick',function(event,x,y){
+		    	console.log('width',paper);
+		    });
 			$('#paper')
 			    .attr('tabindex', 0)
 			    .on('mouseover', function() {
@@ -143,7 +195,6 @@
 				        _this.ContextMenuClick('paste')
 				    }
 			    });
-
 			paper.on('blank:mouseover', function(cellView) {
 				if(selected){
 					selected.unhighlight()
@@ -162,6 +213,7 @@
 			    if (_.contains(listOfElements, cell)) {
 			        _.each(listOfLinks, function(link) {
 			                paper.findViewByModel(link).update();
+			                paperSmall.findViewByModel(link).update();
 			        });
 			    }
 			}).on('add', function(cell) {
@@ -170,6 +222,7 @@
 			    if (_.contains(listOfElements, cell)) {
 			        _.each(listOfLinks, function(link) {
 			                paper.findViewByModel(link).update();
+			                paperSmall.findViewByModel(link).update();
 			        });
 			    }
 			});
@@ -333,14 +386,14 @@
 							args:{
 							},
 						},
-					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					markup:'<circle class="joint-port-body" r="5" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
 					},
 					'out':{
 						position:{
 							name:'right',
 							args:{}
 						},
-					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					markup:'<circle class="joint-port-body" r="5" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
 					},
 					'top':{
 						position:{
@@ -348,14 +401,14 @@
 							args:{
 							},
 						},
-					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					markup:'<circle class="joint-port-body" r="5" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
 					},
 					'bottom':{
 						position:{
 							name:'bottom',
 							args:{}
 						},
-					markup:'<circle class="joint-port-body" r="6" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
+					markup:'<circle class="joint-port-body" r="5" fill="#FFFFFF" stroke="#000000" magnet="true"/>'
 					}
 				},
 				items:[
@@ -399,4 +452,15 @@
 .available-cell rect {
     stroke-dasharray: 5, 2;
 }
+
+div#container {
+  height: 500px;
+  width: 800px;
+  border:1px solid #000;
+  overflow: scroll;
+  lef:10px;
+ }
+
+
+
 </style>
