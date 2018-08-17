@@ -38,12 +38,12 @@
         		var paper_heigth = 1600
         		var paper_width = 1600
         		var currentScale = 1
-        		var currentScaleForMinimap = 1
+        		var gridSize = 5
 				var graph =_this.graph
 			  	var paper = new joint.dia.Paper({
 			    	el: $('#paper'),
 			    	model: graph,
-			    	gridSize: 5,
+			    	gridSize: gridSize,
   					drawGrid:true,
   					height:paper_heigth,
   					width:paper_width,
@@ -81,12 +81,13 @@
 						 // Enable link snapping within 75px lookup radius
     				snapLinks: { radius: 75 }
 			  	});
-
+			var paperSmall_width = 160
+			var paperSmall_heigth = 160
 			var paperSmall = new joint.dia.Paper({
 	        el: $('#paper-multiple-papers-small'),
 	        model: graph,
-	        width: 160,
-	        height: 160,
+	        width: paperSmall_width,
+	        height: paperSmall_heigth,
 	        gridSize: 1,
 	        interactive: false,
 	        defaultLink: new joint.dia.Link({router: { name: 'manhattan' },
@@ -103,11 +104,12 @@
                   		}
 					})
 	    });
-	    paperSmall.scale(0.10); 
+		var paperSmall_scale = paperSmall_width / paper_width
+	    paperSmall.scale(paperSmall_scale); 
 	    	let panAndZoom = "";
 		    setTimeout(() => {
 		      panAndZoom = svgPanZoom(paper.svg,{
-		        zoomEnabled: true,
+		        zoomEnabled: false,
 		        zoomScaleSensitivity: 0.4,
 		        panEnabled: false,
 		        controlIconsEnabled: true,
@@ -117,7 +119,6 @@
 		        scroll:true,
 		        onZoom: function (scale) {
 		        currentScale = scale;
-		        currentScaleForMinimap = scale;
 		        },
 		        beforePan: function (oldpan, newpan) {
 		        },
@@ -149,9 +150,6 @@
 			}).on('cell:pointerdblclick', function(cellView) {
 				var shapeText = prompt('Enter your table name:', '');
 		    	cellView.model.attr('.name/text', shapeText)
-		  // _this.graph(cellView.clone())
-		  // alert(cellView.model.id)
-		  // console.log("data"+JSON.stringify(_this.graph))
 			}).on('cell:pointerup blank:pointerup', function (cellView, evt) {
 			    // panAndZoom.disablePan();
 			    if(cellView.model){
@@ -162,14 +160,41 @@
 				        elem.remove()
 				    }
 				}
+			}).on('cell:pointermove', function (cellView, evt, x, y) {
+
+			    var bbox = cellView.getBBox();
+			    var constrained = false;
+
+			    var constrainedX = x;
+
+			    if (bbox.x <= 0) { constrainedX = x + gridSize; constrained = true }
+			    if (bbox.x + bbox.width >= paper_width) { constrainedX = x - gridSize; constrained = true }
+
+			    var constrainedY = y;
+
+			    if (bbox.y <= 0) {  constrainedY = y + gridSize; constrained = true }
+			    if (bbox.y + bbox.height >= paper_heigth) { constrainedY = y - gridSize; constrained = true }
+
+			    //if you fire the event all the time you get a stack overflow
+			    if (constrained) { cellView.pointermove(evt, constrainedX, constrainedY) }
 			});
-			paper.on('blank:pointerdown', function (evt, x, y) {
-		      // panAndZoom.enablePan();
-		      console.log(paper.options.width)
-		      //console.log(x + ' ' + y);
-		    }).on('blank:pointerdblclick',function(event,x,y){
-		    	console.log('width',paper);
+
+			// paper.on('blank:pointerdown', function (evt, x, y) {
+		 //      // panAndZoom.enablePan();
+		 //      console.log(paper.options.width)
+		 //      //console.log(x + ' ' + y);
+		 //    });
+
+		    paperSmall.on('blank:pointerclick',function(event,x,y){
+		    	debugger;
+		    	document.getElementById('container').scrollLeft = (x -400)
+		    	document.getElementById('container').scrollTop = (y-250)
+		    }).on('cell:pointerclick',function(cellview,event,x,y){
+		    	debugger;
+		    	document.getElementById('container').scrollLeft = (cellview.model.attributes.position.x -400)
+		    	document.getElementById('container').scrollTop = (cellview.model.attributes.position.y - 250)
 		    });
+
 			$('#paper')
 			    .attr('tabindex', 0)
 			    .on('mouseover', function() {
